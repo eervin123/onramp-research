@@ -268,8 +268,8 @@ def update_graphs(value):
                                 },
                         title="Portfolio Performance",
                         color_discrete_map=color_dict,
-                        template= my_template
-                        #width = 500, height = 450
+                        template= my_template,
+                        width = 450
                         )
         
         fig.update_yaxes( # the y-axis is in dollars

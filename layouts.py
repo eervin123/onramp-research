@@ -985,23 +985,28 @@ vol_page = html.Div([
             html.Div([ # Internal row
 
                 # Chart Column
-                html.Div([
+                # html.Div([
                     
-                ],
-                className = 'col-3'),
+                # ],
+                # className = 'col-3'),
 
                 # Chart Column
                 html.Div([
                     dcc.Graph(
                         id='vol_chart',
-                        figure = vol_fig)
+                        figure = vol_fig,
+                        style={
+                            "responsive" : True
+                        }
+                    )
                 ],
+                style={"max-width": "100%", "margin": "auto"},
                 className = 'col-4'),
 
                 # Chart Column
-                html.Div([
-                ],
-                className = 'col-4')
+                # html.Div([
+                # ],
+                # className = 'col-4')
 
             ],
             className = 'row'), # Internal row
@@ -1082,23 +1087,27 @@ heatmap_page = html.Div([
             html.Div([ # Internal row
 
                 # Chart Column
-                html.Div([
+                # html.Div([
                     
-                ],
-                className = 'col-4'),
+                # ],
+                # className = 'col-4'),
 
                 # Chart Column
                 html.Div([
                     dcc.Graph(
                         id='heatmap',
-                        figure = heatmap_fig)
+                        figure = heatmap_fig,
+                        style={
+                            "responsive" : True
+                        })
                 ],
+                style={"max-width": "100%", "margin": "auto"},
                 className = 'col-4'),
 
                 # Chart Column
-                html.Div([
-                ],
-                className = 'col-4')
+                # html.Div([
+                # ],
+                # className = 'col-4')
 
             ],
             className = 'row'), # Internal row
@@ -1178,23 +1187,27 @@ heatmap_timeline_page = html.Div([
             html.Div([ # Internal row
 
                 # Chart Column
-                html.Div([
+                # html.Div([
                     
-                ],
-                className = 'col-4'),
+                # ],
+                # className = 'col-4'),
 
                 # Chart Column
                 html.Div([
                     dcc.Graph(
                         id='heatmap_timeline',
-                        figure = heatmap_timeline_fig)
+                        figure = heatmap_timeline_fig,
+                        style={
+                            "responsive" : True
+                        })
                 ],
+                style={"max-width": "100%", "margin": "auto"},
                 className = 'col-4'),
 
                 # Chart Column
-                html.Div([
-                ],
-                className = 'col-4')
+                # html.Div([
+                # ],
+                # className = 'col-4')
 
             ],
             className = 'row'), # Internal row

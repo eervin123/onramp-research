@@ -176,12 +176,12 @@ sales_formats = {
 # 000 - IMPORT DATA DASHBOARD
 ####################################################################################################
 
-df = pd.read_csv("data/Slider_data.csv", usecols = ['Date','TraditionalOnly', 'SP500Only', 'd1', 'd2', 'd3', 'd4', 'd5', 'd6'])
+df = pd.read_csv("datafiles/Slider_data.csv", usecols = ['Date','TraditionalOnly', 'SP500Only', 'd1', 'd2', 'd3', 'd4', 'd5', 'd6'])
 df['Date'] = pd.to_datetime(df['Date'], unit = 'ms')
 df = df.set_index('Date')
 
 #Stats Data
-df_stats = pd.read_csv("data/Slider_data.csv", usecols = ['AnnReturn',	'AnnRisk','SharpeRatio','SortinoRatio','ReturnTraditional','ReturnSP500','RiskTraditional',	'RiskSP500','SharpeTraditional','SharpeSP500','SortinoTraditional',	'SortinoSP500'])
+df_stats = pd.read_csv("datafiles/Slider_data.csv", usecols = ['AnnReturn',	'AnnRisk','SharpeRatio','SortinoRatio','ReturnTraditional','ReturnSP500','RiskTraditional',	'RiskSP500','SharpeTraditional','SharpeSP500','SortinoTraditional',	'SortinoSP500'])
 df_stats = df_stats.dropna()
 
 colors = ['#a90bfe', '#7540ee', '#3fb6dc'] 

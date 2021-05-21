@@ -12,6 +12,7 @@ from datetime import datetime as dt
 from dash_app import dash_app
 import datetime 
 import pytz
+import math
 
 ####################################################################################################
 # 000 - FORMATTING INFO
@@ -161,12 +162,11 @@ my_template = dict(
 # 000 - IMPORT DATA DASHBOARD
 ####################################################################################################
 
-df = pd.read_csv("datafiles/Slider_data.csv", usecols = ['Date','TraditionalOnly', 'SP500Only', 'd1', 'd2', 'd3', 'd4', 'd5', 'd6'])
+df = pd.read_csv("datafiles/Slider_data20.csv", usecols = ['Date','TraditionalOnly', 'SP500Only', 'd1', 'd2', 'd3', 'd4', 'd5', 'd6', 'd7', 'd8', 'd9', 'd10', 'd11', 'd12', 'd13', 'd14', 'd15', 'd16', 'd17', 'd18', 'd19', 'd20', 'd21'], encoding='latin-1')
 df['Date'] = pd.to_datetime(df['Date'], unit = 'ms')
 df = df.set_index('Date')
-
 #Stats Data
-df_stats = pd.read_csv("datafiles/Slider_data.csv", usecols = ['AnnReturn',	'AnnRisk','SharpeRatio','SortinoRatio','ReturnTraditional','ReturnSP500','RiskTraditional',	'RiskSP500','SharpeTraditional','SharpeSP500','SortinoTraditional',	'SortinoSP500'])
+df_stats = pd.read_csv("datafiles/Slider_data20.csv", usecols = ['AnnReturn',	'AnnRisk','SharpeRatio','SortinoRatio','ReturnTraditional','ReturnSP500','RiskTraditional',	'RiskSP500','SharpeTraditional','SharpeSP500','SortinoTraditional',	'SortinoSP500'], encoding='latin-1')
 df_stats = df_stats.dropna()
 
 colors = ['#a90bfe', '#7540ee', '#3fb6dc'] 
@@ -196,11 +196,36 @@ colors = ['#a90bfe', '#7540ee', '#3fb6dc']
     [dash.dependencies.Input('slider_num', 'drag_value')]
 )
 def update_graphs(value):
-    
+    #print(value)
     #------------------------------------------------------------------------------Pie Chart ---------------------------------------------------------------------------
+    value_dict = {
+        0:1,
+        .5:2,
+        1:3,
+        1.5:4,
+        2:5,
+        2.5:6,
+        3:7,
+        3.5:8,
+        4:9,
+        4.5:10,
+        5:11,
+        5.5:12,
+        6:13,
+        6.5:14,
+        7:15,
+        7.5:16,
+        8:17,
+        8.5:18,
+        9:19,
+        9.5:20,
+        10:21
+    }
 
+    
     percent_dict = {'60/40' : 1-float(value)/100, 'Bitcoin': float(value)/100}
-
+    
+    #print(value)
     def graph_pie(percent_dictionary):
 
         colors_pie = ['#a90bfe', '#f2a900'] #BTC Orange
@@ -246,10 +271,12 @@ def update_graphs(value):
         
         return fig
 
-
+    #print(percent_dict)
+    value = value_dict[value]
+    #print(value)
     #------------------------------------------------------------------------------Line Chart ---------------------------------------------------------------------------
-
-    choice = 'd' + str(value + 1)
+    
+    choice = 'd' + str(value)
     def graph_line_chart(df, choice):
         colors = ['#a90bfe', '#7540ee', '#3fb6dc'] 
         df = df[['TraditionalOnly', 'SP500Only', choice]]
@@ -269,7 +296,7 @@ def update_graphs(value):
                         title="Portfolio Performance",
                         color_discrete_map=color_dict,
                         template= my_template,
-                        width = 450
+                        #width = 450
                         )
         
         fig.update_yaxes( # the y-axis is in dollars
@@ -299,13 +326,14 @@ def update_graphs(value):
         })
         fig.update_yaxes(side = "right", nticks = 4)
         fig.update_layout(titlefont=dict(size =24, color='white', family = 'Circular STD'))
-        fig.update_layout(margin = dict(l=10, r=30, t=20, b=0))
+        fig.update_layout(margin = dict(l=0, r=30, t=20, b=0))
         return fig
 
 
     #------------------------------------------------------------------------------Scatter Plot ---------------------------------------------------------------------------
-    risk_dic = {'60/40': float(df_stats.iloc[0][6])/100, 'S&P 500 Total Return': float(df_stats.iloc[0][7])/100, 'Combined Portfolio': float(df_stats.iloc[value][1])/100}
-    return_dic = {'60/40': float(df_stats.iloc[0][4])/100, 'S&P 500 Total Return': float(df_stats.iloc[0][5])/100, 'Combined Portfolio': float(df_stats.iloc[value][0])/100}
+    risk_dic = {'60/40': float(df_stats.iloc[0][6])/100, 'S&P 500 Total Return': float(df_stats.iloc[0][7])/100, 'Combined Portfolio': float(df_stats.iloc[value-1][1])/100}
+    #print(risk_dic)
+    return_dic = {'60/40': float(df_stats.iloc[0][4])/100, 'S&P 500 Total Return': float(df_stats.iloc[0][5])/100, 'Combined Portfolio': float(df_stats.iloc[value-1][0])/100}
     
     def graph_scatter_plot(risk_dic, return_dic):
         colors = ['#a90bfe', '#7540ee', '#3fb6dc'] 
@@ -362,7 +390,7 @@ def update_graphs(value):
         fig.update_layout(titlefont=dict(size =24, color='white'))
         fig.update_xaxes( title_font = {"size": 20})
         fig.update_yaxes( title_font = {"size": 20})
-        fig.update_layout(margin = dict(l=0, r=50, t=20, b=0))
+        fig.update_layout(margin = dict(l=10, r=50, t=20, b=0))
 
         return fig
     
@@ -371,11 +399,11 @@ def update_graphs(value):
     x_axis_rr = ['Ann. Return', 'Ann. Risk']
     x_axis_ss = ['Sharpe', 'Sortino']
     
-    y_combined_rr = [float(df_stats.iloc[value][0])/100, float(df_stats.iloc[value][1])/100]
+    y_combined_rr = [float(df_stats.iloc[value-1][0])/100, float(df_stats.iloc[value-1][1])/100]
     y_6040_rr = [float(df_stats.iloc[0][4])/100, float(df_stats.iloc[0][6])/100]
     y_spy_rr = [float(df_stats.iloc[0][5])/100, float(df_stats.iloc[0][7])/100]
 
-    y_combined_ss = [float(df_stats.iloc[value][2])/100, float(df_stats.iloc[value][3])/100]
+    y_combined_ss = [float(df_stats.iloc[value-1][2])/100, float(df_stats.iloc[value-1][3])/100]
     y_6040_ss = [float(df_stats.iloc[0][8])/100, float(df_stats.iloc[0][10])/100]
     y_spy_ss = [float(df_stats.iloc[0][9])/100, float(df_stats.iloc[0][11])/100]
 
@@ -384,7 +412,7 @@ def update_graphs(value):
         colors = ['#a90bfe', '#7540ee', '#3fb6dc'] 
         if(x_axis_rr_ss[0] == 'Ann. Return'):
             title = "<b>Ann. Return & Risk<b>"
-            max_range = .25
+            max_range = .5
         else:
             title = "<b>Sharpe & Sortino Ratio<b>"
             max_range = .05

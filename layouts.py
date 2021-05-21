@@ -837,9 +837,9 @@ dashboard_page = html.Div([
                     dcc.Slider(
                         id = "slider_num",
                         min = 0,
-                        max = 5,
+                        max = 10,
                         value = 0,
-                        step = 1
+                        step = .5
                         )
                 ],
                 className = 'col-8'),
@@ -862,14 +862,18 @@ dashboard_page = html.Div([
                     dcc.Graph(
                         id='pie_chart')
                 ],
-                className = 'col-4'),
+                className = 'col-3'),
 
                 # Chart Column
                 html.Div([
                     dcc.Graph(
-                        id='line_chart')
+                        id='line_chart',
+                        style={
+                            "responsive" : True
+                        })
                 ],
-                className = 'col-4'),
+                style={"margin": "auto"},
+                className = 'col-5'),
 
                 # Chart Column
                 html.Div([

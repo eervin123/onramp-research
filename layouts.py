@@ -542,8 +542,13 @@ def get_header():
 
         html.Div([
             html.H1(children='Onramp Research Tools',
-                    style = {'textAlign' : 'center', 'font': 'Circular STD'}
-            )],
+                    style = {'textAlign' : 'center', 'font': 'Roboto'}
+            
+            ),
+            html.H4(children='Onramp is the best etc etc etc',
+                    style = {'textAlign' : 'center', 'font': 'Roboto', 'color' : '#b0b6bd'}
+            )
+            ],
             className='col-8',
             style = {'padding-top' : '1%'}
         ),
@@ -570,9 +575,9 @@ def get_header():
 
 #####################
 # Nav bar
-def get_navbar(p = 'sales'):
+def get_navbar(p = 'dashboard'):
 
-    navbar_sales = html.Div([
+    navbar_dashboard = html.Div([
 
         html.Div([], className = 'col-2'),
 
@@ -617,8 +622,152 @@ def get_navbar(p = 'sales'):
     style = {'background-color' : corporate_colors['dark-green'], #behind nav 
             'box-shadow': '2px 5px 5px 1px #00eead'}
     )
+
+    navbar_vol = html.Div([
+
+        html.Div([], className = 'col-2'),
+
+        html.Div([
+            dcc.Link(
+                html.H4(children = 'Dashboard'),
+                href='/apps/dashboard'
+                )
+        ],
+        className='col-2'),
+
+        html.Div([
+            dcc.Link(
+                html.H4(children = 'Volatility Chart', style = navbarcurrentpage),
+                href='/apps/volatility-chart'
+                )
+        ],
+        className='col-2'),
+
+        html.Div([
+            dcc.Link(
+                html.H4(children = 'Heatmap'),
+                href='/apps/heatmap'
+                )
+        ],
+        className='col-2'),
+
+        html.Div([
+            dcc.Link(
+                html.H4(children = 'Heatmap Timeline'),
+                href='/apps/heatmap-timeline'
+                )
+        ],
+        className='col-2'),
+
+
+        html.Div([], className = 'col-3')
+
+    ],
+    className = 'row',
+    style = {'background-color' : corporate_colors['dark-green'], #behind nav 
+            'box-shadow': '2px 5px 5px 1px #00eead'}
+    )
+
+    navbar_heatmap = html.Div([
+
+        html.Div([], className = 'col-2'),
+
+        html.Div([
+            dcc.Link(
+                html.H4(children = 'Dashboard'),
+                href='/apps/dashboard'
+                )
+        ],
+        className='col-2'),
+
+        html.Div([
+            dcc.Link(
+                html.H4(children = 'Volatility Chart'),
+                href='/apps/volatility-chart'
+                )
+        ],
+        className='col-2'),
+
+        html.Div([
+            dcc.Link(
+                html.H4(children = 'Heatmap', style = navbarcurrentpage),
+                href='/apps/heatmap'
+                )
+        ],
+        className='col-2'),
+
+        html.Div([
+            dcc.Link(
+                html.H4(children = 'Heatmap Timeline'),
+                href='/apps/heatmap-timeline'
+                )
+        ],
+        className='col-2'),
+
+
+        html.Div([], className = 'col-3')
+
+    ],
+    className = 'row',
+    style = {'background-color' : corporate_colors['dark-green'], #behind nav 
+            'box-shadow': '2px 5px 5px 1px #00eead'}
+    )
+
+    navbar_timeline = html.Div([
+
+        html.Div([], className = 'col-2'),
+
+        html.Div([
+            dcc.Link(
+                html.H4(children = 'Dashboard'),
+                href='/apps/dashboard'
+                )
+        ],
+        className='col-2'),
+
+        html.Div([
+            dcc.Link(
+                html.H4(children = 'Volatility Chart'),
+                href='/apps/volatility-chart'
+                )
+        ],
+        className='col-2'),
+
+        html.Div([
+            dcc.Link(
+                html.H4(children = 'Heatmap'),
+                href='/apps/heatmap'
+                )
+        ],
+        className='col-2'),
+
+        html.Div([
+            dcc.Link(
+                html.H4(children = 'Heatmap Timeline', style = navbarcurrentpage),
+                href='/apps/heatmap-timeline'
+                )
+        ],
+        className='col-2'),
+
+
+        html.Div([], className = 'col-3')
+
+    ],
+    className = 'row',
+    style = {'background-color' : corporate_colors['dark-green'], #behind nav 
+            'box-shadow': '2px 5px 5px 1px #00eead'}
+    )
     
-    return navbar_sales
+    if p == 'dashboard':
+        return navbar_dashboard
+    elif p == 'volatility':
+        return navbar_vol
+    elif p == 'heatmap':
+        return navbar_heatmap
+    elif p == 'timeline':
+        return navbar_timeline
+    else:
+        return navbar_dashboard
     
 
 #####################
@@ -649,7 +798,7 @@ dashboard_page = html.Div([
 
     #####################
     #Row 2 : Nav bar
-    get_navbar('sales'),
+    get_navbar('dashboard'),
 
     #####################
     #Row 3 : Filters
@@ -670,9 +819,13 @@ dashboard_page = html.Div([
 
             html.H2(children = "Onramp Portfolio Optimizer",
                     style = {'color' : corporate_colors['white']}),
+            
+            html.Br(),
+            html.H4(children = "Commerce on the Internet has come to rely almost exclusively on financial institutions serving as trusted third parties to process electronic payments. While the system works well enough for most transactions, it still suffers from the inherent weaknesses of the trust based model. Completely non-reversible transactions are not really possible, since financial institutions cannot avoid mediating disputes. ",
+                    style = {'color' : corporate_colors['white']}),
 
             html.Div([ # Internal row - RECAPS
-
+                
                 html.Div([
                     #$html.Br(),
                     html.H3(children= "100% 60/40",
@@ -779,7 +932,7 @@ vol_page = html.Div([
 
     #####################
     #Row 2 : Nav bar
-    get_navbar('sales'),
+    get_navbar('volatility'),
 
     #####################
     #Row 3 : Filters
@@ -799,6 +952,10 @@ vol_page = html.Div([
         html.Div([ # External 10-column
 
             html.H2(children = "Onramp Volatility Graph",
+                    style = {'color' : corporate_colors['white']}),
+
+            html.Br(),
+            html.H4(children = "Commerce on the Internet has come to rely almost exclusively on financial institutions serving as trusted third parties to process electronic payments. While the system works well enough for most transactions, it still suffers from the inherent weaknesses of the trust based model. Completely non-reversible transactions are not really possible, since financial institutions cannot avoid mediating disputes. ",
                     style = {'color' : corporate_colors['white']}),
 
             html.Div([ # Internal row - RECAPS
@@ -872,7 +1029,7 @@ heatmap_page = html.Div([
 
     #####################
     #Row 2 : Nav bar
-    get_navbar('sales'),
+    get_navbar('heatmap'),
 
     #####################
     #Row 3 : Filters
@@ -892,6 +1049,10 @@ heatmap_page = html.Div([
         html.Div([ # External 10-column
 
             html.H2(children = "Onramp Heatmap",
+                    style = {'color' : corporate_colors['white']}),
+            
+            html.Br(),
+            html.H4(children = "Commerce on the Internet has come to rely almost exclusively on financial institutions serving as trusted third parties to process electronic payments. While the system works well enough for most transactions, it still suffers from the inherent weaknesses of the trust based model. Completely non-reversible transactions are not really possible, since financial institutions cannot avoid mediating disputes. ",
                     style = {'color' : corporate_colors['white']}),
 
             html.Div([ # Internal row - RECAPS
@@ -964,7 +1125,7 @@ heatmap_timeline_page = html.Div([
 
     #####################
     #Row 2 : Nav bar
-    get_navbar('sales'),
+    get_navbar('timeline'),
 
     #####################
     #Row 3 : Filters
@@ -984,6 +1145,10 @@ heatmap_timeline_page = html.Div([
         html.Div([ # External 10-column
 
             html.H2(children = "Onramp Heatmap Timeline",
+                    style = {'color' : corporate_colors['white']}),
+            
+            html.Br(),
+            html.H4(children = "Commerce on the Internet has come to rely almost exclusively on financial institutions serving as trusted third parties to process electronic payments. While the system works well enough for most transactions, it still suffers from the inherent weaknesses of the trust based model. Completely non-reversible transactions are not really possible, since financial institutions cannot avoid mediating disputes. ",
                     style = {'color' : corporate_colors['white']}),
 
             html.Div([ # Internal row - RECAPS

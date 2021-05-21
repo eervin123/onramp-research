@@ -13,6 +13,7 @@ dash_app.layout = html.Div([
     html.Div(id='page-content')
 ])
 
+dash_app.title = 'Onramp Research'
 @dash_app.callback(dash.dependencies.Output('page-content', 'children'),
               [dash.dependencies.Input('url', 'pathname')])
 def display_page(pathname):

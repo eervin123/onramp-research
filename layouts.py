@@ -1182,7 +1182,7 @@ heatmap_page = html.Div(
                 html.Div(
                     [  # External 10-column
                         html.H2(
-                            children="Onramp Heatmap",
+                            children="Correlation Matrix",
                             style={"color": corporate_colors["white"]},
                         ),
                         html.Br(),
@@ -1210,6 +1210,7 @@ heatmap_page = html.Div(
                                         ),
                                     ],
                                     className="col-3",
+                                    style={"width":"150%"},
                                 ),
                                 html.Div([], className="col-8"),
                                 html.Div(

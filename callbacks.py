@@ -195,6 +195,7 @@ colors = ['#a90bfe', '#7540ee', '#3fb6dc']
      dash.dependencies.Output('bar_chart_ss', 'figure')],
     [dash.dependencies.Input('slider_num', 'drag_value')]
 )
+
 def update_graphs(value):
     #print(value)
     #------------------------------------------------------------------------------Pie Chart ---------------------------------------------------------------------------
@@ -321,7 +322,7 @@ def update_graphs(value):
                 'xanchor': 'center',
                 'yanchor': 'top'},)
         fig.update_layout({
-        'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+        'plot_bgcolor': 'rgba(0, 0, 0, 0)', # Transparent
         'paper_bgcolor': 'rgba(0, 0, 0, 0)',
         })
         fig.update_yaxes(side = "right", nticks = 4)

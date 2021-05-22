@@ -1355,7 +1355,7 @@ def update_timeline(value):
         updatemenus = list([
         dict(type="dropdown",
             active=0,
-            y=1.4, x=0,
+            y=1.07, x=0.2,
             buttons=buttons,
             ),
         ]
@@ -1375,14 +1375,20 @@ def update_timeline(value):
                 dict(x=-.15,y=-0.25,xref='paper',yref='paper',showarrow=False,
                     text=f'*Source: {source}; Correlation data quoted here represents data as of {xd}.', font=dict(size=9))
             ],
-            title=dict(text='Crypto-Return Correlation',font=dict(_font,size=20, color='#000')),
+            title=dict(
+                text='Relative Correlation Over Time',
+                font=dict(_font,size=40, color='#000'),
+                x=0.5,
+            ),
             xaxis=dict(
-                title='Date', ticks='inside', ticklen=6, tickwidth=2,
+                title=dict(text='Date',font=dict(_font,size=20)),
+                ticks='inside', ticklen=6, tickwidth=2,
                 tickfont=_font,
                 rangeselector=dict(
+                    x = 0.75,
                     buttons=list([
-                        dict(count=6,
-                            label='6m',
+                        dict(count=3,
+                            label='3m',
                             step='month',
                             stepmode='backward'),
                         dict(count=1,
@@ -1398,10 +1404,14 @@ def update_timeline(value):
                 ),
                 autorange=True,
                 type='date',
-                tickcolor='#53585f'
+                tickcolor='#53585f',
             ),
-            yaxis = dict(axis_dict,title=f"{start_title} 6-Month Rolling Return Correlation"),
-            margin=dict(pad=5, b=125),
+            yaxis = dict(axis_dict,
+                title=dict(
+                    font=dict(_font,size=20),
+                    text=f"{start_title} 6-Month Rolling Return Correlation")
+            ),
+            margin=dict(pad=5, b=15),
             legend=dict(orientation="h"),
             updatemenus=updatemenus)
         

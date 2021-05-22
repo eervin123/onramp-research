@@ -1210,7 +1210,7 @@ heatmap_page = html.Div(
                                         ),
                                     ],
                                     className="col-3",
-                                    style={"width":"150%"},
+                                #TODO: #1 style the dropdown to accommodate the text
                                 ),
                                 html.Div([], className="col-8"),
                                 html.Div(

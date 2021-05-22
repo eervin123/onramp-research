@@ -168,6 +168,9 @@ df_stats = df_stats.dropna()
 # 000 - DATA AND FUNCTIONS FOR NON DYNAMIC STUFF
 ####################################################################################################
 pairs = ['BTC-USDT', 'BCHABC-USDT', 'TRX-USDT', 'IOTA-USDT', 'XLM-USDT', 'EOS-USDT', 'ADA-USDT','LTC-USDT', 'NEO-USDT', 'BNB-USDT', 'ETH-USDT']
+
+pairs_new = ['S&P 500','All World Index','High Yield','HFRXGL Index','Gold','Emerging Markets','Russell 2000','Oil','Frontier Markets','Biotech','Bitcoin','Ethereum']
+
 price_data={}
 
 #----------------------------------------Volitility ----------------------------------------------------------
@@ -177,6 +180,7 @@ def get_coin_data(symbol, db, coindata_day):
                'price_low','price_close',\
                'volume' ]].to_dict(orient='list')
     return res
+
 
 def volatility(price, period_value, data_interval):
     """
@@ -225,7 +229,7 @@ def calc_volatility(pairs, db, coindata_day):
 df = calc_volatility(pairs, 'Nothing', 'Nothing')
 
 today = datetime.datetime.now(tz=pytz.utc).date()
-xd = today - datetime.timedelta(days=1)
+xd = today - datetime.timedelta(days=30)
 
 def graph_volatility(df, coins, xd):
     source='Binance'
@@ -358,6 +362,11 @@ custom_scale = [
         [1.0, '#131c4f']
     ]
 
+def get_coin_data_new(symbol):
+    df = pd.read_csv('datafiles/Multi_asset_data.csv', usecols= ['Timestamp', symbol])
+    res = df.to_dict(orient='list')
+    return res
+
 def create_corr(pairs, db, coindata_day):
     vals = dict()
     for sp in pairs:
@@ -368,6 +377,25 @@ def create_corr(pairs, db, coindata_day):
         df = pd.DataFrame(data)
         df.set_index('timestamp', inplace=True)
         vals[sp]=df.price_close
+        
+    df_ = pd.DataFrame(vals)
+    df_.index = pd.to_datetime(df_.index, unit='s')
+    df_ = df_.pct_change(1).fillna(0)
+    df_.columns = [col.split("-",1)[0] for col in df_.columns]
+    df_ = df_.round(3).rolling(180).corr().dropna(how='all')
+    
+    return df_
+
+def create_corr_new(pairs, db, coindata_day):
+    vals = dict()
+    for sp in pairs:
+        data = get_coin_data_new(sp)
+        # if(len(data)<6): #bad data
+        #     print(sp, " ", len(data))
+        #     continue
+        df = pd.DataFrame(data)
+        df.set_index('Timestamp', inplace=True)
+        vals[sp]=df[sp]
         
     df_ = pd.DataFrame(vals)
     df_.index = pd.to_datetime(df_.index, unit='s')
@@ -408,15 +436,6 @@ def graph_heatmap(df, date):
         margin=dict(pad=0, b=125)
     )
 
-    # #create visuals
-    # graphs=[
-    #     {
-    #         'data':[go.Heatmap(z=corr_mtx, x=labels, y=labels, text = text_info,\
-    #                 hoverinfo='text',colorscale=[[0.,'#00eead'],[1,'#131c4f']])],
-    #         'layout': layout
-    #     }
-    # ]
-
     fig = go.Figure(
         data= [go.Heatmap(z=corr_mtx, x=labels, y=labels, text = text_info,\
                     hoverinfo='text',colorscale=[[0.,'#00eead'],[1,'#131c4f']])],
@@ -427,7 +446,11 @@ def graph_heatmap(df, date):
     
 corr_df = create_corr(pairs, 'Nothing', 'Nothing')
 
+corr_df_new = create_corr_new(pairs_new, 'Nothing', 'Nothing')
+
 heatmap_fig = graph_heatmap(corr_df, c)
+
+heatmap_fig_new = graph_heatmap(corr_df_new, c)
 
 #---------------------------------------------------------Timeline--------------------------------------------
 
@@ -469,8 +492,8 @@ def graph_timeline(corr_df, xd):
          active=0,
          y=1.5, x=0,
          buttons=buttons,
-        )
-    ])
+        )]
+    )
 
     layout = dict(
         font=_font,
@@ -530,6 +553,8 @@ def graph_timeline(corr_df, xd):
     return fig
 
 heatmap_timeline_fig = graph_timeline(corr_df, c)
+
+heatmap_timeline_fig_new = graph_timeline(corr_df_new, c)
 
    
 #####################
@@ -1067,10 +1092,15 @@ heatmap_page = html.Div([
             html.Div([ # Internal row - RECAPS
 
                 html.Div([
-                    #$html.Br(),
-                    # html.H3(children= "100% 60/40",
-                    # style = {'color' : corporate_colors['white']}),
-                ],className = 'col-2'), 
+                    dcc.Dropdown(
+                        id='dropdown',
+                        options=[
+                            {'label': 'Crypto Correlation', 'value': 'CC'},
+                            {'label': 'Asset Class Correlation', 'value': 'AC'}
+                        ],
+                        value='AC'
+                    ),
+                ],className = 'col-3'), 
 
                 html.Div([
                 ],
@@ -1100,7 +1130,7 @@ heatmap_page = html.Div([
                 html.Div([
                     dcc.Graph(
                         id='heatmap',
-                        figure = heatmap_fig,
+                        # figure = heatmap_fig_new,
                         style={
                             "responsive" : True
                         })
@@ -1129,6 +1159,55 @@ heatmap_page = html.Div([
     ), # External row
 
 ])          
+
+@dash_app.callback(dash.dependencies.Output('heatmap', 'figure'),
+              [dash.dependencies.Input('dropdown', 'value')])
+def update_heatmap(value):
+    
+    def graph_heatmap(df, date):
+        corr_mtx = df.loc[date].values
+        text_info = np.round(corr_mtx, decimals=5).astype(str)
+
+        x = 0
+        for i in range(len(text_info)):
+            for j in range(len(text_info[0])):
+                if(text_info[i,j]=='1.0'):
+                    text_info[i,j]=''
+                    corr_mtx[i,j]=np.nan
+            
+        labels=df.columns
+        layout = go.Layout(images=[dict(
+                source="/static/onramp-logo.png",
+                xref="paper", yref="paper",
+                x=1.12, y=1.08,
+                sizex=0.25, sizey=0.25,
+                xanchor="right", yanchor="bottom")],
+            title=f'Return Correlation - Close {date}',
+            annotations=[
+            dict(x=.5,y=-.25,xref='paper',yref='paper',showarrow=False,
+                text=(f"*6-Month Rolling Correlation of Daily Returns; Source: Binance; Correlation data quoted here represents data as of {date}."), font=dict(size=10))
+            ],
+            autosize=False,
+            width=700,
+            height=700,
+            xaxis=dict(ticklen=1, tickcolor='#fff'),
+            yaxis=dict(ticklen=1, tickcolor='#fff'),
+            margin=dict(pad=0, b=125)
+        )
+
+        fig = go.Figure(
+            data= [go.Heatmap(z=corr_mtx, x=labels, y=labels, text = text_info,\
+                        hoverinfo='text',colorscale=[[0.,'#00eead'],[1,'#131c4f']])],
+            layout=layout
+        )
+
+        return fig
+    if(value == 'CC'):
+        return graph_heatmap(corr_df, c)
+    if(value == 'AC'):
+        return graph_heatmap(corr_df_new, c)
+
+
 
 heatmap_timeline_page = html.Div([
 
@@ -1167,10 +1246,15 @@ heatmap_timeline_page = html.Div([
             html.Div([ # Internal row - RECAPS
 
                 html.Div([
-                    #$html.Br(),
-                    # html.H3(children= "100% 60/40",
-                    # style = {'color' : corporate_colors['white']}),
-                ],className = 'col-2'), 
+                    dcc.Dropdown(
+                        id='dropdown',
+                        options=[
+                            {'label': 'Crypto Correlation', 'value': 'CC'},
+                            {'label': 'Asset Class Correlation', 'value': 'AC'}
+                        ],
+                        value='AC'
+                    ),
+                ],className = 'col-3'), 
 
                 html.Div([
                 ],
@@ -1200,7 +1284,7 @@ heatmap_timeline_page = html.Div([
                 html.Div([
                     dcc.Graph(
                         id='heatmap_timeline',
-                        figure = heatmap_timeline_fig,
+                        #figure = heatmap_timeline_fig_new,
                         style={
                             "responsive" : True
                         })
@@ -1228,4 +1312,113 @@ heatmap_timeline_page = html.Div([
     style = externalgraph_rowstyling
     ), # External row
 
-])       
+])
+
+@dash_app.callback(dash.dependencies.Output('heatmap_timeline', 'figure'),
+              [dash.dependencies.Input('dropdown', 'value')])
+def update_timeline(value):
+
+
+    def graph_timeline(corr_df, xd):    
+        _font = dict(family='Raleway, Bold')
+        source='Binance'
+        axis_dict = dict(ticks='outside',tickfont=_font,\
+                        tickcolor='#53585f',ticklen=0, tickwidth=2, automargin=True, fixedrange=True, tickprefix="        ")
+        
+        unique_coins = corr_df.columns
+        coin_set = set(unique_coins)
+        num_buttons=np.arange(1,len(unique_coins),1).sum()
+        data, buttons=[], []
+        x=0
+        
+        if('USDT' in corr_df.columns[0]):
+            label_tag = '-USDT'
+        else: label_tag = '-USD'
+        
+        for i in unique_coins:
+            labels=[]
+
+            info_=i.replace(label_tag,'')
+            #z:vals, x:dates, y:coin names
+            cross_section = corr_df.xs(i, level=1).drop(i,axis=1)
+            labels = [x.replace(label_tag,'') for x in cross_section.columns]
+            data.append(go.Heatmap(z=cross_section.T.values, \
+                                x=cross_section.index, y=labels,
+                                name=info_, visible=False,colorscale=custom_scale))
+            buttons.append(dict(label = info_,method = 'update',\
+                                args = [{'visible':list(np.insert([False]*num_buttons, x, True))},
+                            {'yaxis': dict(axis_dict, title=f'{info_} 6-Month Rolling Return Correlation')}]))
+            x+=1
+                    
+        data[0].visible=True
+        start_title = buttons[0]['label']
+        updatemenus = list([
+        dict(type="dropdown",
+            active=0,
+            y=1.4, x=0,
+            buttons=buttons,
+            ),
+        ]
+        )
+
+        layout = dict(
+            font=_font,
+            images=[dict(
+                source="/static/onramp-logo.png",
+                xref="paper", yref="paper",
+                x=1.08, y=1.1,
+                sizex=0.25, sizey=0.25,
+                xanchor="right", yanchor="bottom")],
+            height=700, width=800,\
+            dragmode='zoom',
+            annotations=[
+                dict(x=-.15,y=-0.25,xref='paper',yref='paper',showarrow=False,
+                    text=f'*Source: {source}; Correlation data quoted here represents data as of {xd}.', font=dict(size=9))
+            ],
+            title=dict(text='Crypto-Return Correlation',font=dict(_font,size=20, color='#000')),
+            xaxis=dict(
+                title='Date', ticks='inside', ticklen=6, tickwidth=2,
+                tickfont=_font,
+                rangeselector=dict(
+                    buttons=list([
+                        dict(count=6,
+                            label='6m',
+                            step='month',
+                            stepmode='backward'),
+                        dict(count=1,
+                            label='YTD',
+                            step='year',
+                            stepmode='todate'),
+                        dict(count=1,
+                            label='1y',
+                            step='year',
+                            stepmode='backward'),
+                        dict(step='all')
+                    ])
+                ),
+                autorange=True,
+                type='date',
+                tickcolor='#53585f'
+            ),
+            yaxis = dict(axis_dict,title=f"{start_title} 6-Month Rolling Return Correlation"),
+            margin=dict(pad=5, b=125),
+            legend=dict(orientation="h"),
+            updatemenus=updatemenus)
+        
+        fig = go.Figure(
+            data= data,
+            layout=layout
+        )
+        # fig.update_layout({
+        #     'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+        #     'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+        #     })
+
+
+        
+        return fig
+
+    if(value == 'CC'):
+        return graph_timeline(corr_df, c)
+    if(value == 'AC'):
+        return graph_timeline(corr_df_new, c)

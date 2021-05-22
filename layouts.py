@@ -949,7 +949,7 @@ def get_emptyrow(h="45px"):
 
 
 ####################################################################################################
-# 001 - Dashboard
+# 001 - Portfilio Modeling
 ####################################################################################################
 
 dashboard_page = html.Div(
@@ -973,12 +973,12 @@ dashboard_page = html.Div(
                 html.Div(
                     [  # External 10-column
                         html.H2(
-                            children="Onramp Portfolio Optimizer",
+                            children="Impact of Adding BTC to a 60/40 Portfolio",
                             style={"color": corporate_colors["white"]},
                         ),
                         html.Br(),
                         html.H4(
-                            children="Commerce on the Internet has come to rely almost exclusively on financial institutions serving as trusted third parties to process electronic payments. While the system works well enough for most transactions, it still suffers from the inherent weaknesses of the trust based model. Completely non-reversible transactions are not really possible, since financial institutions cannot avoid mediating disputes. ",
+                            children="Cryptocurrencies such as Bitcoin (BTC) and Ether (ETH) have emerged as an asset class that clients are interested in holding long term. Cryptoassets are usually held away from advisors. As a trusted confidante and risk manager, Advisors should have access to tools and insights that help them manage portfolios holistically. Use the slider to show the performance change of adding 1-5% BTC to a typical 60/40 portfolio. ",
                             style={"color": corporate_colors["white"]},
                         ),
                         html.Div(
@@ -1092,12 +1092,12 @@ vol_page = html.Div(
                 html.Div(
                     [  # External 10-column
                         html.H2(
-                            children="Onramp Volatility Graph",
+                            children="Rolling Volatility Charts",
                             style={"color": corporate_colors["white"]},
                         ),
                         html.Br(),
                         html.H4(
-                            children="Commerce on the Internet has come to rely almost exclusively on financial institutions serving as trusted third parties to process electronic payments. While the system works well enough for most transactions, it still suffers from the inherent weaknesses of the trust based model. Completely non-reversible transactions are not really possible, since financial institutions cannot avoid mediating disputes. ",
+                            children="Advisors will now have remote access to held-away client cryptoasset accounts via Read-Only or direct access to allocate on clients’ behalf via the Onramp platform, allowing Advisors to comprehensively manage clients’ assets and risk. Here we show how dynamic volatility can be in the cryptoasset ecosystem creating multiple opportunities to reach out to clients and discuss their risk tolerance and ability to withstand this volatility. ",
                             style={"color": corporate_colors["white"]},
                         ),
                         html.Div(

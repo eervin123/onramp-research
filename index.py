@@ -3,10 +3,11 @@ import dash_html_components as html
 import dash
 
 from dash_app import dash_app
-from dash_app import server
+# from dash_app import server #Eric modified to move in code for gunicorn
 from layouts import dashboard_page, vol_page, heatmap_page, heatmap_timeline_page
 import callbacks
 
+server = dash_app.server # Eric moved this here after struggling with gunicorn
 
 dash_app.layout = html.Div([
     dcc.Location(id='url', refresh=False),

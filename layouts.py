@@ -720,11 +720,11 @@ def get_header():
             html.Div(
                 [
                     html.H1(
-                        children="Onramp Research Tools",
+                        children="Onramp Academy Tools",
                         style={"textAlign": "center", "font": "Roboto"},
                     ),
                     html.H4(
-                        children="Onramp is the best etc etc etc",
+                        children="Interactive Market Data and Tools to Explore the Cryptoasset Economy",
                         style={
                             "textAlign": "center",
                             "font": "Roboto",

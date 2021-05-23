@@ -29,4 +29,4 @@ def display_page(pathname):
         return dashboard_page # This is the "home page"
 
 if __name__ == '__main__':
-    dash_app.run_server(debug=True)
+    dash_app.run_server(debug=False)

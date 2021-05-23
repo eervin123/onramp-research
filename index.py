@@ -7,6 +7,7 @@ from dash_app import server
 from layouts import dashboard_page, vol_page, heatmap_page, heatmap_timeline_page
 import callbacks
 
+server = dash_app.server
 
 dash_app.layout = html.Div([
     dcc.Location(id='url', refresh=False),

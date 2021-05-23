@@ -1122,7 +1122,7 @@ vol_page = html.Div(
                                                     "value": "AC",
                                                 },
                                             ],
-                                            value="AC",
+                                            value="CC",
                                         ),
                                     ],
                                     className="col-3",

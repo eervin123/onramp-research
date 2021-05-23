@@ -919,8 +919,6 @@ def get_navbar(p="dashboard"):
 
 #####################
 # Empty row
-
-
 def get_emptyrow(h="45px"):
     """This returns an empty row of a defined height"""
 
@@ -936,7 +934,6 @@ def get_emptyrow(h="45px"):
 ####################################################################################################
 # 001 - Portfilio Modeling
 ####################################################################################################
-
 dashboard_page = html.Div(
     [
         #####################
@@ -1076,7 +1073,9 @@ dashboard_page = html.Div(
         ),  # External row
     ]
 )
-
+####################################################################################################
+# 002 - Volatility over Time Page
+####################################################################################################
 
 vol_page = html.Div(
     [
@@ -1176,6 +1175,214 @@ vol_page = html.Div(
         ),  # External row
     ]
 )
+####################################################################################################
+# 003 - Correlation Matrix Heatmap Page 
+####################################################################################################
+heatmap_page = html.Div(
+    [
+        #####################
+        # Row 1 : Header
+        get_header(),
+        #####################
+        # Row 2 : Nav bar
+        get_navbar("heatmap"),
+        #####################
+        # Row 3 : Filters
+        #####################
+        # Row 4
+        get_emptyrow(),
+        #####################
+        # Row 5 : Charts
+        html.Div(
+            [  # External row
+                html.Div([], className="col-1"),  # Blank 1 column
+                html.Div(
+                    [  # External 10-column
+                        html.H2(
+                            children="Correlation Matrix",
+                            style={"color": corporate_colors["white"]},
+                        ),
+                        html.Br(),
+                        html.H4(
+                            children="Advisors can now manage the overall expected return, risk, Sharpe ratio, et cetera, of clients’ total mix of financial assets, including cryptocurrencies and decentralized finance. This heatmap, updated daily, shows current intra-asset correlations for: BTC, ETH, S&P500, All World Equities, High Yield, Global Hedge Funds, Gold, Emerging Market Indices, Russell 2000, Oil, Frontier Markets, and Biotech. Historical correlations are presented in the next tab.",
+                            style={"color": corporate_colors["white"]},
+                        ),
+                        html.Div(
+                            [  # Internal row - RECAPS
+                                html.Div(
+                                    [
+                                        dcc.Dropdown(
+                                            id="dropdown",
+                                            options=[
+                                                {
+                                                    "label": "Crypto Correlation",
+                                                    "value": "CC",
+                                                },
+                                                {
+                                                    "label": "Asset Class Correlation",
+                                                    "value": "AC",
+                                                },
+                                            ],
+                                            value="AC",
+                                        ),
+                                    ],
+                                    className="col-3",
+                                #TODO: #1 style the dropdown to accommodate the text
+                                ),
+                                html.Div([], className="col-8"),
+                                html.Div(
+                                    [
+                                        # #html.Br(),
+                                        # html.H3(children= "10% Bitcoin",
+                                        # style = {'color' : corporate_colors['white']}),
+                                    ],
+                                    className="col-2",
+                                ),  # Empty column
+                            ],
+                            className="row",
+                            style=recapdiv,
+                        ),  # Internal row - RECAP
+                        html.Div(
+                            [  # Internal row
+                                # Chart Column
+                                # html.Div([
+                                # ],
+                                # className = 'col-4'),
+                                # Chart Column
+                                html.Div(
+                                    [
+                                        dcc.Graph(
+                                            id="heatmap",
+                                            # figure = heatmap_fig_new,
+                                            style={"responsive": True},
+                                        )
+                                    ],
+                                    style={"max-width": "100%", "margin": "auto"},
+                                    className="col-4",
+                                ),
+                                # Chart Column
+                                # html.Div([
+                                # ],
+                                # className = 'col-4')
+                            ],
+                            className="row",
+                        ),  # Internal row
+                    ],
+                    className="col-10",
+                    style=externalgraph_colstyling,
+                ),  # External 10-column
+                html.Div([], className="col-1"),  # Blank 1 column
+            ],
+            className="row",
+            style=externalgraph_rowstyling,
+        ),  # External row
+    ]
+)
+####################################################################################################
+# 004 - Correlation over time (Heatmap over time) Page 
+####################################################################################################
+heatmap_timeline_page = html.Div(
+    [
+        #####################
+        # Row 1 : Header
+        get_header(),
+        #####################
+        # Row 2 : Nav bar
+        get_navbar("timeline"),
+        #####################
+        # Row 3 : Filters
+        #####################
+        # Row 4
+        get_emptyrow(),
+        #####################
+        # Row 5 : Charts
+        html.Div(
+            [  # External row
+                html.Div([], className="col-1"),  # Blank 1 column
+                html.Div(
+                    [  # External 10-column
+                        html.H2(
+                            children="Onramp Heatmap Timeline",
+                            style={"color": corporate_colors["white"]},
+                        ),
+                        html.Br(),
+                        html.H4(
+                            children="Advisors may have or receive questions about the value of adding cryptoassets, particularly BTC and ETH, to a traditional portfolio. Price returns speak for themselves but the history of their correlation to traditional assets is meaningful to holistic portfolio construction and client discussions. For example, the May 2021 drawdown in cryptoassets had very little correlation to the broader markets, illustrating its value as a minimally-correlated asset in a broader portfolio.",
+                            style={"color": corporate_colors["white"]},
+                        ),
+                        html.Div(
+                            [  # Internal row - RECAPS
+                                html.Div(
+                                    [
+                                        dcc.Dropdown(
+                                            id="dropdown",
+                                            options=[
+                                                {
+                                                    "label": "Crypto Correlation",
+                                                    "value": "CC",
+                                                },
+                                                {
+                                                    "label": "Asset Class Correlation",
+                                                    "value": "AC",
+                                                },
+                                            ],
+                                            value="AC",
+                                        ),
+                                    ],
+                                    className="col-3",
+                                ),
+                                html.Div([], className="col-8"),
+                                html.Div(
+                                    [
+                                        # #html.Br(),
+                                        # html.H3(children= "10% Bitcoin",
+                                        # style = {'color' : corporate_colors['white']}),
+                                    ],
+                                    className="col-2",
+                                ),  # Empty column
+                            ],
+                            className="row",
+                            style=recapdiv,
+                        ),  # Internal row - RECAP
+                        html.Div(
+                            [  # Internal row
+                                # Chart Column
+                                # html.Div([
+                                # ],
+                                # className = 'col-4'),
+                                # Chart Column
+                                html.Div(
+                                    [
+                                        dcc.Graph(
+                                            id="heatmap_timeline",
+                                            # figure = heatmap_timeline_fig_new,
+                                            style={"responsive": True},
+                                        )
+                                    ],
+                                    style={"max-width": "100%", "margin": "auto"},
+                                    className="col-4",
+                                ),
+                                # Chart Column
+                                # html.Div([
+                                # ],
+                                # className = 'col-4')
+                            ],
+                            className="row",
+                        ),  # Internal row
+                    ],
+                    className="col-10",
+                    style=externalgraph_colstyling,
+                ),  # External 10-column
+                html.Div([], className="col-1"),  # Blank 1 column
+            ],
+            className="row",
+            style=externalgraph_rowstyling,
+        ),  # External row
+    ]
+)
+####################################################################################################
+# 002 Plotting Volatility
+####################################################################################################
 @dash_app.callback(
     dash.dependencies.Output("vol_chart", "figure"),
     [dash.dependencies.Input("dropdown", "value")],
@@ -1316,108 +1523,9 @@ def update_vol(value):
     if value == "AC":
         return graph_volatility(df_new, pairs_new, c)
 
-heatmap_page = html.Div(
-    [
-        #####################
-        # Row 1 : Header
-        get_header(),
-        #####################
-        # Row 2 : Nav bar
-        get_navbar("heatmap"),
-        #####################
-        # Row 3 : Filters
-        #####################
-        # Row 4
-        get_emptyrow(),
-        #####################
-        # Row 5 : Charts
-        html.Div(
-            [  # External row
-                html.Div([], className="col-1"),  # Blank 1 column
-                html.Div(
-                    [  # External 10-column
-                        html.H2(
-                            children="Correlation Matrix",
-                            style={"color": corporate_colors["white"]},
-                        ),
-                        html.Br(),
-                        html.H4(
-                            children="Advisors can now manage the overall expected return, risk, Sharpe ratio, et cetera, of clients’ total mix of financial assets, including cryptocurrencies and decentralized finance. This heatmap, updated daily, shows current intra-asset correlations for: BTC, ETH, S&P500, All World Equities, High Yield, Global Hedge Funds, Gold, Emerging Market Indices, Russell 2000, Oil, Frontier Markets, and Biotech. Historical correlations are presented in the next tab.",
-                            style={"color": corporate_colors["white"]},
-                        ),
-                        html.Div(
-                            [  # Internal row - RECAPS
-                                html.Div(
-                                    [
-                                        dcc.Dropdown(
-                                            id="dropdown",
-                                            options=[
-                                                {
-                                                    "label": "Crypto Correlation",
-                                                    "value": "CC",
-                                                },
-                                                {
-                                                    "label": "Asset Class Correlation",
-                                                    "value": "AC",
-                                                },
-                                            ],
-                                            value="AC",
-                                        ),
-                                    ],
-                                    className="col-3",
-                                #TODO: #1 style the dropdown to accommodate the text
-                                ),
-                                html.Div([], className="col-8"),
-                                html.Div(
-                                    [
-                                        # #html.Br(),
-                                        # html.H3(children= "10% Bitcoin",
-                                        # style = {'color' : corporate_colors['white']}),
-                                    ],
-                                    className="col-2",
-                                ),  # Empty column
-                            ],
-                            className="row",
-                            style=recapdiv,
-                        ),  # Internal row - RECAP
-                        html.Div(
-                            [  # Internal row
-                                # Chart Column
-                                # html.Div([
-                                # ],
-                                # className = 'col-4'),
-                                # Chart Column
-                                html.Div(
-                                    [
-                                        dcc.Graph(
-                                            id="heatmap",
-                                            # figure = heatmap_fig_new,
-                                            style={"responsive": True},
-                                        )
-                                    ],
-                                    style={"max-width": "100%", "margin": "auto"},
-                                    className="col-4",
-                                ),
-                                # Chart Column
-                                # html.Div([
-                                # ],
-                                # className = 'col-4')
-                            ],
-                            className="row",
-                        ),  # Internal row
-                    ],
-                    className="col-10",
-                    style=externalgraph_colstyling,
-                ),  # External 10-column
-                html.Div([], className="col-1"),  # Blank 1 column
-            ],
-            className="row",
-            style=externalgraph_rowstyling,
-        ),  # External row
-    ]
-)
-
-
+####################################################################################################
+# 003 Plotting Correlation Matrix
+####################################################################################################
 @dash_app.callback(
     dash.dependencies.Output("heatmap", "figure"),
     [dash.dependencies.Input("dropdown", "value")],
@@ -1479,108 +1587,9 @@ def update_heatmap(value):
     if value == "AC":
         return graph_heatmap(corr_df_new, c)
 
-
-heatmap_timeline_page = html.Div(
-    [
-        #####################
-        # Row 1 : Header
-        get_header(),
-        #####################
-        # Row 2 : Nav bar
-        get_navbar("timeline"),
-        #####################
-        # Row 3 : Filters
-        #####################
-        # Row 4
-        get_emptyrow(),
-        #####################
-        # Row 5 : Charts
-        html.Div(
-            [  # External row
-                html.Div([], className="col-1"),  # Blank 1 column
-                html.Div(
-                    [  # External 10-column
-                        html.H2(
-                            children="Onramp Heatmap Timeline",
-                            style={"color": corporate_colors["white"]},
-                        ),
-                        html.Br(),
-                        html.H4(
-                            children="Advisors may have or receive questions about the value of adding cryptoassets, particularly BTC and ETH, to a traditional portfolio. Price returns speak for themselves but the history of their correlation to traditional assets is meaningful to holistic portfolio construction and client discussions. For example, the May 2021 drawdown in cryptoassets had very little correlation to the broader markets, illustrating its value as a minimally-correlated asset in a broader portfolio.",
-                            style={"color": corporate_colors["white"]},
-                        ),
-                        html.Div(
-                            [  # Internal row - RECAPS
-                                html.Div(
-                                    [
-                                        dcc.Dropdown(
-                                            id="dropdown",
-                                            options=[
-                                                {
-                                                    "label": "Crypto Correlation",
-                                                    "value": "CC",
-                                                },
-                                                {
-                                                    "label": "Asset Class Correlation",
-                                                    "value": "AC",
-                                                },
-                                            ],
-                                            value="AC",
-                                        ),
-                                    ],
-                                    className="col-3",
-                                ),
-                                html.Div([], className="col-8"),
-                                html.Div(
-                                    [
-                                        # #html.Br(),
-                                        # html.H3(children= "10% Bitcoin",
-                                        # style = {'color' : corporate_colors['white']}),
-                                    ],
-                                    className="col-2",
-                                ),  # Empty column
-                            ],
-                            className="row",
-                            style=recapdiv,
-                        ),  # Internal row - RECAP
-                        html.Div(
-                            [  # Internal row
-                                # Chart Column
-                                # html.Div([
-                                # ],
-                                # className = 'col-4'),
-                                # Chart Column
-                                html.Div(
-                                    [
-                                        dcc.Graph(
-                                            id="heatmap_timeline",
-                                            # figure = heatmap_timeline_fig_new,
-                                            style={"responsive": True},
-                                        )
-                                    ],
-                                    style={"max-width": "100%", "margin": "auto"},
-                                    className="col-4",
-                                ),
-                                # Chart Column
-                                # html.Div([
-                                # ],
-                                # className = 'col-4')
-                            ],
-                            className="row",
-                        ),  # Internal row
-                    ],
-                    className="col-10",
-                    style=externalgraph_colstyling,
-                ),  # External 10-column
-                html.Div([], className="col-1"),  # Blank 1 column
-            ],
-            className="row",
-            style=externalgraph_rowstyling,
-        ),  # External row
-    ]
-)
-
-
+####################################################################################################
+# 004 Plotting Correlation Over Time (Heatmap over time)
+####################################################################################################
 @dash_app.callback(
     dash.dependencies.Output("heatmap_timeline", "figure"),
     [dash.dependencies.Input("dropdown", "value")],
@@ -1732,3 +1741,7 @@ def update_timeline(value):
         return graph_timeline(corr_df, c)
     if value == "AC":
         return graph_timeline(corr_df_new, c)
+
+####################################################################################################
+# The End
+####################################################################################################

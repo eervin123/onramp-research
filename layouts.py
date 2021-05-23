@@ -359,19 +359,11 @@ def graph_volatility(df, coins, xd):
             data[i].visible = b
 
     layout = dict(
-        images=[
-            dict(
-                source="/static/onramp-logo.png",
-                xref="paper",
-                yref="paper",
-                x=1.05,
-                y=1.05,
-                sizex=0.21,
-                sizey=0.21,
-                xanchor="right",
-                yanchor="bottom",
-            )
-        ],
+        title=dict(
+            text="Changing Volatility Over Time",
+            font=dict(size=30, color="#000"),
+            x=0.5,
+        ),
         height=700,
         width=1000,
         dragmode="zoom",
@@ -508,19 +500,6 @@ def graph_heatmap(df, date):
 
     labels = df.columns
     layout = go.Layout(
-        images=[
-            dict(
-                source="/static/onramp-logo.png",
-                xref="paper",
-                yref="paper",
-                x=1.12,
-                y=1.08,
-                sizex=0.25,
-                sizey=0.25,
-                xanchor="right",
-                yanchor="bottom",
-            )
-        ],
         title=f"Return Correlation - Close {date}",
         annotations=[
             dict(
@@ -636,19 +615,6 @@ def graph_timeline(corr_df, xd):
 
     layout = dict(
         font=_font,
-        images=[
-            dict(
-                source="/static/onramp-logo.png",
-                xref="paper",
-                yref="paper",
-                x=1.08,
-                y=1.1,
-                sizex=0.25,
-                sizey=0.25,
-                xanchor="right",
-                yanchor="bottom",
-            )
-        ],
         height=700,
         width=800,
         dragmode="zoom",
@@ -675,7 +641,7 @@ def graph_timeline(corr_df, xd):
             rangeselector=dict(
                 buttons=list(
                     [
-                        dict(count=6, label="6m", step="month", stepmode="backward"),
+                        dict(count=3, label="3m", step="month", stepmode="backward"),
                         dict(count=1, label="YTD", step="year", stepmode="todate"),
                         dict(count=1, label="1y", step="year", stepmode="backward"),
                         dict(step="all"),
@@ -1003,12 +969,27 @@ dashboard_page = html.Div(
                                             value=0,
                                             step=0.5,
                                             marks={
-                                                0: {'label':'0% BTC', 'style':{'color':'white'}},
-                                                2.5 : {'label':'2.5% BTC', 'style':{'color':'white'}},
-                                                5: {'label':'5% BTC', 'style':{'color':'white'}},
-                                                7.5: {'label':'7.5% BTC', 'style':{'color':'white'}},
-                                                10: {'label':'10% BTC', 'style':{'color':'white'}},
-                                            }
+                                                0: {
+                                                    "label": "0% BTC",
+                                                    "style": {"color": "white"},
+                                                },
+                                                2.5: {
+                                                    "label": "2.5% BTC",
+                                                    "style": {"color": "white"},
+                                                },
+                                                5: {
+                                                    "label": "5% BTC",
+                                                    "style": {"color": "white"},
+                                                },
+                                                7.5: {
+                                                    "label": "7.5% BTC",
+                                                    "style": {"color": "white"},
+                                                },
+                                                10: {
+                                                    "label": "10% BTC",
+                                                    "style": {"color": "white"},
+                                                },
+                                            },
                                         ),
                                     ],
                                     className="col-8",
@@ -1217,7 +1198,7 @@ heatmap_page = html.Div(
                                         ),
                                     ],
                                     className="col-3",
-                                #TODO: #1 style the dropdown to accommodate the text
+                                    # TODO: #1 style the dropdown to accommodate the text
                                 ),
                                 html.Div([], className="col-8"),
                                 html.Div(
@@ -1288,11 +1269,7 @@ def update_heatmap(value):
 
         labels = df.columns
         layout = go.Layout(
-            title=dict(
-                text="Correlation Matrix",
-                font=dict(size=30),
-                x=.5,
-            ),
+            title=dict(text="Correlation Matrix", font=dict(size=30), x=0.5,),
             annotations=[
                 dict(
                     x=0.5,

@@ -20,7 +20,6 @@ from helpers import get_coin_data, get_coin_data_new, volatility, calc_volatilit
 ####################################################################################################
 # 000 - BITCOIN VOLATILITY (NOT DYNAMIC YET)
 ####################################################################################################
-<<<<<<< HEAD
 pairs = [
     "BTC-USDT",
     "BCHABC-USDT",
@@ -74,7 +73,6 @@ def graph_btc_vol(df):
             "xanchor": "center",
             "yanchor": "top",
         },
-=======
 pairs = ['BTC-USDT', 'BCHABC-USDT', 'TRX-USDT', 'IOTA-USDT', 'XLM-USDT', 'EOS-USDT', 'ADA-USDT','LTC-USDT', 'NEO-USDT', 'BNB-USDT', 'ETH-USDT']
 
 pairs_new = ['S&P 500','All World Index','High Yield','HFRXGL Index','Gold','Emerging Markets','Russell 2000','Oil','Frontier Markets','Biotech','Bitcoin','Ethereum']
@@ -229,7 +227,6 @@ def graph_volatility(df, coins, xd):
 
     return fig
 
-<<<<<<< HEAD
 def btc_vol_table(a7, a30, a60, df_btc):
     labels = ['<b>Volatility<b>', '<b>Average<b>', '<b>Current<b>']
     fig = go.Figure(data=[go.Table(
@@ -250,7 +247,6 @@ def btc_vol_table(a7, a30, a60, df_btc):
             "plot_bgcolor": "rgba(0, 0, 0, 0)",  # Transparent
             "paper_bgcolor": "rgba(0, 0, 0, 0)",
         }
-=======
 c = xd.strftime('%Y-%m-%d')
 vol_fig = graph_volatility(df, pairs, c)
 
@@ -288,11 +284,9 @@ custom_scale = [
 
         [0.8, '#00326b'],
         [0.9, '#00326b'],
-
         [0.9, '#131c4f'],
         [1.0, '#131c4f']
     ]
-
 
 
 def create_corr(pairs, db, coindata_day):

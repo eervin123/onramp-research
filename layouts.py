@@ -978,7 +978,7 @@ dashboard_page = html.Div(
                         ),
                         html.Br(),
                         html.H4(
-                            children="Cryptocurrencies such as Bitcoin (BTC) and Ether (ETH) have emerged as an asset class that clients are interested in holding long term. Cryptoassets are usually held away from advisors. As a trusted confidante and risk manager, Advisors should have access to tools and insights that help them manage portfolios holistically. Use the slider to show the performance change of adding 1-5% BTC to a typical 60/40 portfolio. ",
+                            children="Cryptoassets such as Bitcoin (BTC) and Ether (ETH) have emerged as an asset class that clients are interested in holding long term. Cryptoassets are usually held away from advisors. As a trusted confidante and risk manager, Advisors should have access to tools and insights that help them manage portfolios holistically. Use the slider to show the performance change of adding 1-5% BTC to a typical 60/40 portfolio. ",
                             style={"color": corporate_colors["white"]},
                         ),
                         html.Div(
@@ -1002,6 +1002,13 @@ dashboard_page = html.Div(
                                             max=10,
                                             value=0,
                                             step=0.5,
+                                            marks={
+                                                0: {'label':'0% BTC', 'style':{'color':'white'}},
+                                                2.5 : {'label':'2.5% BTC', 'style':{'color':'white'}},
+                                                5: {'label':'5% BTC', 'style':{'color':'white'}},
+                                                7.5: {'label':'7.5% BTC', 'style':{'color':'white'}},
+                                                10: {'label':'10% BTC', 'style':{'color':'white'}},
+                                            }
                                         ),
                                     ],
                                     className="col-8",

@@ -332,8 +332,8 @@ def graph_volatility(df, coins, xd):
             dict(
                 type="dropdown",
                 active=1,
-                x=-0.12,
-                y=1.09,
+                x=-0,
+                y=1.2,
                 buttons=[
                     dict(
                         label=f"{v}-Day",
@@ -1288,19 +1288,6 @@ def update_heatmap(value):
 
         labels = df.columns
         layout = go.Layout(
-            images=[
-                dict(
-                    source="/static/onramp-logo.png",
-                    xref="paper",
-                    yref="paper",
-                    x=1.12,
-                    y=1.08,
-                    sizex=0.25,
-                    sizey=0.25,
-                    xanchor="right",
-                    yanchor="bottom",
-                )
-            ],
             title=dict(
                 text="Correlation Matrix",
                 font=dict(size=30),

@@ -450,7 +450,7 @@ custom_scale = [
 
 
 def get_coin_data_new(symbol):
-    df = pd.read_csv("datafiles/Multi_asset_data.csv", usecols=["Timestamp", symbol])
+    df = pd.read_csv("datafiles/Multi_Asset_data.csv", usecols=["Timestamp", symbol])
     res = df.to_dict(orient="list")
     return res
 

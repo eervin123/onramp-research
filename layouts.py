@@ -469,14 +469,6 @@ custom_scale = [
     [1.0, "#131c4f"],
 ]
 
-<<<<<<< HEAD
-        [0.9, '#131c4f'],
-        [1.0, '#131c4f']
-    ]
-
-
-=======
->>>>>>> 28b50e17152f21f1f67b2c2f91a2fefefe319a1a
 
 def create_corr(pairs, db, coindata_day):
     vals = dict()

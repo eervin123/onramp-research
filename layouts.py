@@ -181,7 +181,11 @@ def get_coin_data(symbol, db, coindata_day):
                'volume' ]].to_dict(orient='list')
     return res
 
-
+def get_coin_data_new(symbol):
+    df = pd.read_csv('datafiles/Multi_asset_data.csv', usecols= ['Timestamp', symbol])
+    res = df.to_dict(orient='list')
+    return res
+    
 def volatility(price, period_value, data_interval):
     """
     This function is used to calculate the annualized volatility for a given set of prices.
@@ -362,10 +366,7 @@ custom_scale = [
         [1.0, '#131c4f']
     ]
 
-def get_coin_data_new(symbol):
-    df = pd.read_csv('datafiles/Multi_asset_data.csv', usecols= ['Timestamp', symbol])
-    res = df.to_dict(orient='list')
-    return res
+
 
 def create_corr(pairs, db, coindata_day):
     vals = dict()

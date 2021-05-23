@@ -20,6 +20,7 @@ from helpers import get_coin_data, get_coin_data_new, volatility, calc_volatilit
 ####################################################################################################
 # 000 - BITCOIN VOLATILITY (NOT DYNAMIC YET)
 ####################################################################################################
+<<<<<<< HEAD
 pairs = [
     "BTC-USDT",
     "BCHABC-USDT",
@@ -73,6 +74,125 @@ def graph_btc_vol(df):
             "xanchor": "center",
             "yanchor": "top",
         },
+=======
+pairs = ['BTC-USDT', 'BCHABC-USDT', 'TRX-USDT', 'IOTA-USDT', 'XLM-USDT', 'EOS-USDT', 'ADA-USDT','LTC-USDT', 'NEO-USDT', 'BNB-USDT', 'ETH-USDT']
+
+pairs_new = ['S&P 500','All World Index','High Yield','HFRXGL Index','Gold','Emerging Markets','Russell 2000','Oil','Frontier Markets','Biotech','Bitcoin','Ethereum']
+
+price_data={}
+
+#----------------------------------------Volitility ----------------------------------------------------------
+def get_coin_data(symbol, db, coindata_day):
+    df = pd.read_csv(f'datafiles/{symbol}_data.csv')
+    res = df[ ['timestamp','price_open','price_high',\
+               'price_low','price_close',\
+               'volume' ]].to_dict(orient='list')
+    return res
+
+def get_coin_data_new(symbol):
+    df = pd.read_csv('datafiles/Multi_asset_data.csv', usecols= ['Timestamp', symbol])
+    res = df.to_dict(orient='list')
+    return res
+    
+def volatility(price, period_value, data_interval):
+    """
+    This function is used to calculate the annualized volatility for a given set of prices.
+    Inputs:
+       price: a pandas series/column of prices
+       period_value: Number of days volatility is measured over (int). e.g 1,5,10,14,30
+    returns:
+       a pandas series of volatility measures
+    """
+
+    if data_interval not in ['1T', '30T', '1D']:
+        raise ValueError
+    
+    if data_interval == '1T':
+        trading_periods = 60*24
+    elif data_interval == '30T':
+        trading_periods = 2*24
+    else:
+        trading_periods = 1
+
+    percent_change=price.pct_change()*100
+    standard_deviation = percent_change.rolling(period_value*trading_periods).std()
+    #formula sqrt(to_hour * daily_hours * days)
+    volatility = standard_deviation*((trading_periods*365)**0.5)
+    return volatility
+
+def calc_volatility(pairs, db, coindata_day):
+    '''
+    Get Graph For Each Coin You Want
+    '''
+    #create visuals
+
+    df_all = dict()
+    for sp in pairs:
+        #calculate vol for each coin and graph
+        tmp = pd.DataFrame(get_coin_data(sp, db, coindata_day))
+        tmp = tmp[['price_close', 'timestamp']]
+        tmp.timestamp = pd.to_datetime(tmp.timestamp, unit='s')
+        tmp.set_index('timestamp', inplace=True)
+        for t in [14,30,90]:
+            df_all[f'{sp.split("-",1)[0]}_vol_{t}']=volatility(tmp.price_close, t, data_interval='1D')
+
+    return pd.DataFrame(df_all).dropna(how='all')
+
+df = calc_volatility(pairs, 'Nothing', 'Nothing')
+
+today = datetime.datetime.now(tz=pytz.utc).date()
+xd = today - datetime.timedelta(days=30)
+
+def graph_volatility(df, coins, xd):
+    source='Binance'
+    yaxis_dict = dict(title='Rolling 30-Day Volatility', hoverformat = '.2f',\
+                    ticks='outside', tickcolor='#53585f',ticklen=8, tickwidth=3,\
+                    tick0=0, tickprefix="                 ")
+    vols = [14,30,90]
+    colors = 3*['black', '#033F63' , '#28666E', '#7C9885', '#B5B682', '#FEDC97', '#F6AE2D', '#F26419', '#5F0F40', '#9A031E', '#CB793A' ]
+
+    index = 0
+    data=[]
+    for i in df.columns:
+        data.append(go.Scatter(x=list(df.index),
+                    y=list(df[i]), name=i.split('_',1)[0], visible=False, line_color = colors[index]))
+        index += 1
+
+    num_coins = len(coins)
+    
+    vis_init = [False]*len(vols)
+    vis_vol = dict()
+    for i,v in enumerate(list(vols)):
+        tmp = vis_init.copy()
+        tmp[i]=True
+        vis_vol[v]=tmp.copy()
+        
+    updatemenus = list([
+    dict(type="dropdown",
+        active=1,
+        x=-0.12,
+        y=1.09,
+        buttons=[dict(label = f'{v}-Day',
+                method = 'update',
+                args = [{'visible': vis_vol[v]*num_coins},
+                        {'yaxis': dict(yaxis_dict, title=f'Rolling {v}-Day Volatility')}]) for v in list(vols)]
+        )
+    ])
+    
+    #set initial to 0
+    for i, b in enumerate(vis_vol[30]*num_coins):
+        if b == True:
+            data[i].visible=b
+    
+    layout = dict(
+        images=[dict(
+            source="/static/onramp-logo.png",
+            xref="paper", yref="paper",
+            x=1.05, y=1.05,
+            sizex=0.21, sizey=0.21,
+            xanchor="right", yanchor="bottom")],
+        height=700, width=1000,\
+        dragmode='zoom',
         xaxis=dict(
                 title="Date",
                 ticks="inside",
@@ -109,6 +229,7 @@ def graph_btc_vol(df):
 
     return fig
 
+<<<<<<< HEAD
 def btc_vol_table(a7, a30, a60, df_btc):
     labels = ['<b>Volatility<b>', '<b>Average<b>', '<b>Current<b>']
     fig = go.Figure(data=[go.Table(
@@ -129,6 +250,124 @@ def btc_vol_table(a7, a30, a60, df_btc):
             "plot_bgcolor": "rgba(0, 0, 0, 0)",  # Transparent
             "paper_bgcolor": "rgba(0, 0, 0, 0)",
         }
+=======
+c = xd.strftime('%Y-%m-%d')
+vol_fig = graph_volatility(df, pairs, c)
+
+
+#-----------------------------------------------------------Heatmap------------------------------------------
+custom_scale = [
+        # Let first 10% (0.1) of the values have color rgb(0, 0, 0)
+        [0, '#00eead'],
+        [0.1, '#00eead'],
+
+        # Let values between 10-20% of the min and max of z
+        # have color rgb(20, 20, 20)
+        [0.1, '#00d8b7'],
+        [0.2, '#00d8b7'],
+
+        # Values between 20-30% of the min and max of z
+        # have color rgb(40, 40, 40)
+        [0.2, '#00c0bd'],
+        [0.3, '#00c0bd'],
+
+        [0.3, '#00a9be'],
+        [0.4, '#00a9be'],
+
+        [0.4, '#0090b9'],
+        [0.5, '#0090b9'],
+
+        [0.5, '#0078ad'],
+        [0.6, '#0078ad'],
+
+        [0.6, '#00609c'],
+        [0.7, '#00609c'],
+
+        [0.7, '#004986'],
+        [0.8, '#004986'],
+
+        [0.8, '#00326b'],
+        [0.9, '#00326b'],
+
+        [0.9, '#131c4f'],
+        [1.0, '#131c4f']
+    ]
+
+
+
+def create_corr(pairs, db, coindata_day):
+    vals = dict()
+    for sp in pairs:
+        data = get_coin_data(sp, db, coindata_day)
+        if(len(data)<6): #bad data
+            print(sp, " ", len(data))
+            continue
+        df = pd.DataFrame(data)
+        df.set_index('timestamp', inplace=True)
+        vals[sp]=df.price_close
+        
+    df_ = pd.DataFrame(vals)
+    df_.index = pd.to_datetime(df_.index, unit='s')
+    df_ = df_.pct_change(1).fillna(0)
+    df_.columns = [col.split("-",1)[0] for col in df_.columns]
+    df_ = df_.round(3).rolling(180).corr().dropna(how='all')
+    
+    return df_
+
+def create_corr_new(pairs, db, coindata_day):
+    vals = dict()
+    for sp in pairs:
+        data = get_coin_data_new(sp)
+        # if(len(data)<6): #bad data
+        #     print(sp, " ", len(data))
+        #     continue
+        df = pd.DataFrame(data)
+        df.set_index('Timestamp', inplace=True)
+        vals[sp]=df[sp]
+        
+    df_ = pd.DataFrame(vals)
+    df_.index = pd.to_datetime(df_.index, unit='s')
+    df_ = df_.pct_change(1).fillna(0)
+    df_.columns = [col.split("-",1)[0] for col in df_.columns]
+    df_ = df_.round(3).rolling(180).corr().dropna(how='all')
+    
+    return df_
+
+def graph_heatmap(df, date):
+    corr_mtx = df.loc[date].values
+    text_info = np.round(corr_mtx, decimals=5).astype(str)
+
+    x = 0
+    for i in range(len(text_info)):
+        for j in range(len(text_info[0])):
+            if(text_info[i,j]=='1.0'):
+                text_info[i,j]=''
+                corr_mtx[i,j]=np.nan
+        
+    labels=df.columns
+    layout = go.Layout(images=[dict(
+            source="/static/onramp-logo.png",
+            xref="paper", yref="paper",
+            x=1.12, y=1.08,
+            sizex=0.25, sizey=0.25,
+            xanchor="right", yanchor="bottom")],
+        title=f'Return Correlation - Close {date}',
+        annotations=[
+        dict(x=.5,y=-.25,xref='paper',yref='paper',showarrow=False,
+            text=(f"*6-Month Rolling Correlation of Daily Returns; Source: Binance; Correlation data quoted here represents data as of {date}."), font=dict(size=10))
+        ],
+        autosize=False,
+        width=700,
+        height=700,
+        xaxis=dict(ticklen=1, tickcolor='#fff'),
+        yaxis=dict(ticklen=1, tickcolor='#fff'),
+        margin=dict(pad=0, b=125)
+    )
+
+    fig = go.Figure(
+        data= [go.Heatmap(z=corr_mtx, x=labels, y=labels, text = text_info,\
+                    hoverinfo='text',colorscale=[[0.,'#00eead'],[1,'#131c4f']])],
+        layout=layout
     )
     return fig
 

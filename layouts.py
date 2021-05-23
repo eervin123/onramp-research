@@ -1115,11 +1115,11 @@ vol_page = html.Div(
                                             id="dropdown",
                                             options=[
                                                 {
-                                                    "label": "Crypto Correlation",
+                                                    "label": "Crypto",
                                                     "value": "CC",
                                                 },
                                                 {
-                                                    "label": "Asset Class Correlation",
+                                                    "label": "Mixed Asset Classes", #TODO @cyrus let's use these names going forward.
                                                     "value": "AC",
                                                 },
                                             ],

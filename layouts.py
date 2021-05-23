@@ -222,7 +222,16 @@ def get_coin_data(symbol, db, coindata_day):
     ].to_dict(orient="list")
     return res
 
+def get_coin_data_new(symbol):
+    df = pd.read_csv("datafiles/Multi_Asset_data.csv", usecols=["Timestamp", symbol])
+    res = df.to_dict(orient="list")
+    return res
 
+def get_coin_data_new(symbol):
+    df = pd.read_csv('datafiles/Multi_asset_data.csv', usecols= ['Timestamp', symbol])
+    res = df.to_dict(orient='list')
+    return res
+    
 def volatility(price, period_value, data_interval):
     """
     This function is used to calculate the annualized volatility for a given set of prices.
@@ -270,7 +279,27 @@ def calc_volatility(pairs, db, coindata_day):
 
     return pd.DataFrame(df_all).dropna(how="all")
 
+def calc_volatility_new(pairs, db, coindata_day):
+    """
+    Get Graph For Each Coin You Want
+    """
+    # create visuals
 
+    df_all = dict()
+    for sp in pairs:
+        # calculate vol for each coin and graph
+        tmp = pd.DataFrame(get_coin_data_new(sp))
+        tmp = tmp[[sp, "Timestamp"]]
+        tmp.set_index("Timestamp", inplace=True)
+        tmp.index = pd.to_datetime(tmp.index, unit="s")
+        for t in [14, 30, 90]:
+            df_all[f'{sp.split("-",1)[0]}_vol_{t}'] = volatility(
+                tmp.iloc[:,0], t, data_interval="1D"
+            )
+
+    return pd.DataFrame(df_all).dropna(how="all")
+
+df_new = calc_volatility_new(pairs_new, "n", "n")
 df = calc_volatility(pairs, "Nothing", "Nothing")
 
 today = datetime.datetime.now(tz=pytz.utc).date()
@@ -290,7 +319,7 @@ def graph_volatility(df, coins, xd):
         tickprefix="                 ",
     )
     vols = [14, 30, 90]
-    colors = 3 * [
+    colors = 4 * [
         "black",
         "#033F63",
         "#28666E",
@@ -332,8 +361,8 @@ def graph_volatility(df, coins, xd):
             dict(
                 type="dropdown",
                 active=1,
-                x=-0.12,
-                y=1.09,
+                x=-0,
+                y=1.2,
                 buttons=[
                     dict(
                         label=f"{v}-Day",
@@ -359,19 +388,11 @@ def graph_volatility(df, coins, xd):
             data[i].visible = b
 
     layout = dict(
-        images=[
-            dict(
-                source="/static/onramp-logo.png",
-                xref="paper",
-                yref="paper",
-                x=1.05,
-                y=1.05,
-                sizex=0.21,
-                sizey=0.21,
-                xanchor="right",
-                yanchor="bottom",
-            )
-        ],
+      title=dict(
+            text="Changing Volatility Over Time",
+            font=dict(size=30, color="#000"),
+            x=0.5,
+        ),
         height=700,
         width=1000,
         dragmode="zoom",
@@ -383,7 +404,7 @@ def graph_volatility(df, coins, xd):
             rangeselector=dict(
                 buttons=list(
                     [
-                        dict(count=6, label="6m", step="month", stepmode="backward"),
+                        dict(count=3, label="3m", step="month", stepmode="backward"),
                         dict(count=1, label="YTD", step="year", stepmode="todate"),
                         dict(count=1, label="1y", step="year", stepmode="backward"),
                         dict(step="all"),
@@ -416,7 +437,7 @@ def graph_volatility(df, coins, xd):
 
 
 c = xd.strftime("%Y-%m-%d")
-vol_fig = graph_volatility(df, pairs, c)
+vol_fig = graph_volatility(df_new, pairs_new, c)
 
 
 # -----------------------------------------------------------Heatmap------------------------------------------
@@ -447,12 +468,6 @@ custom_scale = [
     [0.9, "#131c4f"],
     [1.0, "#131c4f"],
 ]
-
-
-def get_coin_data_new(symbol):
-    df = pd.read_csv("datafiles/Multi_Asset_data.csv", usecols=["Timestamp", symbol])
-    res = df.to_dict(orient="list")
-    return res
 
 
 def create_corr(pairs, db, coindata_day):
@@ -508,19 +523,6 @@ def graph_heatmap(df, date):
 
     labels = df.columns
     layout = go.Layout(
-        images=[
-            dict(
-                source="/static/onramp-logo.png",
-                xref="paper",
-                yref="paper",
-                x=1.12,
-                y=1.08,
-                sizex=0.25,
-                sizey=0.25,
-                xanchor="right",
-                yanchor="bottom",
-            )
-        ],
         title=f"Return Correlation - Close {date}",
         annotations=[
             dict(
@@ -636,19 +638,6 @@ def graph_timeline(corr_df, xd):
 
     layout = dict(
         font=_font,
-        images=[
-            dict(
-                source="/static/onramp-logo.png",
-                xref="paper",
-                yref="paper",
-                x=1.08,
-                y=1.1,
-                sizex=0.25,
-                sizey=0.25,
-                xanchor="right",
-                yanchor="bottom",
-            )
-        ],
         height=700,
         width=800,
         dragmode="zoom",
@@ -675,7 +664,7 @@ def graph_timeline(corr_df, xd):
             rangeselector=dict(
                 buttons=list(
                     [
-                        dict(count=6, label="6m", step="month", stepmode="backward"),
+                        dict(count=3, label="3m", step="month", stepmode="backward"),
                         dict(count=1, label="YTD", step="year", stepmode="todate"),
                         dict(count=1, label="1y", step="year", stepmode="backward"),
                         dict(step="all"),
@@ -934,8 +923,6 @@ def get_navbar(p="dashboard"):
 
 #####################
 # Empty row
-
-
 def get_emptyrow(h="45px"):
     """This returns an empty row of a defined height"""
 
@@ -951,7 +938,6 @@ def get_emptyrow(h="45px"):
 ####################################################################################################
 # 001 - Portfilio Modeling
 ####################################################################################################
-
 dashboard_page = html.Div(
     [
         #####################
@@ -1003,12 +989,27 @@ dashboard_page = html.Div(
                                             value=0,
                                             step=0.5,
                                             marks={
-                                                0: {'label':'0% BTC', 'style':{'color':'white'}},
-                                                2.5 : {'label':'2.5% BTC', 'style':{'color':'white'}},
-                                                5: {'label':'5% BTC', 'style':{'color':'white'}},
-                                                7.5: {'label':'7.5% BTC', 'style':{'color':'white'}},
-                                                10: {'label':'10% BTC', 'style':{'color':'white'}},
-                                            }
+                                                0: {
+                                                    "label": "0% BTC",
+                                                    "style": {"color": "white"},
+                                                },
+                                                2.5: {
+                                                    "label": "2.5% BTC",
+                                                    "style": {"color": "white"},
+                                                },
+                                                5: {
+                                                    "label": "5% BTC",
+                                                    "style": {"color": "white"},
+                                                },
+                                                7.5: {
+                                                    "label": "7.5% BTC",
+                                                    "style": {"color": "white"},
+                                                },
+                                                10: {
+                                                    "label": "10% BTC",
+                                                    "style": {"color": "white"},
+                                                },
+                                            },
                                         ),
                                     ],
                                     className="col-8",
@@ -1076,7 +1077,9 @@ dashboard_page = html.Div(
         ),  # External row
     ]
 )
-
+####################################################################################################
+# 002 - Volatility over Time Page
+####################################################################################################
 
 vol_page = html.Div(
     [
@@ -1111,11 +1114,22 @@ vol_page = html.Div(
                             [  # Internal row - RECAPS
                                 html.Div(
                                     [
-                                        # $html.Br(),
-                                        # html.H3(children= "100% 60/40",
-                                        # style = {'color' : corporate_colors['white']}),
+                                        dcc.Dropdown(
+                                            id="dropdown",
+                                            options=[
+                                                {
+                                                    "label": "Crypto",
+                                                    "value": "CC",
+                                                },
+                                                {
+                                                    "label": "Mixed Asset Classes", #TODO @cyrus let's use these names going forward.
+                                                    "value": "AC",
+                                                },
+                                            ],
+                                            value="AC",
+                                        ),
                                     ],
-                                    className="col-2",
+                                    className="col-3",
                                 ),
                                 html.Div([], className="col-8"),
                                 html.Div(
@@ -1141,7 +1155,6 @@ vol_page = html.Div(
                                     [
                                         dcc.Graph(
                                             id="vol_chart",
-                                            figure=vol_fig,
                                             style={"responsive": True},
                                         )
                                     ],
@@ -1166,8 +1179,9 @@ vol_page = html.Div(
         ),  # External row
     ]
 )
-
-
+####################################################################################################
+# 003 - Correlation Matrix Heatmap Page 
+####################################################################################################
 heatmap_page = html.Div(
     [
         #####################
@@ -1268,87 +1282,9 @@ heatmap_page = html.Div(
         ),  # External row
     ]
 )
-
-
-@dash_app.callback(
-    dash.dependencies.Output("heatmap", "figure"),
-    [dash.dependencies.Input("dropdown", "value")],
-)
-def update_heatmap(value):
-    def graph_heatmap(df, date):
-        corr_mtx = df.loc[date].values
-        text_info = np.round(corr_mtx, decimals=5).astype(str)
-
-        x = 0
-        for i in range(len(text_info)):
-            for j in range(len(text_info[0])):
-                if text_info[i, j] == "1.0":
-                    text_info[i, j] = ""
-                    corr_mtx[i, j] = np.nan
-
-        labels = df.columns
-        layout = go.Layout(
-            images=[
-                dict(
-                    source="/static/onramp-logo.png",
-                    xref="paper",
-                    yref="paper",
-                    x=1.12,
-                    y=1.08,
-                    sizex=0.25,
-                    sizey=0.25,
-                    xanchor="right",
-                    yanchor="bottom",
-                )
-            ],
-            title=dict(
-                text="Correlation Matrix",
-                font=dict(size=30),
-                x=.5,
-            ),
-            annotations=[
-                dict(
-                    x=0.5,
-                    y=-0.25,
-                    xref="paper",
-                    yref="paper",
-                    showarrow=False,
-                    text=(
-                        f"*6-Month Rolling Correlation of Daily Returns; Source: Binance; Correlation data quoted here represents data as of {date}."
-                    ),
-                    font=dict(size=10),
-                )
-            ],
-            autosize=False,
-            width=700,
-            height=700,
-            xaxis=dict(ticklen=1, tickcolor="#fff"),
-            yaxis=dict(ticklen=1, tickcolor="#fff"),
-            margin=dict(pad=0, b=125),
-        )
-
-        fig = go.Figure(
-            data=[
-                go.Heatmap(
-                    z=corr_mtx,
-                    x=labels,
-                    y=labels,
-                    text=text_info,
-                    hoverinfo="text",
-                    colorscale=[[0.0, "#00eead"], [1, "#131c4f"]],
-                )
-            ],
-            layout=layout,
-        )
-
-        return fig
-
-    if value == "CC":
-        return graph_heatmap(corr_df, c)
-    if value == "AC":
-        return graph_heatmap(corr_df_new, c)
-
-
+####################################################################################################
+# 004 - Correlation over time (Heatmap over time) Page 
+####################################################################################################
 heatmap_timeline_page = html.Div(
     [
         #####################
@@ -1448,8 +1384,216 @@ heatmap_timeline_page = html.Div(
         ),  # External row
     ]
 )
+####################################################################################################
+# 002 Plotting Volatility
+####################################################################################################
+@dash_app.callback(
+    dash.dependencies.Output("vol_chart", "figure"),
+    [dash.dependencies.Input("dropdown", "value")],
+)
+def update_vol(value):
 
+    def graph_volatility(df, coins, xd):
+        source = "Binance"
+        yaxis_dict = dict(
+            title="Rolling 30-Day Volatility",
+            hoverformat=".2f",
+            ticks="outside",
+            tickcolor="#53585f",
+            ticklen=8,
+            tickwidth=3,
+            tick0=0,
+            tickprefix="                 ",
+        )
+        vols = [14, 30, 90]
+        colors = 4 * [
+            "black",
+            "#033F63",
+            "#28666E",
+            "#7C9885",
+            "#B5B682",
+            "#FEDC97",
+            "#F6AE2D",
+            "#F26419",
+            "#5F0F40",
+            "#9A031E",
+            "#CB793A",
+        ]
 
+        index = 0
+        data = []
+        for i in df.columns:
+            data.append(
+                go.Scatter(
+                    x=list(df.index),
+                    y=list(df[i]),
+                    name=i.split("_", 1)[0],
+                    visible=False,
+                    line_color=colors[index],
+                )
+            )
+            index += 1
+
+        num_coins = len(coins)
+
+        vis_init = [False] * len(vols)
+        vis_vol = dict()
+        for i, v in enumerate(list(vols)):
+            tmp = vis_init.copy()
+            tmp[i] = True
+            vis_vol[v] = tmp.copy()
+
+        updatemenus = list(
+            [
+                dict(
+                    type="dropdown",
+                    active=1,
+                    x=-0,
+                    y=1.2,
+                    buttons=[
+                        dict(
+                            label=f"{v}-Day",
+                            method="update",
+                            args=[
+                                {"visible": vis_vol[v] * num_coins},
+                                {
+                                    "yaxis": dict(
+                                        yaxis_dict, title=f"Rolling {v}-Day Volatility"
+                                    )
+                                },
+                            ],
+                        )
+                        for v in list(vols)
+                    ],
+                )
+            ]
+        )
+
+        # set initial to 0
+        for i, b in enumerate(vis_vol[30] * num_coins):
+            if b == True:
+                data[i].visible = b
+
+        layout = dict(
+        title=dict(
+                text="Changing Volatility Over Time",
+                font=dict(size=30, color="#000"),
+                x=0.5,
+            ),
+            height=700,
+            width=1000,
+            dragmode="zoom",
+            xaxis=dict(
+                title="Date",
+                ticks="inside",
+                ticklen=6,
+                tickwidth=3,
+                rangeselector=dict(
+                    buttons=list(
+                        [
+                            dict(count=3, label="3m", step="month", stepmode="backward"),
+                            dict(count=1, label="YTD", step="year", stepmode="todate"),
+                            dict(count=1, label="1y", step="year", stepmode="backward"),
+                            dict(step="all"),
+                        ]
+                    )
+                ),
+                type="date",
+                tickcolor="#53585f",
+            ),
+            yaxis=yaxis_dict,
+            margin=dict(pad=0, b=125),
+            updatemenus=updatemenus,
+            font=dict(size=14),
+            annotations=[
+                dict(
+                    x=-0.18,
+                    y=-0.25,
+                    xref="paper",
+                    yref="paper",
+                    showarrow=False,
+                    text=f"*Source: {source}; Volatility data quoted here represents data as of {xd}.",
+                    font=dict(size=10),
+                )
+            ],
+        )
+
+        fig = go.Figure(data=data, layout=layout)
+
+        return fig
+
+    if value == "CC":
+        return graph_volatility(df, pairs, c)
+    if value == "AC":
+        return graph_volatility(df_new, pairs_new, c)
+
+####################################################################################################
+# 003 Plotting Correlation Matrix
+####################################################################################################
+@dash_app.callback(
+    dash.dependencies.Output("heatmap", "figure"),
+    [dash.dependencies.Input("dropdown", "value")],
+)
+def update_heatmap(value):
+    def graph_heatmap(df, date):
+        corr_mtx = df.loc[date].values
+        text_info = np.round(corr_mtx, decimals=5).astype(str)
+
+        x = 0
+        for i in range(len(text_info)):
+            for j in range(len(text_info[0])):
+                if text_info[i, j] == "1.0":
+                    text_info[i, j] = ""
+                    corr_mtx[i, j] = np.nan
+
+        labels = df.columns
+        layout = go.Layout(
+            title=dict(text="Correlation Matrix", font=dict(size=30), x=0.5,),
+            annotations=[
+                dict(
+                    x=0.5,
+                    y=-0.25,
+                    xref="paper",
+                    yref="paper",
+                    showarrow=False,
+                    text=(
+                        f"*6-Month Rolling Correlation of Daily Returns; Source: Binance; Correlation data quoted here represents data as of {date}."
+                    ),
+                    font=dict(size=10),
+                )
+            ],
+            autosize=False,
+            width=700,
+            height=700,
+            xaxis=dict(ticklen=1, tickcolor="#fff"),
+            yaxis=dict(ticklen=1, tickcolor="#fff"),
+            margin=dict(pad=0, b=125),
+        )
+
+        fig = go.Figure(
+            data=[
+                go.Heatmap(
+                    z=corr_mtx,
+                    x=labels,
+                    y=labels,
+                    text=text_info,
+                    hoverinfo="text",
+                    colorscale=[[0.0, "#00eead"], [1, "#131c4f"]],
+                )
+            ],
+            layout=layout,
+        )
+
+        return fig
+
+    if value == "CC":
+        return graph_heatmap(corr_df, c)
+    if value == "AC":
+        return graph_heatmap(corr_df_new, c)
+
+####################################################################################################
+# 004 Plotting Correlation Over Time (Heatmap over time)
+####################################################################################################
 @dash_app.callback(
     dash.dependencies.Output("heatmap_timeline", "figure"),
     [dash.dependencies.Input("dropdown", "value")],
@@ -1601,3 +1745,7 @@ def update_timeline(value):
         return graph_timeline(corr_df, c)
     if value == "AC":
         return graph_timeline(corr_df_new, c)
+
+####################################################################################################
+# The End
+####################################################################################################

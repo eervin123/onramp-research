@@ -1029,7 +1029,7 @@ dashboard_page = html.Div(
         # Row 5 : Charts
         html.Div(
             [  # External row
-                html.Div([], className="col-1"),  # Blank 1 column
+                # html.Div([], className="col-1"),  # Blank 1 column
                 html.Div(
                     [  # External 10-column
                         html.H2(
@@ -1141,10 +1141,10 @@ dashboard_page = html.Div(
                             className="row",
                         ),  # Internal row
                     ],
-                    className="col-10",
+                    className="col-12",
                     style=externalgraph_colstyling,
                 ),  # External 10-column
-                html.Div([], className="col-1"),  # Blank 1 column
+                # html.Div([], className="col-1"),  # Blank 1 column
             ],
             className="row",
             style=externalgraph_rowstyling,
@@ -1172,7 +1172,7 @@ vol_page = html.Div(
         # Row 5 : Charts
         html.Div(
             [  # External row
-                html.Div([], className="col-1"),  # Blank 1 column
+                # html.Div([], className="col-1"),  # Blank 1 column
                 html.Div(
                     [  # External 10-column
                         html.H2(
@@ -1239,10 +1239,10 @@ vol_page = html.Div(
                             className="row",
                         ),  # Internal row
                     ],
-                    className="col-10",
+                    className="col-12",
                     style=externalgraph_colstyling,
                 ),  # External 10-column
-                html.Div([], className="col-1"),  # Blank 1 column
+                # html.Div([], className="col-1"),  # Blank 1 column
             ],
             className="row",
             style=externalgraph_rowstyling,
@@ -1269,7 +1269,7 @@ heatmap_page = html.Div(
         # Row 5 : Charts
         html.Div(
             [  # External row
-                html.Div([], className="col-1"),  # Blank 1 column
+                # html.Div([], className="col-1"),  # Blank 1 column
                 html.Div(
                     [  # External 10-column
                         html.H2(
@@ -1339,10 +1339,10 @@ heatmap_page = html.Div(
                             className="row",
                         ),  # Internal row
                     ],
-                    className="col-10",
+                    className="col-12",
                     style=externalgraph_colstyling,
                 ),  # External 10-column
-                html.Div([], className="col-1"),  # Blank 1 column
+                # html.Div([], className="col-1"),  # Blank 1 column
             ],
             className="row",
             style=externalgraph_rowstyling,
@@ -1369,7 +1369,7 @@ heatmap_timeline_page = html.Div(
         # Row 5 : Charts
         html.Div(
             [  # External row
-                html.Div([], className="col-1"),  # Blank 1 column
+                # html.Div([], className="col-1"),  # Blank 1 column
                 html.Div(
                     [  # External 10-column
                         html.H2(
@@ -1438,10 +1438,10 @@ heatmap_timeline_page = html.Div(
                             className="row",
                         ),  # Internal row
                     ],
-                    className="col-10",
+                    className="col-12",
                     style=externalgraph_colstyling,
                 ),  # External 10-column
-                html.Div([], className="col-1"),  # Blank 1 column
+                # html.Div([], className="col-1"),  # Blank 1 column
             ],
             className="row",
             style=externalgraph_rowstyling,

@@ -223,6 +223,7 @@ def get_coin_data(symbol, db, coindata_day):
     ].to_dict(orient="list")
     return res
 
+
 def get_coin_data_new(symbol):
     df = pd.read_csv("datafiles/Multi_Asset_data.csv", usecols=["Timestamp", symbol])
     res = df.to_dict(orient="list")
@@ -276,6 +277,7 @@ def calc_volatility(pairs, db, coindata_day):
 
     return pd.DataFrame(df_all).dropna(how="all")
 
+
 def calc_volatility_new(pairs, db, coindata_day):
     """
     Get Graph For Each Coin You Want
@@ -291,13 +293,16 @@ def calc_volatility_new(pairs, db, coindata_day):
         tmp.index = pd.to_datetime(tmp.index, unit="s")
         for t in [14, 30, 90]:
             df_all[f'{sp.split("-",1)[0]}_vol_{t}'] = volatility(
-                tmp.iloc[:,0], t, data_interval="1D"
+                tmp.iloc[:, 0], t, data_interval="1D"
             )
 
     return pd.DataFrame(df_all).dropna(how="all")
 
+
 df_new = calc_volatility_new(pairs_new, "n", "n")
-df_new = df_new[df_new.index > datetime.datetime(2020, 1, 15)] #make it so we only have 2020 data
+df_new = df_new[
+    df_new.index > datetime.datetime(2020, 1, 15)
+]  # make it so we only have 2020 data
 
 df = calc_volatility(pairs, "Nothing", "Nothing")
 
@@ -388,7 +393,7 @@ def graph_volatility(df, coins, xd):
             data[i].visible = b
 
     layout = dict(
-      title=dict(
+        title=dict(
             text="Changing Volatility Over Time",
             font=dict(size=30, color="#000"),
             x=0.5,
@@ -566,7 +571,7 @@ corr_df = create_corr(pairs, "Nothing", "Nothing")
 
 corr_df_new = create_corr_new(pairs_new, "Nothing", "Nothing")
 
-#print(corr_df_new[corr_df_new.index > datetime.datetime(2020, 1, 15)])
+# print(corr_df_new[corr_df_new.index > datetime.datetime(2020, 1, 15)])
 
 heatmap_fig = graph_heatmap(corr_df, c)
 
@@ -699,7 +704,7 @@ heatmap_timeline_fig = graph_timeline(corr_df, c)
 heatmap_timeline_fig_new = graph_timeline(corr_df_new, c)
 
 
-####################################################################################Dashboard Components 
+####################################################################################Dashboard Components
 
 
 percent_dict = {"60/40": 1 - float(0) / 100, "Bitcoin": float(0) / 100}
@@ -734,9 +739,7 @@ def graph_pie(percent_dictionary):
             "xanchor": "center",
             "yanchor": "top",
         },
-        legend=dict(
-            orientation="h", yanchor="bottom", y=-0.2, xanchor="left", x=0.30
-        ),
+        legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="left", x=0.30),
     )
     fig.update_layout(
         {"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)",}
@@ -747,8 +750,8 @@ def graph_pie(percent_dictionary):
 
     return fig
 
-pie_fig = graph_pie(percent_dict)
 
+pie_fig = graph_pie(percent_dict)
 
 
 #####################
@@ -823,7 +826,12 @@ def get_navbar(p="dashboard"):
                 className="col-2",
             ),
             html.Div(
-                [dcc.Link(html.H4(children="Correlation Matrix"), href="/apps/correlation-matrix")],
+                [
+                    dcc.Link(
+                        html.H4(children="Correlation Matrix"),
+                        href="/apps/correlation-matrix",
+                    )
+                ],
                 className="col-2",
             ),
             html.Div(
@@ -861,7 +869,12 @@ def get_navbar(p="dashboard"):
                 className="col-2",
             ),
             html.Div(
-                [dcc.Link(html.H4(children="Correlation Matrix"), href="/apps/correlation-matrix")],
+                [
+                    dcc.Link(
+                        html.H4(children="Correlation Matrix"),
+                        href="/apps/correlation-matrix",
+                    )
+                ],
                 className="col-2",
             ),
             html.Div(
@@ -942,13 +955,20 @@ def get_navbar(p="dashboard"):
                 className="col-2",
             ),
             html.Div(
-                [dcc.Link(html.H4(children="Correlation Matrix"), href="/apps/correlation-matrix")],
+                [
+                    dcc.Link(
+                        html.H4(children="Correlation Matrix"),
+                        href="/apps/correlation-matrix",
+                    )
+                ],
                 className="col-2",
             ),
             html.Div(
                 [
                     dcc.Link(
-                        html.H4(children="Correlation Over Time", style=navbarcurrentpage),
+                        html.H4(
+                            children="Correlation Over Time", style=navbarcurrentpage
+                        ),
                         href="/apps/correlation-timeline",
                     )
                 ],
@@ -994,9 +1014,9 @@ def get_emptyrow(h="45px"):
 ####################################################################################################
 dashboard_page = html.Div(
     [
-        #####################
-        # Row 1 : Header
-        get_header(),
+        # ##################### commented out for Nutech to place in iframe ########################
+        # # Row 1 : Header
+        # get_header(),
         #####################
         # Row 2 : Nav bar
         get_navbar("dashboard"),
@@ -1086,9 +1106,8 @@ dashboard_page = html.Div(
                             [  # Internal row
                                 # Chart Column
                                 html.Div(
-                                    [dcc.Graph(id="pie_chart"), ], className="col-3"
+                                    [dcc.Graph(id="pie_chart"),], className="col-3"
                                 ),
-
                                 # Chart Column
                                 html.Div(
                                     [
@@ -1138,10 +1157,10 @@ dashboard_page = html.Div(
 
 vol_page = html.Div(
     [
-        #####################
-        # Row 1 : Header
-        get_header(),
-        #####################
+        # #####################
+        # # Row 1 : Header
+        # get_header(),
+        # #####################
         # Row 2 : Nav bar
         get_navbar("volatility"),
         #####################
@@ -1172,12 +1191,9 @@ vol_page = html.Div(
                                         dcc.Dropdown(
                                             id="dropdown",
                                             options=[
+                                                {"label": "Crypto", "value": "CC",},
                                                 {
-                                                    "label": "Crypto",
-                                                    "value": "CC",
-                                                },
-                                                {
-                                                    "label": "Mixed Asset Classes", #TODO @cyrus let's use these names going forward.
+                                                    "label": "Mixed Asset Classes",  # TODO @cyrus let's use these names going forward.
                                                     "value": "AC",
                                                 },
                                             ],
@@ -1209,8 +1225,7 @@ vol_page = html.Div(
                                 html.Div(
                                     [
                                         dcc.Graph(
-                                            id="vol_chart",
-                                            style={"responsive": True},
+                                            id="vol_chart", style={"responsive": True},
                                         )
                                     ],
                                     style={"max-width": "100%", "margin": "auto"},
@@ -1235,14 +1250,14 @@ vol_page = html.Div(
     ]
 )
 ####################################################################################################
-# 003 - Correlation Matrix Heatmap Page 
+# 003 - Correlation Matrix Heatmap Page
 ####################################################################################################
 heatmap_page = html.Div(
     [
-        #####################
-        # Row 1 : Header
-        get_header(),
-        #####################
+        # #####################
+        # # Row 1 : Header
+        # get_header(),
+        # #####################
         # Row 2 : Nav bar
         get_navbar("heatmap"),
         #####################
@@ -1273,10 +1288,7 @@ heatmap_page = html.Div(
                                         dcc.Dropdown(
                                             id="dropdown",
                                             options=[
-                                                {
-                                                    "label": "Crypto",
-                                                    "value": "CC",
-                                                },
+                                                {"label": "Crypto", "value": "CC",},
                                                 {
                                                     "label": "Mixed Asset Classes",
                                                     "value": "AC",
@@ -1286,7 +1298,7 @@ heatmap_page = html.Div(
                                         ),
                                     ],
                                     className="col-3",
-                                #TODO: #1 style the dropdown to accommodate the text
+                                    # TODO: #1 style the dropdown to accommodate the text
                                 ),
                                 html.Div([], className="col-8"),
                                 html.Div(
@@ -1338,14 +1350,14 @@ heatmap_page = html.Div(
     ]
 )
 ####################################################################################################
-# 004 - Correlation over time (Heatmap over time) Page 
+# 004 - Correlation over time (Heatmap over time) Page
 ####################################################################################################
 heatmap_timeline_page = html.Div(
     [
-        #####################
-        # Row 1 : Header
-        get_header(),
-        #####################
+        # #####################
+        # # Row 1 : Header
+        # get_header(),
+        # #####################
         # Row 2 : Nav bar
         get_navbar("timeline"),
         #####################
@@ -1376,10 +1388,7 @@ heatmap_timeline_page = html.Div(
                                         dcc.Dropdown(
                                             id="dropdown",
                                             options=[
-                                                {
-                                                    "label": "Crypto",
-                                                    "value": "CC",
-                                                },
+                                                {"label": "Crypto", "value": "CC",},
                                                 {
                                                     "label": "Mixed Asset Classes",
                                                     "value": "AC",
@@ -1447,7 +1456,6 @@ heatmap_timeline_page = html.Div(
     [dash.dependencies.Input("dropdown", "value")],
 )
 def update_vol(value):
-
     def graph_volatility(df, coins, xd):
         source = "Binance"
         yaxis_dict = dict(
@@ -1530,7 +1538,7 @@ def update_vol(value):
                 data[i].visible = b
 
         layout = dict(
-        title=dict(
+            title=dict(
                 text="Changing Volatility Over Time",
                 font=dict(size=30, color="#000"),
                 x=0.5,
@@ -1546,7 +1554,9 @@ def update_vol(value):
                 rangeselector=dict(
                     buttons=list(
                         [
-                            dict(count=3, label="3m", step="month", stepmode="backward"),
+                            dict(
+                                count=3, label="3m", step="month", stepmode="backward"
+                            ),
                             dict(count=1, label="YTD", step="year", stepmode="todate"),
                             dict(count=1, label="1y", step="year", stepmode="backward"),
                             dict(step="all"),
@@ -1581,6 +1591,7 @@ def update_vol(value):
         return graph_volatility(df, pairs, c)
     if value == "AC":
         return graph_volatility(df_new, pairs_new, c)
+
 
 ####################################################################################################
 # 003 Plotting Correlation Matrix
@@ -1645,6 +1656,7 @@ def update_heatmap(value):
         return graph_heatmap(corr_df, c)
     if value == "AC":
         return graph_heatmap(corr_df_new, c)
+
 
 ####################################################################################################
 # 004 Plotting Correlation Over Time (Heatmap over time)
@@ -1800,6 +1812,7 @@ def update_timeline(value):
         return graph_timeline(corr_df, c)
     if value == "AC":
         return graph_timeline(corr_df_new, c)
+
 
 ####################################################################################################
 # The End

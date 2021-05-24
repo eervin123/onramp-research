@@ -765,14 +765,14 @@ def get_navbar(p="dashboard"):
                 className="col-2",
             ),
             html.Div(
-                [dcc.Link(html.H4(children="Heatmap"), href="/apps/heatmap")],
+                [dcc.Link(html.H4(children="Correlation Matrix"), href="/apps/correlation-matrix")],
                 className="col-2",
             ),
             html.Div(
                 [
                     dcc.Link(
-                        html.H4(children="Heatmap Timeline"),
-                        href="/apps/heatmap-timeline",
+                        html.H4(children="Correlation Over Time"),
+                        href="/apps/correlation-timeline",
                     )
                 ],
                 className="col-2",
@@ -803,14 +803,14 @@ def get_navbar(p="dashboard"):
                 className="col-2",
             ),
             html.Div(
-                [dcc.Link(html.H4(children="Heatmap"), href="/apps/heatmap")],
+                [dcc.Link(html.H4(children="Correlation Matrix"), href="/apps/correlation-matrix")],
                 className="col-2",
             ),
             html.Div(
                 [
                     dcc.Link(
-                        html.H4(children="Heatmap Timeline"),
-                        href="/apps/heatmap-timeline",
+                        html.H4(children="Correlation Over Time"),
+                        href="/apps/correlation-timeline",
                     )
                 ],
                 className="col-2",
@@ -843,8 +843,8 @@ def get_navbar(p="dashboard"):
             html.Div(
                 [
                     dcc.Link(
-                        html.H4(children="Heatmap", style=navbarcurrentpage),
-                        href="/apps/heatmap",
+                        html.H4(children="Correlation Matrix", style=navbarcurrentpage),
+                        href="/apps/correlation-matrix",
                     )
                 ],
                 className="col-2",
@@ -852,8 +852,8 @@ def get_navbar(p="dashboard"):
             html.Div(
                 [
                     dcc.Link(
-                        html.H4(children="Heatmap Timeline"),
-                        href="/apps/heatmap-timeline",
+                        html.H4(children="Correlation Over Time"),
+                        href="/apps/correlation-timeline",
                     )
                 ],
                 className="col-2",
@@ -884,14 +884,14 @@ def get_navbar(p="dashboard"):
                 className="col-2",
             ),
             html.Div(
-                [dcc.Link(html.H4(children="Heatmap"), href="/apps/heatmap")],
+                [dcc.Link(html.H4(children="Correlation Matrix"), href="/apps/correlation-matrix")],
                 className="col-2",
             ),
             html.Div(
                 [
                     dcc.Link(
-                        html.H4(children="Heatmap Timeline", style=navbarcurrentpage),
-                        href="/apps/heatmap-timeline",
+                        html.H4(children="Correlation Over Time", style=navbarcurrentpage),
+                        href="/apps/correlation-timeline",
                     )
                 ],
                 className="col-2",
@@ -1302,7 +1302,7 @@ heatmap_timeline_page = html.Div(
                 html.Div(
                     [  # External 10-column
                         html.H2(
-                            children="Onramp Heatmap Timeline",
+                            children="Correlation Over Time",
                             style={"color": corporate_colors["white"]},
                         ),
                         html.Br(),

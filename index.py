@@ -22,9 +22,9 @@ def display_page(pathname):
          return dashboard_page
     elif pathname == '/apps/volatility-chart':
          return vol_page
-    elif pathname == '/apps/heatmap':
+    elif pathname == '/apps/correlation-matrix':
          return heatmap_page
-    elif pathname == '/apps/heatmap-timeline':
+    elif pathname == '/apps/correlation-timeline':
          return heatmap_timeline_page
     else:
         return dashboard_page # This is the "home page"

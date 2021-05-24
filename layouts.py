@@ -1,6 +1,7 @@
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
+import plotly.express as px
 import pandas as pd
 import numpy as np
 import dash
@@ -137,7 +138,7 @@ corporate_layout = go.Layout(
     margin=corporate_margins,
 )
 
-
+my_template = dict(layout=go.Layout(corporate_layout))
 ####################################################################################################
 # 000 - IMPORT DATA
 ####################################################################################################
@@ -300,7 +301,10 @@ def calc_volatility_new(pairs, db, coindata_day):
     return pd.DataFrame(df_all).dropna(how="all")
 
 df_new = calc_volatility_new(pairs_new, "n", "n")
+df_new = df_new[df_new.index > datetime.datetime(2020, 1, 15)] #make it so we only have 2020 data
+
 df = calc_volatility(pairs, "Nothing", "Nothing")
+
 
 today = datetime.datetime.now(tz=pytz.utc).date()
 xd = today - datetime.timedelta(days=30)
@@ -566,6 +570,8 @@ corr_df = create_corr(pairs, "Nothing", "Nothing")
 
 corr_df_new = create_corr_new(pairs_new, "Nothing", "Nothing")
 
+#print(corr_df_new[corr_df_new.index > datetime.datetime(2020, 1, 15)])
+
 heatmap_fig = graph_heatmap(corr_df, c)
 
 heatmap_fig_new = graph_heatmap(corr_df_new, c)
@@ -697,6 +703,58 @@ heatmap_timeline_fig = graph_timeline(corr_df, c)
 heatmap_timeline_fig_new = graph_timeline(corr_df_new, c)
 
 
+####################################################################################Dashboard Components 
+
+
+percent_dict = {"60/40": 1 - float(0) / 100, "Bitcoin": float(0) / 100}
+
+
+def graph_pie(percent_dictionary):
+
+    colors_pie = ["#a90bfe", "#f2a900"]  # BTC Orange
+    assets = list(percent_dictionary.keys())
+
+    percents = list(percent_dictionary.values())
+    # print(percents)
+
+    fig = px.pie(
+        values=percents,
+        names=assets,
+        color=assets,
+        color_discrete_sequence=colors_pie,
+        title="Portfolio Allocation",
+        # width = 400, height = 400
+        template=my_template,
+        height=400,
+    )
+    fig.update_traces(hovertemplate="%{value:.0%}")
+    # print("plotly express hovertemplate:", fig.data[0].hovertemplate)
+    fig.update_layout(
+        font=dict(family="Circular STD", color="white"),
+        title={
+            "text": "<b>Portfolio Allocation<b>",
+            "y": 1,
+            "x": 0.49,
+            "xanchor": "center",
+            "yanchor": "top",
+        },
+        legend=dict(
+            orientation="h", yanchor="bottom", y=-0.2, xanchor="left", x=0.30
+        ),
+    )
+    fig.update_layout(
+        {"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)",}
+    )
+    fig.update_traces(textfont_size=17)
+    fig.update_layout(titlefont=dict(size=24, color="white"))
+    fig.update_layout(margin=dict(l=10, r=20, t=40, b=0))
+
+    return fig
+
+pie_fig = graph_pie(percent_dict)
+
+
+
 #####################
 # Header with logo
 def get_header():
@@ -769,14 +827,14 @@ def get_navbar(p="dashboard"):
                 className="col-2",
             ),
             html.Div(
-                [dcc.Link(html.H4(children="Heatmap"), href="/apps/heatmap")],
+                [dcc.Link(html.H4(children="Correlation Matrix"), href="/apps/correlation-matrix")],
                 className="col-2",
             ),
             html.Div(
                 [
                     dcc.Link(
-                        html.H4(children="Heatmap Timeline"),
-                        href="/apps/heatmap-timeline",
+                        html.H4(children="Correlation Over Time"),
+                        href="/apps/correlation-timeline",
                     )
                 ],
                 className="col-2",
@@ -807,14 +865,14 @@ def get_navbar(p="dashboard"):
                 className="col-2",
             ),
             html.Div(
-                [dcc.Link(html.H4(children="Heatmap"), href="/apps/heatmap")],
+                [dcc.Link(html.H4(children="Correlation Matrix"), href="/apps/correlation-matrix")],
                 className="col-2",
             ),
             html.Div(
                 [
                     dcc.Link(
-                        html.H4(children="Heatmap Timeline"),
-                        href="/apps/heatmap-timeline",
+                        html.H4(children="Correlation Over Time"),
+                        href="/apps/correlation-timeline",
                     )
                 ],
                 className="col-2",
@@ -847,8 +905,8 @@ def get_navbar(p="dashboard"):
             html.Div(
                 [
                     dcc.Link(
-                        html.H4(children="Heatmap", style=navbarcurrentpage),
-                        href="/apps/heatmap",
+                        html.H4(children="Correlation Matrix", style=navbarcurrentpage),
+                        href="/apps/correlation-matrix",
                     )
                 ],
                 className="col-2",
@@ -856,8 +914,8 @@ def get_navbar(p="dashboard"):
             html.Div(
                 [
                     dcc.Link(
-                        html.H4(children="Heatmap Timeline"),
-                        href="/apps/heatmap-timeline",
+                        html.H4(children="Correlation Over Time"),
+                        href="/apps/correlation-timeline",
                     )
                 ],
                 className="col-2",
@@ -888,14 +946,14 @@ def get_navbar(p="dashboard"):
                 className="col-2",
             ),
             html.Div(
-                [dcc.Link(html.H4(children="Heatmap"), href="/apps/heatmap")],
+                [dcc.Link(html.H4(children="Correlation Matrix"), href="/apps/correlation-matrix")],
                 className="col-2",
             ),
             html.Div(
                 [
                     dcc.Link(
-                        html.H4(children="Heatmap Timeline", style=navbarcurrentpage),
-                        href="/apps/heatmap-timeline",
+                        html.H4(children="Correlation Over Time", style=navbarcurrentpage),
+                        href="/apps/correlation-timeline",
                     )
                 ],
                 className="col-2",
@@ -1032,8 +1090,9 @@ dashboard_page = html.Div(
                             [  # Internal row
                                 # Chart Column
                                 html.Div(
-                                    [dcc.Graph(id="pie_chart")], className="col-3"
+                                    [dcc.Graph(id="pie_chart"), ], className="col-3"
                                 ),
+
                                 # Chart Column
                                 html.Div(
                                     [
@@ -1126,7 +1185,7 @@ vol_page = html.Div(
                                                     "value": "AC",
                                                 },
                                             ],
-                                            value="AC",
+                                            value="CC",
                                         ),
                                     ],
                                     className="col-3",
@@ -1219,15 +1278,15 @@ heatmap_page = html.Div(
                                             id="dropdown",
                                             options=[
                                                 {
-                                                    "label": "Crypto Correlation",
+                                                    "label": "Crypto",
                                                     "value": "CC",
                                                 },
                                                 {
-                                                    "label": "Asset Class Correlation",
+                                                    "label": "Mixed Asset Classes",
                                                     "value": "AC",
                                                 },
                                             ],
-                                            value="AC",
+                                            value="CC",
                                         ),
                                     ],
                                     className="col-3",
@@ -1306,7 +1365,7 @@ heatmap_timeline_page = html.Div(
                 html.Div(
                     [  # External 10-column
                         html.H2(
-                            children="Onramp Heatmap Timeline",
+                            children="Correlation Over Time",
                             style={"color": corporate_colors["white"]},
                         ),
                         html.Br(),
@@ -1322,15 +1381,15 @@ heatmap_timeline_page = html.Div(
                                             id="dropdown",
                                             options=[
                                                 {
-                                                    "label": "Crypto Correlation",
+                                                    "label": "Crypto",
                                                     "value": "CC",
                                                 },
                                                 {
-                                                    "label": "Asset Class Correlation",
+                                                    "label": "Mixed Asset Classes",
                                                     "value": "AC",
                                                 },
                                             ],
-                                            value="AC",
+                                            value="CC",
                                         ),
                                     ],
                                     className="col-3",

@@ -308,7 +308,9 @@ df = calc_volatility(pairs, "Nothing", "Nothing")
 
 
 today = datetime.datetime.now(tz=pytz.utc).date()
-xd = today - datetime.timedelta(days=30)
+xd = today - datetime.timedelta(days=30) 
+#TODO Cyrus possibly change this to april 30th
+
 
 
 def graph_volatility(df, coins, xd):

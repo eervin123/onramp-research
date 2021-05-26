@@ -92,7 +92,7 @@ corporate_xaxis = {
     "color": corporate_colors["light-grey"],
     "tickangle": 315,
     "titlefont": {"size": 12, "color": corporate_colors["light-grey"]},
-    "tickfont": {"size": 11, "color": corporate_colors["light-grey"]},
+    "tickfont": {"size": 14, "color": corporate_colors["light-grey"]},
     "zeroline": False,
 }
 
@@ -1085,6 +1085,7 @@ dashboard_page = html.Div(
                                                 },
                                             },
                                         ),
+                                        html.Br()
                                     ],
                                     className="col-8",
                                 ),
@@ -1095,6 +1096,7 @@ dashboard_page = html.Div(
                                             children="10% Bitcoin",
                                             style={"color": corporate_colors["white"]},
                                         ),
+                                        
                                     ],
                                     className="col-2 slider-text",
                                 ),  # Empty column
@@ -1106,7 +1108,8 @@ dashboard_page = html.Div(
                             [  # Internal row
                                 # Chart Column
                                 html.Div(
-                                    [
+                                    [   
+                                        html.Br(),
                                         #dcc.Graph(id="pie_chart"),
                                         dcc.Loading(id = "loading-icon1", 
                                                 children=[html.Div(dcc.Graph(id='pie_chart'))], type="default")
@@ -1119,6 +1122,7 @@ dashboard_page = html.Div(
                                         # dcc.Graph(
                                         #     id="line_chart", style={"responsive": True}
                                         # )
+                                        html.Br(),
                                         dcc.Loading(id = "loading-icon2", 
                                                 children=[html.Div(dcc.Graph(id='line_chart', style={"responsive": True}))], type="default")
                                     ],
@@ -1129,6 +1133,7 @@ dashboard_page = html.Div(
                                 html.Div(
                                     [
                                         #dcc.Graph(id="scatter_plot")
+                                        html.Br(),
                                         dcc.Loading(id = "loading-icon3", 
                                                 children=[html.Div(dcc.Graph(id='scatter_plot'))], type="default")
                                         
@@ -1142,7 +1147,7 @@ dashboard_page = html.Div(
                             [  # Internal row
                                 # Chart Column
                                 html.Div(
-                                    [
+                                    [   #html.Br(),
                                         #dcc.Graph(id="bar_chart_rr")
                                         dcc.Loading(id = "loading-icon4", 
                                                 children=[html.Div(dcc.Graph(id='bar_chart_rr'))], type="default")
@@ -1152,7 +1157,8 @@ dashboard_page = html.Div(
                                 ),
                                 # Chart Column
                                 html.Div(
-                                    [
+                                    [   
+                                        #html.Br(),
                                         #dcc.Graph(id="bar_chart_ss")
                                         dcc.Loading(id = "loading-icon5", 
                                                 children=[html.Div(dcc.Graph(id='bar_chart_ss'))], type="default")

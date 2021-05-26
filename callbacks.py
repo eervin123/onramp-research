@@ -88,21 +88,21 @@ corporate_title = {"font": {"size": 16, "color": corporate_colors["white"]}}
 corporate_xaxis = {
     "showgrid": False,
     "linecolor": corporate_colors["light-grey"],
-    "color": corporate_colors["light-grey"],
-    "tickangle": 330,
-    "titlefont": {"size": 12, "color": corporate_colors["light-grey"]},
-    "tickfont": {"size": 11, "color": corporate_colors["light-grey"]},
+    "color": corporate_colors["white"],
+    "tickangle": 0,
+    "titlefont": {"size": 12, "color": corporate_colors["white"]},
+    "tickfont": {"size": 11, "color": corporate_colors["white"]},
     "zeroline": False,
 }
 
 corporate_yaxis = {
     "showgrid": True,
-    "color": corporate_colors["light-grey"],
+    "color": corporate_colors["white"],
     "gridwidth": 0.5,
-    "gridcolor": corporate_colors["dark-green"],
+    "gridcolor": corporate_colors["light-grey"],
     "linecolor": corporate_colors["light-grey"],
-    "titlefont": {"size": 12, "color": corporate_colors["light-grey"]},
-    "tickfont": {"size": 11, "color": corporate_colors["light-grey"]},
+    "titlefont": {"size": 12, "color": corporate_colors["white"]},
+    "tickfont": {"size": 11, "color": corporate_colors["white"]},
     "zeroline": False,
 }
 
@@ -114,7 +114,7 @@ corporate_legend = {
     "y": 1.01,
     "xanchor": "right",
     "x": 1.05,
-    "font": {"size": 15, "color": corporate_colors["light-grey"]},
+    "font": {"size": 15, "color": corporate_colors["white"]},
 }  # Legend will be on the top right, above the graph, horizontally
 
 corporate_margins = {
@@ -132,7 +132,7 @@ corporate_layout = go.Layout(
     plot_bgcolor="rgba(0,0,0,0)",
     xaxis=corporate_xaxis,
     yaxis=corporate_yaxis,
-    height=270,
+    height=300,
     legend=corporate_legend,
     margin=corporate_margins,
 )
@@ -201,7 +201,7 @@ df_stats = pd.read_csv(
 )
 df_stats = df_stats.dropna()
 
-colors = ["#a90bfe", "#7540ee", "#3fb6dc"]
+colors = [corporate_colors["onramp-dark"], "#3fb6dc", "#f2a900"]
 ##################################################################################################################################################
 
 
@@ -261,7 +261,7 @@ def update_graphs(value):
     # print(value)
     def graph_pie(percent_dictionary):
 
-        colors_pie = ["#a90bfe", "#f2a900"]  # BTC Orange
+        colors_pie = [corporate_colors['onramp-dark'], "#f2a900"]  # BTC Orange
         assets = list(percent_dictionary.keys())
 
         percents = list(percent_dictionary.values())
@@ -275,12 +275,12 @@ def update_graphs(value):
             title="Portfolio Allocation",
             # width = 400, height = 400
             template=my_template,
-            height=400,
+            height=500,
         )
         fig.update_traces(hovertemplate="%{value:.0%}")
         # print("plotly express hovertemplate:", fig.data[0].hovertemplate)
         fig.update_layout(
-            font=dict(family="Circular STD", color="white"),
+            font=dict(family="Roboto", color="white"),
             title={
                 "text": "<b>Portfolio Allocation<b>",
                 "y": 1,
@@ -295,7 +295,7 @@ def update_graphs(value):
         fig.update_layout(
             {"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)",}
         )
-        fig.update_traces(textfont_size=17)
+        fig.update_traces(textfont_size=17, marker=dict( line=dict(color='white', width=1)))
         fig.update_layout(titlefont=dict(size=24, color="white"))
         fig.update_layout(margin=dict(l=10, r=20, t=40, b=0))
 
@@ -309,7 +309,8 @@ def update_graphs(value):
     choice = "d" + str(value)
 
     def graph_line_chart(df, choice):
-        colors = ["#a90bfe", "#7540ee", "#3fb6dc"]
+        #colors = ["#a90bfe", "#7540ee", "#3fb6dc"]
+        colors = ['white', "#3fb6dc", "#f2a900"]
         df = df[["TraditionalOnly", "SP500Only", choice]]
         df.columns = ["Traditional Only", "SP500 Only", "Combined Portfolio"]
         color_dict = {}
@@ -323,14 +324,15 @@ def update_graphs(value):
             title="Portfolio Performance",
             color_discrete_map=color_dict,
             template=my_template,
+            height = 500
             # width = 450
         )
 
-        fig.update_yaxes(tickprefix="$", showgrid=True)  # the y-axis is in dollars
+        fig.update_yaxes(tickprefix="$", showgrid=False)  # the y-axis is in dollars
         x = 0.82
         fig.update_layout(
             legend=dict(
-                orientation="h", yanchor="bottom", y=-0.5, xanchor="right", x=0.86
+                orientation="h", yanchor="bottom", y=-0.3, xanchor="right", x=0.80
             ),
             font=dict(family="Roboto", color="white"),
             title={
@@ -347,9 +349,9 @@ def update_graphs(value):
                 "paper_bgcolor": "rgba(0, 0, 0, 0)",
             }
         )
-        fig.update_yaxes(side="right", nticks=4)
+        fig.update_yaxes(side="left", nticks=8)
         fig.update_layout(titlefont=dict(size=24, color="white", family="Circular STD"))
-        fig.update_layout(margin=dict(l=0, r=30, t=20, b=0))
+        fig.update_layout(margin=dict(l=70, r=30, t=0, b=0))
         return fig
 
     # ------------------------------------------------------------------------------Scatter Plot ---------------------------------------------------------------------------
@@ -366,7 +368,7 @@ def update_graphs(value):
     }
 
     def graph_scatter_plot(risk_dic, return_dic):
-        colors = ["#a90bfe", "#7540ee", "#3fb6dc"]
+        colors = [corporate_colors['onramp-dark'], "#3fb6dc", "#f2a900"]
         labels = list(risk_dic.keys())
 
         xaxis_vol = list(risk_dic.values())
@@ -381,17 +383,20 @@ def update_graphs(value):
             color=labels,
             # color_discrete_sequence=['#A90BFE','#FF7052','#66F3EC', '#67F9AF'],
             color_discrete_sequence=colors,
+            opacity=1,
             template=my_template,
             labels={
-                "x": "Annual Risk",
+                "x": "",
                 "y": "Annual Return",
                 "color": "",
                 "symbol": "",
             },
             title="Risk vs. Return",
+            height = 500
         )
         # width = 450, height = 450)
         fig.update_xaxes(showgrid=False)
+        fig.update_yaxes(showgrid=False)
         # print("plotly express hovertemplate:", fig.data[0].hovertemplate)
         fig.update_traces(
             hovertemplate="Annual Risk = %{x:.0%}<br>Annual Return = %{y:.0%}"
@@ -407,22 +412,25 @@ def update_graphs(value):
             },
             font=dict(family="Circular STD", color="black"),
             legend=dict(
-                orientation="h", yanchor="bottom", y=-0.5, xanchor="left", x=0.1
+                orientation="h", yanchor="bottom", y=-0.35, xanchor="left", x=0.1
             ),
         )
-        fig.update_yaxes(side="right")
+        fig.update_yaxes(side="left")
         fig.update_layout(
             {
                 "plot_bgcolor": "rgba(255, 255, 255, 0)",
                 "paper_bgcolor": "rgba(255, 255, 255, 0)",
             }
         )
+        fig.add_annotation(text="Annual Risk", 
+                  xref="paper", yref="paper",
+                  x=0.5, y=-.2, showarrow=False, font=dict(family="Roboto", color="white", size = 20))
         fig.update_layout(yaxis_tickformat="%")
         fig.update_layout(xaxis_tickformat="%")
         fig.update_layout(titlefont=dict(size=24, color="white"))
         fig.update_xaxes(title_font={"size": 20})
         fig.update_yaxes(title_font={"size": 20})
-        fig.update_layout(margin=dict(l=10, r=50, t=20, b=0))
+        fig.update_layout(margin=dict(l=100, r=50, t=20, b=0))
 
         return fig
 
@@ -447,13 +455,17 @@ def update_graphs(value):
 
     def graph_barchart(x_axis_rr_ss, y_combined, y_6040, y_spy):
 
-        colors = ["#a90bfe", "#7540ee", "#3fb6dc"]
+        colors = [corporate_colors['onramp-dark'], "#3fb6dc", "#f2a900"]
         if x_axis_rr_ss[0] == "Ann. Return":
             title = "<b>Ann. Return & Risk<b>"
-            max_range = 0.5
+            max_range = 0.4
         else:
             title = "<b>Sharpe & Sortino Ratio<b>"
-            max_range = 0.05
+            for i in range(len(y_combined)):
+                y_combined[i] = y_combined[i]*100
+                y_6040[i] = round(y_6040[i]*100, 2)
+                y_spy[i] = round(y_spy[i]*100, 2)
+            max_range = 4
 
         x_axis_rr_ss *= 3
         y_vals = []
@@ -485,34 +497,43 @@ def update_graphs(value):
             color_discrete_sequence=colors,
             template=my_template,
             labels={"Type": "", "Values": "", "Strategy": ""},
+            height = 490
         )
-        fig.update_traces(texttemplate="%{y:.2%}", textposition="outside")
+        fig.update_yaxes(showgrid=False)
+        fig.update_traces(marker_line_color='white', marker_line_width=1.5)
+
+
+        if x_axis_rr_ss[0] == "Ann. Return":
+            fig.update_traces(texttemplate="%{y:.2%}", textposition="outside")
+            fig.update_traces(hovertemplate="%{y:.0%}")
+        else:
+            fig.update_traces(texttemplate="%{y:.9}", textposition="outside")
+            fig.update_traces(hovertemplate="%{y:.3}")
         fig.update_layout(uniformtext_minsize=16, uniformtext_mode="hide")
-        fig.update_traces(hovertemplate="%{y:.0%}")
         fig.update_yaxes(showticklabels=False)
         fig.update_yaxes(range=[0, max_range])
         fig.update_layout(
             title={
-                "text": title,
-                "y": 0.85,
+                "text": "",
+                "y": 0.0,
                 "x": 0.5,
                 "xanchor": "center",
                 "yanchor": "top",
             },
             font=dict(family="Circular STD", color="white"),
             legend=dict(
-                orientation="h", yanchor="bottom", y=-0.3, xanchor="left", x=0.11
+                orientation="h", yanchor="bottom", y=-0.3, xanchor="left", x=0.31
             ),
             barmode="group",
             bargap=0.15,  # gap between bars of adjacent location coordinates.
             bargroupgap=0.1,  # gap between bars of the same location coordinate.
         )
-        fig.update_layout(
-            {"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)",}
-        )
+        # fig.update_layout(
+        #     {"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)",}
+        # )
         fig.update_layout(xaxis_tickfont_size=19)
         fig.update_layout(titlefont=dict(size=24, color="white"))
-        # fig.update_layout(margin = dict(l=10, r=0, t=100, b=0))
+        fig.update_layout(margin = dict(l=10, r=0, t=0, b=0))
 
         return fig
 

@@ -91,7 +91,7 @@ corporate_xaxis = {
     "color": corporate_colors["white"],
     "tickangle": 0,
     "titlefont": {"size": 12, "color": corporate_colors["white"]},
-    "tickfont": {"size": 11, "color": corporate_colors["white"]},
+    "tickfont": {"size": 16, "color": corporate_colors["white"]},
     "zeroline": False,
 }
 
@@ -102,7 +102,7 @@ corporate_yaxis = {
     "gridcolor": corporate_colors["light-grey"],
     "linecolor": corporate_colors["light-grey"],
     "titlefont": {"size": 12, "color": corporate_colors["white"]},
-    "tickfont": {"size": 11, "color": corporate_colors["white"]},
+    "tickfont": {"size": 16, "color": corporate_colors["white"]},
     "zeroline": False,
 }
 
@@ -256,7 +256,7 @@ def update_graphs(value):
         10: 21,
     }
 
-    percent_dict = {"60/40": 1 - float(value) / 100, "Bitcoin": float(value) / 100}
+    percent_dict = {"Traditional 60/40": 1 - float(value) / 100, "Bitcoin": float(value) / 100}
 
     # print(value)
     def graph_pie(percent_dictionary):
@@ -276,6 +276,7 @@ def update_graphs(value):
             # width = 400, height = 400
             template=my_template,
             height=500,
+            hole = .2
         )
         fig.update_traces(hovertemplate="%{value:.0%}")
         # print("plotly express hovertemplate:", fig.data[0].hovertemplate)
@@ -312,10 +313,10 @@ def update_graphs(value):
         #colors = ["#a90bfe", "#7540ee", "#3fb6dc"]
         colors = ['white', "#3fb6dc", "#f2a900"]
         df = df[["TraditionalOnly", "SP500Only", choice]]
-        df.columns = ["Traditional Only", "SP500 Only", "Combined Portfolio"]
+        df.columns = ["Traditional 60/40", "S&P 500", "Combined Portfolio"]
         color_dict = {}
-        color_dict["Traditional Only"] = colors[0]
-        color_dict["SP500 Only"] = colors[1]
+        color_dict["Traditional 60/40"] = colors[0]
+        color_dict["S&P 500"] = colors[1]
         color_dict["Combined Portfolio"] = colors[2]
 
         fig = px.line(
@@ -356,14 +357,14 @@ def update_graphs(value):
 
     # ------------------------------------------------------------------------------Scatter Plot ---------------------------------------------------------------------------
     risk_dic = {
-        "60/40": float(df_stats.iloc[0][6]) / 100,
-        "S&P 500 Total Return": float(df_stats.iloc[0][7]) / 100,
+        "Traditional 60/40": float(df_stats.iloc[0][6]) / 100,
+        "S&P 500": float(df_stats.iloc[0][7]) / 100,
         "Combined Portfolio": float(df_stats.iloc[value - 1][1]) / 100,
     }
     # print(risk_dic)
     return_dic = {
-        "60/40": float(df_stats.iloc[0][4]) / 100,
-        "S&P 500 Total Return": float(df_stats.iloc[0][5]) / 100,
+        "Traditional 60/40": float(df_stats.iloc[0][4]) / 100,
+        "S&P 500": float(df_stats.iloc[0][5]) / 100,
         "Combined Portfolio": float(df_stats.iloc[value - 1][0]) / 100,
     }
 
@@ -437,7 +438,7 @@ def update_graphs(value):
     # ------------------------------------------------------------------------------Bar Chart ---------------------------------------------------------------------------
 
     x_axis_rr = ["Ann. Return", "Ann. Risk"]
-    x_axis_ss = ["Sharpe", "Sortino"]
+    x_axis_ss = ["Sharpe Ratio", "Sortino Ratio"]
 
     y_combined_rr = [
         float(df_stats.iloc[value - 1][0]) / 100,
@@ -474,10 +475,10 @@ def update_graphs(value):
         y_vals += y_combined
 
         strat = [
-            "60/40 Only",
-            "60/40 Only",
-            "S&P 500 Total Return",
-            "S&P 500 Total Return",
+            "Traditional 60/40",
+            "Traditional 60/40",
+            "S&P 500",
+            "S&P 500",
             "Combined Portfolio",
             "Combined Portfolio",
         ]
@@ -504,12 +505,12 @@ def update_graphs(value):
 
 
         if x_axis_rr_ss[0] == "Ann. Return":
-            fig.update_traces(texttemplate="%{y:.2%}", textposition="outside")
+            fig.update_traces(texttemplate="<b>%{y:.2%}<b>", textposition="outside")
             fig.update_traces(hovertemplate="%{y:.0%}")
         else:
-            fig.update_traces(texttemplate="%{y:.9}", textposition="outside")
+            fig.update_traces(texttemplate="<b>%{y:.9}<b>", textposition="outside")
             fig.update_traces(hovertemplate="%{y:.3}")
-        fig.update_layout(uniformtext_minsize=16, uniformtext_mode="hide")
+        fig.update_layout(uniformtext_minsize=21, uniformtext_mode="hide")
         fig.update_yaxes(showticklabels=False)
         fig.update_yaxes(range=[0, max_range])
         fig.update_layout(

@@ -311,7 +311,7 @@ df_new = df_new[
 df = calc_volatility(pairs, "Nothing", "Nothing", "1D") #Used for Crypto Vol Chart 
 
 today = datetime.datetime.now(tz=pytz.utc).date()
-xd = today - datetime.timedelta(days=40)
+xd = today - datetime.timedelta(days=30)
 
 c = xd.strftime("%Y-%m-%d")
 

@@ -1090,8 +1090,8 @@ dashboard_page = html.Div(
                             children="Impact of Adding BTC to a 60/40 Portfolio",
                             style={"color": corporate_colors["white"]},
                         ),
-                        html.Br(),
-                        html.H4(
+                        #html.Br(),
+                        html.H5(
                             children="Cryptoassets such as Bitcoin (BTC) and Ether (ETH) have emerged as an asset class that clients are interested in holding long term. Cryptoassets are usually held away from advisors. As a trusted confidante and risk manager, Advisors should have access to tools and insights that help them manage portfolios holistically. Use the slider to show the performance change of adding 1-5% BTC to a typical 60/40 portfolio. ",
                             style={"color": corporate_colors["white"]},
                         ),
@@ -1267,8 +1267,8 @@ vol_page = html.Div(
                             children="Rolling Volatility Charts",
                             style={"color": corporate_colors["white"]},
                         ),
-                        html.Br(),
-                        html.H4(
+                        #html.Br(),
+                        html.H5(
                             children="Advisors will now have remote access to held-away client cryptoasset accounts via Read-Only or direct access to allocate on clients’ behalf via the Onramp platform, allowing Advisors to comprehensively manage clients’ assets and risk. Here we show how dynamic volatility can be in the cryptoasset ecosystem creating multiple opportunities to reach out to clients and discuss their risk tolerance and ability to withstand this volatility. ",
                             style={"color": corporate_colors["white"]},
                         ),
@@ -1376,8 +1376,8 @@ btc_vol_page = html.Div(
                             children="Annualized Bitcoin Volatility",
                             style={"color": corporate_colors["white"]},
                         ),
-                        html.Br(),
-                        html.H4(
+                        #html.Br(),
+                        html.H5(
                             children="Advisors will now have remote access to held-away client cryptoasset accounts via Read-Only or direct access to allocate on clients’ behalf via the Onramp platform, allowing Advisors to comprehensively manage clients’ assets and risk. Here we show how dynamic volatility can be in the cryptoasset ecosystem creating multiple opportunities to reach out to clients and discuss their risk tolerance and ability to withstand this volatility. ",
                             style={"color": corporate_colors["white"]},
                         ),
@@ -1479,8 +1479,8 @@ heatmap_page = html.Div(
                             children="Correlation Matrix",
                             style={"color": corporate_colors["white"]},
                         ),
-                        html.Br(),
-                        html.H4(
+                        #html.Br(),
+                        html.H5(
                             children="Advisors can now manage the overall expected return, risk, Sharpe ratio, et cetera, of clients’ total mix of financial assets, including cryptocurrencies and decentralized finance. This heatmap, updated daily, shows current intra-asset correlations for: BTC, ETH, S&P500, All World Equities, High Yield, Global Hedge Funds, Gold, Emerging Market Indices, Russell 2000, Oil, Frontier Markets, and Biotech. Historical correlations are presented in the next tab.",
                             style={"color": corporate_colors["white"]},
                         ),
@@ -1591,8 +1591,8 @@ heatmap_timeline_page = html.Div(
                             children="Correlation Over Time",
                             style={"color": corporate_colors["white"]},
                         ),
-                        html.Br(),
-                        html.H4(
+                        #html.Br(),
+                        html.H5(
                             children="Advisors may have or receive questions about the value of adding cryptoassets, particularly BTC and ETH, to a traditional portfolio. Price returns speak for themselves but the history of their correlation to traditional assets is meaningful to holistic portfolio construction and client discussions. For example, the May 2021 drawdown in cryptoassets had very little correlation to the broader markets, illustrating its value as a minimally-correlated asset in a broader portfolio.",
                             style={"color": corporate_colors["white"]},
                         ),

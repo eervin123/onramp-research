@@ -1178,6 +1178,9 @@ dashboard_page = html.Div(
                                         # dcc.Graph(
                                         #     id="line_chart", style={"responsive": True}
                                         # )
+                                        html.Br(),
+                                        dcc.Loading(id = "loading-icon2", 
+                                                children=[html.Div(dcc.Graph(id='line_chart'))], type="default")
 
                                     ],
                                     style={"margin": "auto"},

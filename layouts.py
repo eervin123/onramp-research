@@ -1088,7 +1088,7 @@ dashboard_page = html.Div(
                             style={"color": corporate_colors["white"]},
                         ),
                         html.Br(),
-                        html.H4(
+                        html.P(
                             children="Cryptoassets such as Bitcoin (BTC) and Ether (ETH) have emerged as an asset class that clients are interested in holding long term. Cryptoassets are usually held away from advisors. As a trusted confidante and risk manager, Advisors should have access to tools and insights that help them manage portfolios holistically. Use the slider to show the performance change of adding 1-5% BTC to a typical 60/40 portfolio. ",
                             style={"color": corporate_colors["white"]},
                         ),
@@ -1174,7 +1174,7 @@ dashboard_page = html.Div(
                                 ),
                                 # Chart Column
                                 html.Div(
-                                    [
+                                    []
 
                                 ),
                             ],

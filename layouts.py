@@ -1,5 +1,8 @@
 import dash_core_components as dcc
 import dash_html_components as html
+from dash_bootstrap_components._components.CardBody import CardBody
+from dash_bootstrap_components._components.Row import Row
+import dash_bootstrap_components as dbc
 import plotly.graph_objs as go
 import plotly.express as px
 import pandas as pd
@@ -1156,17 +1159,17 @@ dashboard_page = html.Div(
                         html.Div(
                             [  # Internal row
                                 # Chart Column
-                                html.Div(
+                                dbc.Col(
                                     [   
                                         html.Br(),
                                         #dcc.Graph(id="pie_chart"),
                                         dcc.Loading(id = "loading-icon1", 
                                                 children=[html.Div(dcc.Graph(id='pie_chart'))], type="default")
                                         
-                                        ], className="col-3"
+                                        ], className="col-3", xs = 12, sm = 12, md = 12, lg = 3, xl = 3
                                 ),
                                 # Chart Column
-                                html.Div(
+                                dbc.Col(
                                     [
                                         # dcc.Graph(
                                         #     id="line_chart", style={"responsive": True}
@@ -1176,10 +1179,10 @@ dashboard_page = html.Div(
                                                 children=[html.Div(dcc.Graph(id='line_chart', style={"responsive": True}))], type="default")
                                     ],
                                     style={"margin": "auto"},
-                                    className="col-5",
+                                    className="col-5", xs = 12, sm = 12, md = 12, lg = 5, xl = 5
                                 ),
                                 # Chart Column
-                                html.Div(
+                                dbc.Col(
                                     [
                                         #dcc.Graph(id="scatter_plot")
                                         html.Br(),
@@ -1187,7 +1190,7 @@ dashboard_page = html.Div(
                                                 children=[html.Div(dcc.Graph(id='scatter_plot'))], type="default")
                                         
                                     
-                                    ], className="col-4"
+                                    ], className="col-4", xs = 12, sm = 12, md = 12, lg = 4, xl = 4
                                 ),
                             ],
                             className="row",
@@ -1195,23 +1198,23 @@ dashboard_page = html.Div(
                         html.Div(
                             [  # Internal row
                                 # Chart Column
-                                html.Div(
+                                dbc.Col(
                                     [   #html.Br(),
                                         #dcc.Graph(id="bar_chart_rr")
                                         dcc.Loading(id = "loading-icon4", 
                                                 children=[html.Div(dcc.Graph(id='bar_chart_rr'))], type="default")
                                     
                                     
-                                    ], className="col-6"
+                                    ], className="col-6", xs = 12, sm = 12, md = 6, lg = 6, xl = 6
                                 ),
                                 # Chart Column
-                                html.Div(
+                                dbc.Col(
                                     [   
                                         #html.Br(),
                                         #dcc.Graph(id="bar_chart_ss")
                                         dcc.Loading(id = "loading-icon5", 
                                                 children=[html.Div(dcc.Graph(id='bar_chart_ss'))], type="default")
-                                    ], className="col-6"
+                                    ], className="col-6", xs = 12, sm = 12, md = 6, lg = 6, xl = 6
                                 ),
                                 # Chart Column
                                 html.Div([], className="col-4"),

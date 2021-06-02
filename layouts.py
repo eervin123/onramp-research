@@ -92,7 +92,7 @@ corporate_xaxis = {
     "color": corporate_colors["light-grey"],
     "tickangle": 315,
     "titlefont": {"size": 12, "color": corporate_colors["light-grey"]},
-    "tickfont": {"size": 11, "color": corporate_colors["light-grey"]},
+    "tickfont": {"size": 14, "color": corporate_colors["light-grey"]},
     "zeroline": False,
 }
 
@@ -223,7 +223,6 @@ def get_coin_data(symbol, db, coindata_day):
     ].to_dict(orient="list")
     return res
 
-
 def get_coin_data_new(symbol):
     df = pd.read_csv("datafiles/Multi_Asset_data.csv", usecols=["Timestamp", symbol])
     res = df.to_dict(orient="list")
@@ -240,15 +239,21 @@ def volatility(price, period_value, data_interval):
        a pandas series of volatility measures
     """
 
-    if data_interval not in ["1T", "30T", "1D"]:
+    if data_interval not in ["1T", "30T", "1D", "30D", "60D", "7D"]:
         raise ValueError
 
     if data_interval == "1T":
         trading_periods = 60 * 24
     elif data_interval == "30T":
         trading_periods = 2 * 24
-    else:
+    elif data_interval == "1D":
         trading_periods = 1
+    elif data_interval == "30D":
+        trading_periods = 30
+    elif data_interval == "60D":
+        trading_periods = 60
+    elif data_interval == "7D":
+        trading_periods = 60
 
     percent_change = price.pct_change() * 100
     standard_deviation = percent_change.rolling(period_value * trading_periods).std()
@@ -257,7 +262,7 @@ def volatility(price, period_value, data_interval):
     return volatility
 
 
-def calc_volatility(pairs, db, coindata_day):
+def calc_volatility(pairs, db, coindata_day, data_interval_ = "1D"):
     """
     Get Graph For Each Coin You Want
     """
@@ -270,13 +275,12 @@ def calc_volatility(pairs, db, coindata_day):
         tmp = tmp[["price_close", "timestamp"]]
         tmp.timestamp = pd.to_datetime(tmp.timestamp, unit="s")
         tmp.set_index("timestamp", inplace=True)
-        for t in [14, 30, 90]:
+        for t in [14, 30, 90, 7, 60]:
             df_all[f'{sp.split("-",1)[0]}_vol_{t}'] = volatility(
-                tmp.price_close, t, data_interval="1D"
+                tmp.price_close, t, data_interval= "1D"
             )
 
     return pd.DataFrame(df_all).dropna(how="all")
-
 
 def calc_volatility_new(pairs, db, coindata_day):
     """
@@ -299,154 +303,100 @@ def calc_volatility_new(pairs, db, coindata_day):
     return pd.DataFrame(df_all).dropna(how="all")
 
 
-df_new = calc_volatility_new(pairs_new, "n", "n")
+df_new = calc_volatility_new(pairs_new, "n", "n") #Used for Mixed Asset Class Vol Chart
 df_new = df_new[
     df_new.index > datetime.datetime(2020, 1, 15)
 ]  # make it so we only have 2020 data
 
-df = calc_volatility(pairs, "Nothing", "Nothing")
-
+df = calc_volatility(pairs, "Nothing", "Nothing", "1D") #Used for Crypto Vol Chart 
 
 today = datetime.datetime.now(tz=pytz.utc).date()
 xd = today - datetime.timedelta(days=30) 
 #TODO Cyrus possibly change this to april 30th
 
 
+c = xd.strftime("%Y-%m-%d")
 
-def graph_volatility(df, coins, xd):
-    source = "Binance"
-    yaxis_dict = dict(
-        title="Rolling 30-Day Volatility",
-        hoverformat=".2f",
-        ticks="outside",
-        tickcolor="#53585f",
-        ticklen=8,
-        tickwidth=3,
-        tick0=0,
-        tickprefix="                 ",
-    )
-    vols = [14, 30, 90]
-    colors = 4 * [
-        "black",
-        "#033F63",
-        "#28666E",
-        "#7C9885",
-        "#B5B682",
-        "#FEDC97",
-        "#F6AE2D",
-        "#F26419",
-        "#5F0F40",
-        "#9A031E",
-        "#CB793A",
-    ]
+#----------------------------------------------------------Bitcoin Volatility-----------------------------------------------------
 
-    index = 0
-    data = []
-    for i in df.columns:
-        data.append(
-            go.Scatter(
-                x=list(df.index),
-                y=list(df[i]),
-                name=i.split("_", 1)[0],
-                visible=False,
-                line_color=colors[index],
-            )
-        )
-        index += 1
+df_btc = df[['BTC_vol_30', 'BTC_vol_60', 'BTC_vol_7']] #Annualized bitcoin vol chart
 
-    num_coins = len(coins)
+df_btc.columns = ['Ann. 30D Volatility', 'Ann. 60D Volatility', 'Ann. 7D Volatility']
 
-    vis_init = [False] * len(vols)
-    vis_vol = dict()
-    for i, v in enumerate(list(vols)):
-        tmp = vis_init.copy()
-        tmp[i] = True
-        vis_vol[v] = tmp.copy()
 
-    updatemenus = list(
-        [
-            dict(
-                type="dropdown",
-                active=1,
-                x=-0,
-                y=1.2,
-                buttons=[
-                    dict(
-                        label=f"{v}-Day",
-                        method="update",
-                        args=[
-                            {"visible": vis_vol[v] * num_coins},
-                            {
-                                "yaxis": dict(
-                                    yaxis_dict, title=f"Rolling {v}-Day Volatility"
-                                )
-                            },
-                        ],
-                    )
-                    for v in list(vols)
-                ],
-            )
-        ]
-    )
 
-    # set initial to 0
-    for i, b in enumerate(vis_vol[30] * num_coins):
-        if b == True:
-            data[i].visible = b
 
-    layout = dict(
-        title=dict(
-            text="Changing Volatility Over Time",
-            font=dict(size=30, color="#000"),
-            x=0.5,
+
+for col in df_btc.columns:
+    df_btc[col] = df_btc[col].map(lambda element: element/100)
+
+avg_7 = df_btc["Ann. 7D Volatility"].mean()
+avg_30 = df_btc["Ann. 30D Volatility"].mean()
+avg_60 = df_btc["Ann. 60D Volatility"].mean()
+df_btc["Avg. 30D Volatility"] = avg_30
+
+def graph_btc_vol(df):
+    fig = go.Figure()
+    fig.add_trace(go.Scatter( x = df.index, y = df['Ann. 30D Volatility'], name = 'Ann. 30D Volatility', line = dict(color = "#00EEAD", width = 2, dash = 'solid')))
+    fig.add_trace(go.Scatter( x = df.index, y = df['Ann. 60D Volatility'], name = 'Ann. 60D Volatility', line = dict(color = "white", width = 2, dash = 'solid')))
+    fig.add_trace(go.Scatter( x = df.index, y = df['Ann. 7D Volatility'], name = 'Ann. 7D Volatility', line = dict(color = "#B0B6BD", width = 2, dash = 'dot')))
+    fig.add_trace(go.Scatter( x = df.index, y = df['Avg. 30D Volatility'], name = 'Avg. 30D Volatility', line = dict(color = "white", width = 2, dash = 'dash')))
+    fig.update_xaxes(showgrid = False)
+    fig.update_yaxes(showgrid=False) 
+    fig.update_layout(yaxis_tickformat="%")
+    fig.update_layout(
+        legend=dict(
+            orientation="h", yanchor="top", xanchor="center", y = 1.1, x = .5, font = {"size": 17}
+            
         ),
-        height=700,
-        width=1000,
-        dragmode="zoom",
-        xaxis=dict(
-            title="Date",
-            ticks="inside",
-            ticklen=6,
-            tickwidth=3,
-            rangeselector=dict(
-                buttons=list(
-                    [
-                        dict(count=3, label="3m", step="month", stepmode="backward"),
-                        dict(count=1, label="YTD", step="year", stepmode="todate"),
-                        dict(count=1, label="1y", step="year", stepmode="backward"),
-                        dict(step="all"),
-                    ]
-                )
-            ),
-            type="date",
-            tickcolor="#53585f",
-        ),
-        yaxis=yaxis_dict,
-        margin=dict(pad=0, b=125),
-        updatemenus=updatemenus,
-        font=dict(size=14),
-        annotations=[
-            dict(
-                x=-0.18,
-                y=-0.25,
-                xref="paper",
-                yref="paper",
-                showarrow=False,
-                text=f"*Source: {source}; Volatility data quoted here represents data as of {xd}.",
-                font=dict(size=10),
-            )
-        ],
+        font=dict(family="Roboto", color="white"),
+        title={
+            "text": "<b>Annualized 30D & 60D Volatility - Bitcoin<b>",
+            "y": 1,
+            "x": 0.5,
+            "xanchor": "center",
+            "yanchor": "top",
+        },
     )
-
-    fig = go.Figure(data=data, layout=layout)
+    fig.update_layout(
+        {
+            "plot_bgcolor": "rgba(0, 0, 0, 0)",  # Transparent
+            "paper_bgcolor": "rgba(0, 0, 0, 0)",
+        }
+    )
+    #fig.update_xaxes(ticks = 'outside', tickwidth=2, tickcolor='white', ticklen=10)
+    fig.update_xaxes(tickfont = {'size': 14})
+    fig.update_yaxes(tickfont = {'size': 14})
+    fig.update_yaxes(side="left", nticks=8)
+    fig.update_layout(titlefont=dict(size=30, color="white", family="Roboto"))
 
     return fig
 
+def btc_vol_table(a7, a30, a60, df_btc):
+    labels = ['<b>Volatility<b>', '<b>Average<b>', '<b>Current<b>']
+    fig = go.Figure(data=[go.Table(
+                                header=dict(values= labels,
+                                            line_color= 'white',
+                                            fill_color= '#b0b6bd',
+                                            align=['left','center', 'center'],
+                                            height = 50,
+                                            font=dict(color='black', size=30, family = "roboto")),
+                                cells=dict(values=[['Ann. 7D Volatility', 'Ann. 30D Volatility', 'Ann. 60D Volatility'], [str(round(a7*100, 2))+'%', str(round(a30*100, 2))+'%', str(round(a60*100, 2))+'%'], [str(round(df_btc['Ann. 7D Volatility'].iloc[-1]*100, 2))+'%', str(round(df_btc['Ann. 30D Volatility'].iloc[-1]*100, 2))+'%', str(round(df_btc['Ann. 60D Volatility'].iloc[-1]*100, 2))+'%']],
+                                            line_color = 'white',
+                                            height = 40,
+                                            font = dict(color = 'white', size = 20, family = "roboto"),
+                                            fill_color = '#131c4f' )) ])
+    fig.update_layout(margin = dict(l=1, r=0, t=0, b=0))
+    fig.update_layout(
+        {
+            "plot_bgcolor": "rgba(0, 0, 0, 0)",  # Transparent
+            "paper_bgcolor": "rgba(0, 0, 0, 0)",
+        }
+    )
+    return fig
 
-c = xd.strftime("%Y-%m-%d")
-vol_fig = graph_volatility(df_new, pairs_new, c)
-
-
+btc_vol_table = btc_vol_table(avg_7, avg_30, avg_60, df_btc)
+btc_vol_fig = graph_btc_vol(df_btc)
 # -----------------------------------------------------------Heatmap------------------------------------------
 custom_scale = [
     # Let first 10% (0.1) of the values have color rgb(0, 0, 0)
@@ -808,7 +758,7 @@ def get_navbar(p="dashboard"):
 
     navbar_dashboard = html.Div(
         [
-            html.Div([], className="col-2"),
+            html.Div([], className="col-1"),
             html.Div(
                 [
                     dcc.Link(
@@ -845,6 +795,16 @@ def get_navbar(p="dashboard"):
                 ],
                 className="col-2",
             ),
+            
+            html.Div(
+                [
+                    dcc.Link(
+                        html.H4(children="Bitcoin Rolling Volatility"),
+                        href="/apps/bitcoin-volatility",
+                    )
+                ],
+                className="col-2",
+            ),
             html.Div([], className="col-3"),
         ],
         className="row",
@@ -856,7 +816,7 @@ def get_navbar(p="dashboard"):
 
     navbar_vol = html.Div(
         [
-            html.Div([], className="col-2"),
+            html.Div([], className="col-1"),
             html.Div(
                 [dcc.Link(html.H4(children="Dashboard"), href="/apps/dashboard")],
                 className="col-2",
@@ -888,6 +848,16 @@ def get_navbar(p="dashboard"):
                 ],
                 className="col-2",
             ),
+            html.Div(
+            [
+                dcc.Link(
+                    html.H4(children="Bitcoin Rolling Volatility"),
+                    href="/apps/bitcoin-volatility",
+                )
+            ],
+            className="col-2",
+            ),
+            
             html.Div([], className="col-3"),
         ],
         className="row",
@@ -899,7 +869,7 @@ def get_navbar(p="dashboard"):
 
     navbar_heatmap = html.Div(
         [
-            html.Div([], className="col-2"),
+            html.Div([], className="col-1"),
             html.Div(
                 [dcc.Link(html.H4(children="Dashboard"), href="/apps/dashboard")],
                 className="col-2",
@@ -931,6 +901,16 @@ def get_navbar(p="dashboard"):
                 ],
                 className="col-2",
             ),
+
+            html.Div(
+            [
+                dcc.Link(
+                    html.H4(children="Bitcoin Rolling Volatility"),
+                    href="/apps/bitcoin-volatility",
+                )
+            ],
+            className="col-2",
+            ),
             html.Div([], className="col-3"),
         ],
         className="row",
@@ -942,7 +922,7 @@ def get_navbar(p="dashboard"):
 
     navbar_timeline = html.Div(
         [
-            html.Div([], className="col-2"),
+            html.Div([], className="col-1"),
             html.Div(
                 [dcc.Link(html.H4(children="Dashboard"), href="/apps/dashboard")],
                 className="col-2",
@@ -976,6 +956,73 @@ def get_navbar(p="dashboard"):
                 ],
                 className="col-2",
             ),
+
+            html.Div(
+            [
+                dcc.Link(
+                    html.H4(children="Bitcoin Rolling Volatility"),
+                    href="/apps/bitcoin-volatility",
+                )
+            ],
+            className="col-2",
+            ),
+
+            html.Div([], className="col-3"),
+        ],
+        className="row",
+        style={
+            "background-color": corporate_colors["dark-green"],  # behind nav
+            "box-shadow": "2px 5px 5px 1px #00eead",
+        },
+    )
+
+    btc_vol = html.Div(
+        [
+            html.Div([], className="col-1"),
+            html.Div(
+                [dcc.Link(html.H4(children="Dashboard"), href="/apps/dashboard")],
+                className="col-2",
+            ),
+            html.Div(
+                [
+                    dcc.Link(
+                        html.H4(children="Volatility Chart"),
+                        href="/apps/volatility-chart",
+                    )
+                ],
+                className="col-2",
+            ),
+            html.Div(
+                [
+                    dcc.Link(
+                        html.H4(children="Correlation Matrix"),
+                        href="/apps/correlation-matrix",
+                    )
+                ],
+                className="col-2",
+            ),
+            html.Div(
+                [
+                    dcc.Link(
+                        html.H4(
+                            children="Correlation Over Time"
+                        ),
+                        href="/apps/correlation-timeline",
+                    )
+                ],
+                className="col-2",
+            ),
+
+            html.Div(
+            [
+                dcc.Link(
+                    html.H4(children="Bitcoin Rolling Volatility", style = navbarcurrentpage),
+                    href="/apps/bitcoin-volatility",
+                )
+            ],
+            className="col-2",
+            ),
+
             html.Div([], className="col-3"),
         ],
         className="row",
@@ -993,6 +1040,8 @@ def get_navbar(p="dashboard"):
         return navbar_heatmap
     elif p == "timeline":
         return navbar_timeline
+    elif p == "btc_vol":
+        return btc_vol
     else:
         return navbar_dashboard
 
@@ -1087,6 +1136,7 @@ dashboard_page = html.Div(
                                                 },
                                             },
                                         ),
+                                        html.Br()
                                     ],
                                     className="col-8",
                                 ),
@@ -1097,6 +1147,7 @@ dashboard_page = html.Div(
                                             children="10% Bitcoin",
                                             style={"color": corporate_colors["white"]},
                                         ),
+                                        
                                     ],
                                     className="col-2 slider-text",
                                 ),  # Empty column
@@ -1108,17 +1159,7 @@ dashboard_page = html.Div(
                             [  # Internal row
                                 # Chart Column
                                 html.Div(
-                                    [
-                                        # dcc.Graph(id="pie_chart"),
-                                        dcc.Loading(
-                                            id="loading-icon1",
-                                            children=[
-                                                html.Div(dcc.Graph(id="pie_chart"))
-                                            ],
-                                            type="default",
-                                        )
-                                    ],
-                                    className="col-3",
+
                                 ),
                                 # Chart Column
                                 html.Div(
@@ -1126,18 +1167,7 @@ dashboard_page = html.Div(
                                         # dcc.Graph(
                                         #     id="line_chart", style={"responsive": True}
                                         # )
-                                        dcc.Loading(
-                                            id="loading-icon2",
-                                            children=[
-                                                html.Div(
-                                                    dcc.Graph(
-                                                        id="line_chart",
-                                                        style={"responsive": True},
-                                                    )
-                                                )
-                                            ],
-                                            type="default",
-                                        )
+
                                     ],
                                     style={"margin": "auto"},
                                     className="col-5",
@@ -1145,16 +1175,7 @@ dashboard_page = html.Div(
                                 # Chart Column
                                 html.Div(
                                     [
-                                        # dcc.Graph(id="scatter_plot")
-                                        dcc.Loading(
-                                            id="loading-icon3",
-                                            children=[
-                                                html.Div(dcc.Graph(id="scatter_plot"))
-                                            ],
-                                            type="default",
-                                        )
-                                    ],
-                                    className="col-4",
+
                                 ),
                             ],
                             className="row",
@@ -1163,31 +1184,7 @@ dashboard_page = html.Div(
                             [  # Internal row
                                 # Chart Column
                                 html.Div(
-                                    [
-                                        # dcc.Graph(id="bar_chart_rr")
-                                        dcc.Loading(
-                                            id="loading-icon4",
-                                            children=[
-                                                html.Div(dcc.Graph(id="bar_chart_rr"))
-                                            ],
-                                            type="default",
-                                        )
-                                    ],
-                                    className="col-6",
-                                ),
-                                # Chart Column
-                                html.Div(
-                                    [
-                                        # dcc.Graph(id="bar_chart_ss")
-                                        dcc.Loading(
-                                            id="loading-icon5",
-                                            children=[
-                                                html.Div(dcc.Graph(id="bar_chart_ss"))
-                                            ],
-                                            type="default",
-                                        )
-                                    ],
-                                    className="col-6",
+
                                 ),
                                 # Chart Column
                                 html.Div([], className="col-4"),
@@ -1208,7 +1205,6 @@ dashboard_page = html.Div(
 ####################################################################################################
 # 002 - Volatility over Time Page
 ####################################################################################################
-
 vol_page = html.Div(
     [
         # #####################
@@ -1316,7 +1312,110 @@ vol_page = html.Div(
     ]
 )
 ####################################################################################################
-# 003 - Correlation Matrix Heatmap Page
+# 003 - Bitcoin Volatility Page
+####################################################################################################
+btc_vol_page = html.Div(
+    [
+        # #####################
+        # # Row 1 : Header
+        # get_header(),
+        # #####################
+        # Row 2 : Nav bar
+        get_navbar("btc_vol"),
+        #####################
+        # Row 3 : Filters
+        #####################
+        # Row 4
+        get_emptyrow(),
+        #####################
+        # Row 5 : Charts
+        html.Div(
+            [  # External row
+                # html.Div([], className="col-1"),  # Blank 1 column
+                html.Div(
+                    [  # External 10-column
+                        html.H2(
+                            children="Annualized Bitcoin Volatility",
+                            style={"color": corporate_colors["white"]},
+                        ),
+                        html.Br(),
+                        html.H4(
+                            children="Advisors will now have remote access to held-away client cryptoasset accounts via Read-Only or direct access to allocate on clients’ behalf via the Onramp platform, allowing Advisors to comprehensively manage clients’ assets and risk. Here we show how dynamic volatility can be in the cryptoasset ecosystem creating multiple opportunities to reach out to clients and discuss their risk tolerance and ability to withstand this volatility. ",
+                            style={"color": corporate_colors["white"]},
+                        ),
+                        html.Div(
+                            [  # Internal row - RECAPS
+                                # html.Div(
+                                #     [
+                                #         dcc.Dropdown(
+                                #             id="dropdown",
+                                #             options=[
+                                #                 {"label": "Crypto", "value": "CC",},
+                                #                 {
+                                #                     "label": "Mixed Asset Classes",  # TODO @cyrus let's use these names going forward.
+                                #                     "value": "AC",
+                                #                 },
+                                #             ],
+                                #             value="AC",
+                                #         ),
+                                #     ],
+                                #     className="col-3",
+                                # ),
+                                html.Div([], className="col-8"),
+                                html.Div(
+                                    [
+                                        # #html.Br(),
+                                        # html.H3(children= "10% Bitcoin",
+                                        # style = {'color' : corporate_colors['white']}),
+                                    ],
+                                    className="col-2",
+                                ),  # Empty column
+                            ],
+                            className="row",
+                            style=recapdiv,
+                        ),  # Internal row - RECAP
+                        html.Div(
+                            [  # Internal row
+                                # Chart Column
+                                # html.Div([
+                                # ],
+                                # className = 'col-3'),
+                                # Chart Column
+                                html.Div(
+                                    [
+                                        # dcc.Graph(
+                                        #     id="vol_chart", style={"responsive": True},
+                                        # )
+                                        dcc.Loading(id = "loading-icon_btc_vol", 
+                                                children=[html.Div(dcc.Graph(id='btc_vol_chart', figure = btc_vol_fig, style = {"responsive": True, "width": "100%", "height": "70vh"}))], type="default"),
+                                        
+                                        dcc.Loading(id = "loading-icon_btc_vol_table", 
+                                                children=[html.Div(dcc.Graph(id='btc_vol_chart_t', figure = btc_vol_table, style = {"responsive": True, "width": "95%", "height": "70vh"}))], type="default")
+                                        
+                                    ],
+                                    style={"max-width": "100%", "margin": "auto"},
+                                    className="col-8",
+                                ),
+                                # Chart Column
+                                # html.Div([
+                                # ],
+                                # className = 'col-4')
+                            ],
+                            className="row",
+                        ),  # Internal row
+                    ],
+                    className="col-12",
+                    style=externalgraph_colstyling,
+                ),  # External 10-column
+                # html.Div([], className="col-1"),  # Blank 1 column
+            ],
+            className="row",
+            style=externalgraph_rowstyling,
+        ),  # External row
+    ]
+)
+####################################################################################################
+# 004 - Correlation Matrix Heatmap Page
 ####################################################################################################
 heatmap_page = html.Div(
     [
@@ -1428,7 +1527,7 @@ heatmap_page = html.Div(
     ]
 )
 ####################################################################################################
-# 004 - Correlation over time (Heatmap over time) Page
+# 005 - Correlation over time (Heatmap over time) Page
 ####################################################################################################
 heatmap_timeline_page = html.Div(
     [
@@ -1559,7 +1658,7 @@ def update_vol(value):
             tickprefix="                 ",
         )
         vols = [14, 30, 90]
-        colors = 4 * [
+        colors = 6 * [
             "black",
             "#033F63",
             "#28666E",

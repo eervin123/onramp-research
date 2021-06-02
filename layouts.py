@@ -314,7 +314,9 @@ df_new = df_new[
 df = calc_volatility(pairs, "Nothing", "Nothing", "1D") #Used for Crypto Vol Chart 
 
 today = datetime.datetime.now(tz=pytz.utc).date()
-xd = today - datetime.timedelta(days=30)
+xd = today - datetime.timedelta(days=30) 
+#TODO Cyrus possibly change this to april 30th
+
 
 c = xd.strftime("%Y-%m-%d")
 
@@ -1166,7 +1168,9 @@ dashboard_page = html.Div(
                                         dcc.Loading(id = "loading-icon1", 
                                                 children=[html.Div(dcc.Graph(id='pie_chart'))], type="default")
                                         
-                                        ], className="col-3", xs = 12, sm = 12, md = 12, lg = 3, xl = 3
+                                        ], className="col-3", xs = 12, sm = 12, md = 12, lg = 3, xl = 3),
+                                html.Div(
+
                                 ),
                                 # Chart Column
                                 dbc.Col(
@@ -1174,9 +1178,7 @@ dashboard_page = html.Div(
                                         # dcc.Graph(
                                         #     id="line_chart", style={"responsive": True}
                                         # )
-                                        html.Br(),
-                                        dcc.Loading(id = "loading-icon2", 
-                                                children=[html.Div(dcc.Graph(id='line_chart', style={"responsive": True}))], type="default")
+
                                     ],
                                     style={"margin": "auto"},
                                     className="col-5", xs = 12, sm = 12, md = 12, lg = 5, xl = 5
@@ -1191,6 +1193,7 @@ dashboard_page = html.Div(
                                         
                                     
                                     ], className="col-4", xs = 12, sm = 12, md = 12, lg = 4, xl = 4
+
                                 ),
                             ],
                             className="row",
@@ -1214,7 +1217,9 @@ dashboard_page = html.Div(
                                         #dcc.Graph(id="bar_chart_ss")
                                         dcc.Loading(id = "loading-icon5", 
                                                 children=[html.Div(dcc.Graph(id='bar_chart_ss'))], type="default")
-                                    ], className="col-6", xs = 12, sm = 12, md = 6, lg = 6, xl = 6
+                                    ], className="col-6", xs = 12, sm = 12, md = 6, lg = 6, xl = 6),
+                                html.Div(
+
                                 ),
                                 # Chart Column
                                 html.Div([], className="col-4"),
@@ -1307,9 +1312,18 @@ vol_page = html.Div(
                                         # dcc.Graph(
                                         #     id="vol_chart", style={"responsive": True},
                                         # )
-                                        dcc.Loading(id = "loading-icon_vol", 
-                                                children=[html.Div(dcc.Graph(id='vol_chart', style = {"responsive": True}))], type="default")
-                                        
+                                        dcc.Loading(
+                                            id="loading-icon_vol",
+                                            children=[
+                                                html.Div(
+                                                    dcc.Graph(
+                                                        id="vol_chart",
+                                                        style={"responsive": True},
+                                                    )
+                                                )
+                                            ],
+                                            type="default",
+                                        )
                                     ],
                                     style={"max-width": "100%", "margin": "auto"},
                                     className="col-4",
@@ -1513,9 +1527,18 @@ heatmap_page = html.Div(
                                         #     # figure = heatmap_fig_new,
                                         #     style={"responsive": True},
                                         # )
-
-                                        dcc.Loading(id = "loading-icon_heat", 
-                                                children=[html.Div(dcc.Graph(id='heatmap', style = {"responsive": True}))], type="default")
+                                        dcc.Loading(
+                                            id="loading-icon_heat",
+                                            children=[
+                                                html.Div(
+                                                    dcc.Graph(
+                                                        id="heatmap",
+                                                        style={"responsive": True},
+                                                    )
+                                                )
+                                            ],
+                                            type="default",
+                                        )
                                     ],
                                     style={"max-width": "100%", "margin": "auto"},
                                     className="col-4",
@@ -1615,9 +1638,18 @@ heatmap_timeline_page = html.Div(
                                         #     # figure = heatmap_timeline_fig_new,
                                         #     style={"responsive": True},
                                         # )
-
-                                        dcc.Loading(id = "loading-icon_time", 
-                                                children=[html.Div(dcc.Graph(id='heatmap_timeline', style = {"responsive": True}))], type="default")
+                                        dcc.Loading(
+                                            id="loading-icon_time",
+                                            children=[
+                                                html.Div(
+                                                    dcc.Graph(
+                                                        id="heatmap_timeline",
+                                                        style={"responsive": True},
+                                                    )
+                                                )
+                                            ],
+                                            type="default",
+                                        )
                                     ],
                                     style={"max-width": "100%", "margin": "auto"},
                                     className="col-4",
@@ -1987,7 +2019,7 @@ def update_timeline(value):
                     text=f"{start_title} 6-Month Rolling Return Correlation",
                 ),
             ),
-            margin=dict(pad=5, b=15),
+            margin=dict(pad=5, b=125),
             legend=dict(orientation="h"),
             updatemenus=updatemenus,
         )

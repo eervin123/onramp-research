@@ -360,6 +360,26 @@ def graph_btc_vol(df):
             "xanchor": "center",
             "yanchor": "top",
         },
+        xaxis=dict(
+                title="Date",
+                ticks="inside",
+                ticklen=6,
+                tickwidth=3,
+                rangeselector=dict(
+                    buttons=list(
+                        [
+                            dict(
+                                count=3, label="3m", step="month", stepmode="backward"
+                            ),
+                            dict(count=1, label="YTD", step="year", stepmode="todate"),
+                            dict(count=1, label="1y", step="year", stepmode="backward"),
+                            dict(step="all"),
+                        ]
+                    )
+                ),
+                type="date",
+                tickcolor="#53585f",
+            ),
     )
     fig.update_layout(
         {

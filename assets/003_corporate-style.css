@@ -11,6 +11,41 @@
 - Img
 - Typography
 */
+/* change the background color */
+
+.nav-pills .nav-link.active {
+  color: #fff;
+  background-color: #00eead;
+}
+
+.nav-pills .nav-link:hover {
+  color: #fff;
+  background-color: #00eead;
+}
+
+
+/* change the brand and text color */
+.navbar-custom .navbar-brand,
+.navbar-custom .navbar-text {
+  color: #ffcc00;
+}
+
+/* change the link color */
+.navbar-custom .navbar-nav .nav-link {
+  color: #ffbb00;
+}
+
+/* change the color of active or hovered links */
+.navbar-custom .nav-item.active .nav-link,
+.navbar-custom .nav-item:focus .nav-link,
+.navbar-custom .nav-item:hover .nav-link {
+  color: black;
+}
+.nav_item .active a,.nav_item .active a:hover,.nav_item .active a:focus {
+  background-color: #ffe70d;
+  color: #FFFFFF;
+}
+
 .rc-slider-rail{
   background-color: #00eead;
 }

@@ -1,11 +1,13 @@
 import dash_core_components as dcc
 import dash_html_components as html
 import dash
+from dash.dependencies import Input, Output
+import dash_bootstrap_components as dbc
 
 from dash_app import dash_app
 
 # from dash_app import server #Eric modified to move in code for gunicorn
-from layouts import dashboard_page, vol_page, heatmap_page, heatmap_timeline_page, btc_vol_page
+from layouts import dashboard_page, vol_page, heatmap_page, heatmap_timeline_page, btc_vol_page, get_navbar
 import callbacks
 
 server = dash_app.server  # Eric moved this here after struggling with gunicorn
@@ -15,7 +17,14 @@ dash_app.layout = html.Div(
 )
 
 dash_app.title = "Onramp Academy Tools"
-
+get_navbar()
+@dash_app.callback(Output("content", "children"), [Input("tabs", "active_tab")])
+def switch_tab(at):
+    if at == "tab-1":
+        return dashboard_page
+    elif at == "tab-2":
+        return vol_page
+    return html.P("This shouldn't ever be displayed...")
 
 @dash_app.callback(
     dash.dependencies.Output("page-content", "children"),

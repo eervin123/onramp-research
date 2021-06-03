@@ -548,286 +548,381 @@ def get_header():
 
     return header
 
-
 #####################
 # Nav bar
 def get_navbar(p="dashboard"):
 
-    navbar_dashboard = html.Div(
+    navbar_dashboard = dbc.Row([
+        dbc.Col( width = {"size" : 0}, className = "mr-3" ),
+        dbc.Col([
+        dbc.Nav(
         [
-            html.Div([], className="col-1"),
-            html.Div(
-                [
-                    dcc.Link(
-                        html.H4(children="Dashboard", style=navbarcurrentpage),
-                        href="/apps/dashboard",
-                    )
-                ],
-                className="col-2",
-            ),
-            html.Div(
-                [
-                    dcc.Link(
-                        html.H4(children="Volatility Chart"),
-                        href="/apps/volatility-chart",
-                    )
-                ],
-                className="col-2",
-            ),
-            html.Div(
-                [
-                    dcc.Link(
-                        html.H4(children="Correlation Matrix"),
-                        href="/apps/correlation-matrix",
-                    )
-                ],
-                className="col-2",
-            ),
-            html.Div(
-                [
-                    dcc.Link(
-                        html.H4(children="Correlation Over Time"),
-                        href="/apps/correlation-timeline",
-                    )
-                ],
-                className="col-2",
-            ),
+        dbc.NavItem(dbc.NavLink("Dashboard", active=True, href="/apps/dashboard", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
+        ],
+        pills=True, 
+        )
+        ])
+    ], className = "bg-white")
+
+    navbar_vol = dbc.Row([
+        dbc.Col( width = {"size" : 0}, className = "mr-3" ),
+        dbc.Col([
+        dbc.Nav(
+        [
+        dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Volatility Chart",active=True, href="/apps/volatility-chart", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
+        ],
+        pills=True, 
+        )
+        ])
+    ], className = "bg-white")
+
+    navbar_heatmap = dbc.Row([
+        dbc.Col( width = {"size" : 0}, className = "mr-3" ),
+        dbc.Col([
+        dbc.Nav(
+        [
+        dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Correlation Matrix",active=True, href="/apps/correlation-matrix", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
+        ],
+        pills=True, 
+        )
+        ])
+    ], className = "bg-white")
+
+    navbar_timeline = dbc.Row([
+        dbc.Col( width = {"size" : 0}, className = "mr-3" ),
+        dbc.Col([
+        dbc.Nav(
+        [
+        dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Correlation Over Time", active=True, href="/apps/correlation-timeline", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Bitcoin Volatility",  href="/apps/bitcoin-volatility", style = {"color": "black"})),
+        ],
+        pills=True, 
+        )
+        ])
+    ], className = "bg-white")
+
+    btc_vol = dbc.Row([
+        dbc.Col( width = {"size" : 0}, className = "mr-3" ),
+        dbc.Col([
+        dbc.Nav(
+        [
+        dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Bitcoin Volatility", active=True, href="/apps/bitcoin-volatility", style = {"color": "black"})),
+        ],
+        pills=True, 
+        )
+        ])
+    ], className = "bg-white")
+
+    # navbar_dashboard = html.Div(
+    #     [
+    #         html.Div([], className="col-1"),
+    #         html.Div(
+    #             [   html.Div(
+    #                      [
+    #                  dbc.Tabs(
+    #                     [
+    #                         dbc.Tab(label="Tab 1", tab_id="tab-1"),
+    #                         dbc.Tab(label="Tab 2", tab_id="tab-2"),
+    #                     ],
+    #                     id="tabs",
+    #                     active_tab="tab-1",
+    #                 ),
+    #                 html.Div(id="content"),
+    #                         ]
+    #                     ),
+
+
+    #                 dcc.Link(
+    #                     html.H4(children="Dashboard", style=navbarcurrentpage),
+    #                     href="/apps/dashboard",
+    #                 )
+    #             ],
+    #             className="col-2",
+    #         ),
+    #         html.Div(
+    #             [
+    #                 dcc.Link(
+    #                     html.H4(children="Volatility Chart"),
+    #                     href="/apps/volatility-chart",
+    #                 )
+    #             ],
+    #             className="col-2",
+    #         ),
+    #         html.Div(
+    #             [
+    #                 dcc.Link(
+    #                     html.H4(children="Correlation Matrix"),
+    #                     href="/apps/correlation-matrix",
+    #                 )
+    #             ],
+    #             className="col-2",
+    #         ),
+    #         html.Div(
+    #             [
+    #                 dcc.Link(
+    #                     html.H4(children="Correlation Over Time"),
+    #                     href="/apps/correlation-timeline",
+    #                 )
+    #             ],
+    #             className="col-2",
+    #         ),
             
-            html.Div(
-                [
-                    dcc.Link(
-                        html.H4(children="Bitcoin Rolling Volatility"),
-                        href="/apps/bitcoin-volatility",
-                    )
-                ],
-                className="col-2",
-            ),
-            html.Div([], className="col-3"),
-        ],
-        className="row",
-        style={
-            "background-color": corporate_colors["dark-green"],  # behind nav
-            "box-shadow": "2px 5px 5px 1px #00eead",
-        },
-    )
+    #         html.Div(
+    #             [
+    #                 dcc.Link(
+    #                     html.H4(children="Bitcoin Rolling Volatility"),
+    #                     href="/apps/bitcoin-volatility",
+    #                 )
+    #             ],
+    #             className="col-2",
+    #         ),
+    #         html.Div([], className="col-3"),
+    #     ],
+    #     className="row",
+    #     style={
+    #         "background-color": corporate_colors["dark-green"],  # behind nav
+    #         "box-shadow": "2px 5px 5px 1px #00eead",
+    #     },
+    # )
 
-    navbar_vol = html.Div(
-        [
-            html.Div([], className="col-1"),
-            html.Div(
-                [dcc.Link(html.H4(children="Dashboard"), href="/apps/dashboard")],
-                className="col-2",
-            ),
-            html.Div(
-                [
-                    dcc.Link(
-                        html.H4(children="Volatility Chart", style=navbarcurrentpage),
-                        href="/apps/volatility-chart",
-                    )
-                ],
-                className="col-2",
-            ),
-            html.Div(
-                [
-                    dcc.Link(
-                        html.H4(children="Correlation Matrix"),
-                        href="/apps/correlation-matrix",
-                    )
-                ],
-                className="col-2",
-            ),
-            html.Div(
-                [
-                    dcc.Link(
-                        html.H4(children="Correlation Over Time"),
-                        href="/apps/correlation-timeline",
-                    )
-                ],
-                className="col-2",
-            ),
-            html.Div(
-            [
-                dcc.Link(
-                    html.H4(children="Bitcoin Rolling Volatility"),
-                    href="/apps/bitcoin-volatility",
-                )
-            ],
-            className="col-2",
-            ),
+    # navbar_vol = html.Div(
+    #     [
+    #         html.Div([], className="col-1"),
+    #         html.Div(
+    #             [dcc.Link(html.H4(children="Dashboard"), href="/apps/dashboard")],
+    #             className="col-2",
+    #         ),
+    #         html.Div(
+    #             [
+    #                 dcc.Link(
+    #                     html.H4(children="Volatility Chart", style=navbarcurrentpage),
+    #                     href="/apps/volatility-chart",
+    #                 )
+    #             ],
+    #             className="col-2",
+    #         ),
+    #         html.Div(
+    #             [
+    #                 dcc.Link(
+    #                     html.H4(children="Correlation Matrix"),
+    #                     href="/apps/correlation-matrix",
+    #                 )
+    #             ],
+    #             className="col-2",
+    #         ),
+    #         html.Div(
+    #             [
+    #                 dcc.Link(
+    #                     html.H4(children="Correlation Over Time"),
+    #                     href="/apps/correlation-timeline",
+    #                 )
+    #             ],
+    #             className="col-2",
+    #         ),
+    #         html.Div(
+    #         [
+    #             dcc.Link(
+    #                 html.H4(children="Bitcoin Rolling Volatility"),
+    #                 href="/apps/bitcoin-volatility",
+    #             )
+    #         ],
+    #         className="col-2",
+    #         ),
             
-            html.Div([], className="col-3"),
-        ],
-        className="row",
-        style={
-            "background-color": corporate_colors["dark-green"],  # behind nav
-            "box-shadow": "2px 5px 5px 1px #00eead",
-        },
-    )
+    #         html.Div([], className="col-3"),
+    #     ],
+    #     className="row",
+    #     style={
+    #         "background-color": corporate_colors["dark-green"],  # behind nav
+    #         "box-shadow": "2px 5px 5px 1px #00eead",
+    #     },
+    # )
 
-    navbar_heatmap = html.Div(
-        [
-            html.Div([], className="col-1"),
-            html.Div(
-                [dcc.Link(html.H4(children="Dashboard"), href="/apps/dashboard")],
-                className="col-2",
-            ),
-            html.Div(
-                [
-                    dcc.Link(
-                        html.H4(children="Volatility Chart"),
-                        href="/apps/volatility-chart",
-                    )
-                ],
-                className="col-2",
-            ),
-            html.Div(
-                [
-                    dcc.Link(
-                        html.H4(children="Correlation Matrix", style=navbarcurrentpage),
-                        href="/apps/correlation-matrix",
-                    )
-                ],
-                className="col-2",
-            ),
-            html.Div(
-                [
-                    dcc.Link(
-                        html.H4(children="Correlation Over Time"),
-                        href="/apps/correlation-timeline",
-                    )
-                ],
-                className="col-2",
-            ),
+    # navbar_heatmap = html.Div(
+    #     [
+    #         html.Div([], className="col-1"), #Empty Col
+            
+            
+    #         html.Div(
+    #             [dcc.Link(html.H4(children="Dashboard"), href="/apps/dashboard")],
+    #             className="col-2",
+    #         ),
+    #         html.Div(
+    #             [
+    #                 dcc.Link(
+    #                     html.H4(children="Volatility Chart"),
+    #                     href="/apps/volatility-chart",
+    #                 )
+    #             ],
+    #             className="col-2",
+    #         ),
+    #         html.Div(
+    #             [
+    #                 dcc.Link(
+    #                     html.H4(children="Correlation Matrix", style=navbarcurrentpage),
+    #                     href="/apps/correlation-matrix",
+    #                 )
+    #             ],
+    #             className="col-2",
+    #         ),
+    #         html.Div(
+    #             [
+    #                 dcc.Link(
+    #                     html.H4(children="Correlation Over Time"),
+    #                     href="/apps/correlation-timeline",
+    #                 )
+    #             ],
+    #             className="col-2",
+    #         ),
 
-            html.Div(
-            [
-                dcc.Link(
-                    html.H4(children="Bitcoin Rolling Volatility"),
-                    href="/apps/bitcoin-volatility",
-                )
-            ],
-            className="col-2",
-            ),
-            html.Div([], className="col-3"),
-        ],
-        className="row",
-        style={
-            "background-color": corporate_colors["dark-green"],  # behind nav
-            "box-shadow": "2px 5px 5px 1px #00eead",
-        },
-    )
+    #         html.Div(
+    #         [
+    #             dcc.Link(
+    #                 html.H4(children="Bitcoin Rolling Volatility"),
+    #                 href="/apps/bitcoin-volatility",
+    #             )
+    #         ],
+    #         className="col-2",
+    #         ),
+    #         html.Div([], className="col-3"),
+    #     ],
+    #     className="row",
+    #     style={
+    #         "background-color": corporate_colors["dark-green"],  # behind nav
+    #         "box-shadow": "2px 5px 5px 1px #00eead",
+    #     },
+    # )
 
-    navbar_timeline = html.Div(
-        [
-            html.Div([], className="col-1"),
-            html.Div(
-                [dcc.Link(html.H4(children="Dashboard"), href="/apps/dashboard")],
-                className="col-2",
-            ),
-            html.Div(
-                [
-                    dcc.Link(
-                        html.H4(children="Volatility Chart"),
-                        href="/apps/volatility-chart",
-                    )
-                ],
-                className="col-2",
-            ),
-            html.Div(
-                [
-                    dcc.Link(
-                        html.H4(children="Correlation Matrix"),
-                        href="/apps/correlation-matrix",
-                    )
-                ],
-                className="col-2",
-            ),
-            html.Div(
-                [
-                    dcc.Link(
-                        html.H4(
-                            children="Correlation Over Time", style=navbarcurrentpage
-                        ),
-                        href="/apps/correlation-timeline",
-                    )
-                ],
-                className="col-2",
-            ),
+    # navbar_timeline = html.Div(
+    #     [
+    #         html.Div([], className="col-1"),
+    #         html.Div(
+    #             [dcc.Link(html.H4(children="Dashboard"), href="/apps/dashboard")],
+    #             className="col-2",
+    #         ),
+    #         html.Div(
+    #             [
+    #                 dcc.Link(
+    #                     html.H4(children="Volatility Chart"),
+    #                     href="/apps/volatility-chart",
+    #                 )
+    #             ],
+    #             className="col-2",
+    #         ),
+    #         html.Div(
+    #             [
+    #                 dcc.Link(
+    #                     html.H4(children="Correlation Matrix"),
+    #                     href="/apps/correlation-matrix",
+    #                 )
+    #             ],
+    #             className="col-2",
+    #         ),
+    #         html.Div(
+    #             [
+    #                 dcc.Link(
+    #                     html.H4(
+    #                         children="Correlation Over Time", style=navbarcurrentpage
+    #                     ),
+    #                     href="/apps/correlation-timeline",
+    #                 )
+    #             ],
+    #             className="col-2",
+    #         ),
 
-            html.Div(
-            [
-                dcc.Link(
-                    html.H4(children="Bitcoin Rolling Volatility"),
-                    href="/apps/bitcoin-volatility",
-                )
-            ],
-            className="col-2",
-            ),
+    #         html.Div(
+    #         [
+    #             dcc.Link(
+    #                 html.H4(children="Bitcoin Rolling Volatility"),
+    #                 href="/apps/bitcoin-volatility",
+    #             )
+    #         ],
+    #         className="col-2",
+    #         ),
 
-            html.Div([], className="col-3"),
-        ],
-        className="row",
-        style={
-            "background-color": corporate_colors["dark-green"],  # behind nav
-            "box-shadow": "2px 5px 5px 1px #00eead",
-        },
-    )
+    #         html.Div([], className="col-3"),
+    #     ],
+    #     className="row",
+    #     style={
+    #         "background-color": corporate_colors["dark-green"],  # behind nav
+    #         "box-shadow": "2px 5px 5px 1px #00eead",
+    #     },
+    # )
 
-    btc_vol = html.Div(
-        [
-            html.Div([], className="col-1"),
-            html.Div(
-                [dcc.Link(html.H4(children="Dashboard"), href="/apps/dashboard")],
-                className="col-2",
-            ),
-            html.Div(
-                [
-                    dcc.Link(
-                        html.H4(children="Volatility Chart"),
-                        href="/apps/volatility-chart",
-                    )
-                ],
-                className="col-2",
-            ),
-            html.Div(
-                [
-                    dcc.Link(
-                        html.H4(children="Correlation Matrix"),
-                        href="/apps/correlation-matrix",
-                    )
-                ],
-                className="col-2",
-            ),
-            html.Div(
-                [
-                    dcc.Link(
-                        html.H4(
-                            children="Correlation Over Time"
-                        ),
-                        href="/apps/correlation-timeline",
-                    )
-                ],
-                className="col-2",
-            ),
+    # btc_vol = html.Div(
+    #     [
+    #         html.Div([], className="col-1"),
+    #         html.Div(
+    #             [dcc.Link(html.H4(children="Dashboard"), href="/apps/dashboard")],
+    #             className="col-2",
+    #         ),
+    #         html.Div(
+    #             [
+    #                 dcc.Link(
+    #                     html.H4(children="Volatility Chart"),
+    #                     href="/apps/volatility-chart",
+    #                 )
+    #             ],
+    #             className="col-2",
+    #         ),
+    #         html.Div(
+    #             [
+    #                 dcc.Link(
+    #                     html.H4(children="Correlation Matrix"),
+    #                     href="/apps/correlation-matrix",
+    #                 )
+    #             ],
+    #             className="col-2",
+    #         ),
+    #         html.Div(
+    #             [
+    #                 dcc.Link(
+    #                     html.H4(
+    #                         children="Correlation Over Time"
+    #                     ),
+    #                     href="/apps/correlation-timeline",
+    #                 )
+    #             ],
+    #             className="col-2",
+    #         ),
 
-            html.Div(
-            [
-                dcc.Link(
-                    html.H4(children="Bitcoin Rolling Volatility", style = navbarcurrentpage),
-                    href="/apps/bitcoin-volatility",
-                )
-            ],
-            className="col-2",
-            ),
+    #         html.Div(
+    #         [
+    #             dcc.Link(
+    #                 html.H4(children="Bitcoin Rolling Volatility", style = navbarcurrentpage),
+    #                 href="/apps/bitcoin-volatility",
+    #             )
+    #         ],
+    #         className="col-2",
+    #         ),
 
-            html.Div([], className="col-3"),
-        ],
-        className="row",
-        style={
-            "background-color": corporate_colors["dark-green"],  # behind nav
-            "box-shadow": "2px 5px 5px 1px #00eead",
-        },
-    )
+    #         html.Div([], className="col-3"),
+    #     ],
+    #     className="row",
+    #     style={
+    #         "background-color": corporate_colors["dark-green"],  # behind nav
+    #         "box-shadow": "2px 5px 5px 1px #00eead",
+    #     },
+    # )
 
     if p == "dashboard":
         return navbar_dashboard
@@ -868,6 +963,7 @@ dashboard_page = html.Div(
         #####################
         # Row 2 : Nav bar
         get_navbar("dashboard"),
+        
         #####################
         # Row 3 : Filters
         #####################
@@ -1120,7 +1216,7 @@ vol_page = html.Div(
                                                 
                                             ],
                                             type="default",
-                                            style={"responsive": True},
+                                            
                                         )
                                     ],
                                     style={"max-width": "100%", "margin": "auto"},

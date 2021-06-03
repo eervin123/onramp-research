@@ -552,6 +552,7 @@ heatmap_fig = graph_heatmap(corr_df, c)
 
 heatmap_fig_new = graph_heatmap(corr_df_new, c)
 
+
 # ---------------------------------------------------------Timeline--------------------------------------------
 
 

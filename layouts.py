@@ -366,6 +366,7 @@ def graph_btc_vol(df):
                 ticklen=6,
                 tickwidth=3,
                 rangeselector=dict(
+                    font = dict(color = 'black'),
                     buttons=list(
                         [
                             dict(
@@ -423,30 +424,30 @@ btc_vol_fig = graph_btc_vol(df_btc)
 # -----------------------------------------------------------Heatmap------------------------------------------
 custom_scale = [
     # Let first 10% (0.1) of the values have color rgb(0, 0, 0)
-    [0, "#00eead"],
-    [0.1, "#00eead"],
+    [0, "#3FB6DC"],
+    [0.1, "#3FB6DC"],
     # Let values between 10-20% of the min and max of z
     # have color rgb(20, 20, 20)
-    [0.1, "#00d8b7"],
-    [0.2, "#00d8b7"],
+    [0.1, "#3FA3D8"],
+    [0.2, "#3FA3D8"],
     # Values between 20-30% of the min and max of z
     # have color rgb(40, 40, 40)
-    [0.2, "#00c0bd"],
-    [0.3, "#00c0bd"],
-    [0.3, "#00a9be"],
-    [0.4, "#00a9be"],
-    [0.4, "#0090b9"],
-    [0.5, "#0090b9"],
-    [0.5, "#0078ad"],
-    [0.6, "#0078ad"],
-    [0.6, "#00609c"],
-    [0.7, "#00609c"],
-    [0.7, "#004986"],
-    [0.8, "#004986"],
-    [0.8, "#00326b"],
-    [0.9, "#00326b"],
-    [0.9, "#131c4f"],
-    [1.0, "#131c4f"],
+    [0.2, "#4090D5"],
+    [0.3, "#4090D5"],
+    [0.3, "#407ED1"],
+    [0.4, "#407ED1"],
+    [0.4, "#406BCD"],
+    [0.5, "#406BCD"],
+    [0.5, "#4158CA"],
+    [0.6, "#4158CA"],
+    [0.6, "#4145C6"],
+    [0.7, "#4145C6"],
+    [0.7, "#4133C2"],
+    [0.8, "#4133C2"],
+    [0.8, "#4220BF"],
+    [0.9, "#4220BF"],
+    [0.9, "#420DBB"],
+    [1.0, "#420DBB"],
 ]
 
 
@@ -490,244 +491,16 @@ def create_corr_new(pairs, db, coindata_day):
     return df_
 
 
-def graph_heatmap(df, date):
-    corr_mtx = df.loc[date].values
-    text_info = np.round(corr_mtx, decimals=5).astype(str)
-
-    x = 0
-    for i in range(len(text_info)):
-        for j in range(len(text_info[0])):
-            if text_info[i, j] == "1.0":
-                text_info[i, j] = ""
-                corr_mtx[i, j] = np.nan
-
-    labels = df.columns
-    layout = go.Layout(
-        title=f"Return Correlation - Close {date}",
-        annotations=[
-            dict(
-                x=0.5,
-                y=-0.25,
-                xref="paper",
-                yref="paper",
-                showarrow=False,
-                text=(
-                    f"*6-Month Rolling Correlation of Daily Returns; Source: Binance; Correlation data quoted here represents data as of {date}."
-                ),
-                font=dict(size=10),
-            )
-        ],
-        autosize=False,
-        width=700,
-        height=700,
-        xaxis=dict(ticklen=1, tickcolor="#fff"),
-        yaxis=dict(ticklen=1, tickcolor="#fff"),
-        margin=dict(pad=0, b=125),
-    )
-
-    fig = go.Figure(
-        data=[
-            go.Heatmap(
-                z=corr_mtx,
-                x=labels,
-                y=labels,
-                text=text_info,
-                hoverinfo="text",
-                colorscale=[[0.0, "#00eead"], [1, "#131c4f"]],
-            )
-        ],
-        layout=layout,
-    )
-
-    return fig
-
 
 corr_df = create_corr(pairs, "Nothing", "Nothing")
 
 corr_df_new = create_corr_new(pairs_new, "Nothing", "Nothing")
 
-# print(corr_df_new[corr_df_new.index > datetime.datetime(2020, 1, 15)])
-
-heatmap_fig = graph_heatmap(corr_df, c)
-
-heatmap_fig_new = graph_heatmap(corr_df_new, c)
-
 
 # ---------------------------------------------------------Timeline--------------------------------------------
 
 
-def graph_timeline(corr_df, xd):
-    _font = dict(family="Raleway, Bold")
-    source = "Binance"
-    axis_dict = dict(
-        ticks="outside",
-        tickfont=_font,
-        tickcolor="#53585f",
-        ticklen=0,
-        tickwidth=2,
-        automargin=True,
-        fixedrange=True,
-        tickprefix="        ",
-    )
-
-    unique_coins = corr_df.columns
-    coin_set = set(unique_coins)
-    num_buttons = np.arange(1, len(unique_coins), 1).sum()
-    data, buttons = [], []
-    x = 0
-
-    if "USDT" in corr_df.columns[0]:
-        label_tag = "-USDT"
-    else:
-        label_tag = "-USD"
-
-    for i in unique_coins:
-        labels = []
-
-        info_ = i.replace(label_tag, "")
-        # z:vals, x:dates, y:coin names
-        cross_section = corr_df.xs(i, level=1).drop(i, axis=1)
-        labels = [x.replace(label_tag, "") for x in cross_section.columns]
-        data.append(
-            go.Heatmap(
-                z=cross_section.T.values,
-                x=cross_section.index,
-                y=labels,
-                name=info_,
-                visible=False,
-                colorscale=custom_scale,
-            )
-        )
-        buttons.append(
-            dict(
-                label=info_,
-                method="update",
-                args=[
-                    {"visible": list(np.insert([False] * num_buttons, x, True))},
-                    {
-                        "yaxis": dict(
-                            axis_dict,
-                            title=f"{info_} 6-Month Rolling Return Correlation",
-                        )
-                    },
-                ],
-            )
-        )
-        x += 1
-
-    data[0].visible = True
-    start_title = buttons[0]["label"]
-    updatemenus = list([dict(type="dropdown", active=0, y=1.5, x=0, buttons=buttons,)])
-
-    layout = dict(
-        font=_font,
-        height=700,
-        width=800,
-        dragmode="zoom",
-        annotations=[
-            dict(
-                x=-0.15,
-                y=-0.25,
-                xref="paper",
-                yref="paper",
-                showarrow=False,
-                text=f"*Source: {source}; Correlation data quoted here represents data as of {xd}.",
-                font=dict(size=9),
-            )
-        ],
-        title=dict(
-            text="Crypto-Return Correlation", font=dict(_font, size=20, color="#000")
-        ),
-        xaxis=dict(
-            title="Date",
-            ticks="inside",
-            ticklen=6,
-            tickwidth=2,
-            tickfont=_font,
-            rangeselector=dict(
-                buttons=list(
-                    [
-                        dict(count=3, label="3m", step="month", stepmode="backward"),
-                        dict(count=1, label="YTD", step="year", stepmode="todate"),
-                        dict(count=1, label="1y", step="year", stepmode="backward"),
-                        dict(step="all"),
-                    ]
-                )
-            ),
-            autorange=True,
-            type="date",
-            tickcolor="#53585f",
-        ),
-        yaxis=dict(
-            axis_dict, title=f"{start_title} 6-Month Rolling Return Correlation"
-        ),
-        margin=dict(pad=5, b=125),
-        legend=dict(orientation="h"),
-        updatemenus=updatemenus,
-    )
-
-    fig = go.Figure(data=data, layout=layout)
-    # fig.update_layout({
-    #     'plot_bgcolor': 'rgba(0, 0, 0, 0)',
-    #     'paper_bgcolor': 'rgba(0, 0, 0, 0)',
-    #     })
-
-    return fig
-
-
-heatmap_timeline_fig = graph_timeline(corr_df, c)
-
-heatmap_timeline_fig_new = graph_timeline(corr_df_new, c)
-
-
 ####################################################################################Dashboard Components
-
-
-percent_dict = {"60/40": 1 - float(0) / 100, "Bitcoin": float(0) / 100}
-
-
-def graph_pie(percent_dictionary):
-
-    colors_pie = ["#a90bfe", "#f2a900"]  # BTC Orange
-    assets = list(percent_dictionary.keys())
-
-    percents = list(percent_dictionary.values())
-    # print(percents)
-
-    fig = px.pie(
-        values=percents,
-        names=assets,
-        color=assets,
-        color_discrete_sequence=colors_pie,
-        title="Portfolio Allocation",
-        # width = 400, height = 400
-        template=my_template,
-        height=400,
-    )
-    fig.update_traces(hovertemplate="%{value:.0%}")
-    # print("plotly express hovertemplate:", fig.data[0].hovertemplate)
-    fig.update_layout(
-        font=dict(family="Circular STD", color="white"),
-        title={
-            "text": "<b>Portfolio Allocation<b>",
-            "y": 1,
-            "x": 0.49,
-            "xanchor": "center",
-            "yanchor": "top",
-        },
-        legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="left", x=0.30),
-    )
-    fig.update_layout(
-        {"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)",}
-    )
-    fig.update_traces(textfont_size=17)
-    fig.update_layout(titlefont=dict(size=24, color="white"))
-    fig.update_layout(margin=dict(l=10, r=20, t=40, b=0))
-
-    return fig
-
-
-pie_fig = graph_pie(percent_dict)
 
 
 #####################
@@ -1711,7 +1484,7 @@ def update_vol(value):
             hoverformat=".2f",
             ticks="outside",
             tickcolor="#53585f",
-            ticklen=8,
+            ticklen=0,
             tickwidth=3,
             tick0=0,
             tickprefix="                 ",
@@ -1761,6 +1534,8 @@ def update_vol(value):
                     active=1,
                     x=-0,
                     y=1.2,
+                    bgcolor = 'white',
+                    font = dict(color = 'black'),
                     buttons=[
                         dict(
                             label=f"{v}-Day",
@@ -1788,7 +1563,7 @@ def update_vol(value):
         layout = dict(
             title=dict(
                 text="Changing Volatility Over Time",
-                font=dict(size=30, color="#000"),
+                font=dict(size=30, color="white"),
                 x=0.5,
             ),
             height=700,
@@ -1797,9 +1572,10 @@ def update_vol(value):
             xaxis=dict(
                 title="Date",
                 ticks="inside",
-                ticklen=6,
+                ticklen=0,
                 tickwidth=3,
                 rangeselector=dict(
+                    font = dict(color = 'black'),
                     buttons=list(
                         [
                             dict(
@@ -1817,7 +1593,7 @@ def update_vol(value):
             yaxis=yaxis_dict,
             margin=dict(pad=0, b=125),
             updatemenus=updatemenus,
-            font=dict(size=14),
+            font=dict(size=14, color = 'white'),
             annotations=[
                 dict(
                     x=-0.18,
@@ -1832,7 +1608,15 @@ def update_vol(value):
         )
 
         fig = go.Figure(data=data, layout=layout)
-
+        
+        fig.update_layout(
+        {
+            "plot_bgcolor": "rgba(0, 0, 0, 0)",  # Transparent
+            "paper_bgcolor": "rgba(0, 0, 0, 0)",
+        }
+        )
+        fig.update_xaxes(showgrid = False)
+        fig.update_yaxes(gridcolor = '#C3C3C3')
         return fig
 
     if value == "CC":
@@ -1862,7 +1646,8 @@ def update_heatmap(value):
 
         labels = df.columns
         layout = go.Layout(
-            title=dict(text="Correlation Matrix", font=dict(size=30), x=0.5,),
+            font = dict(color = 'white'),
+            title=dict(text="Correlation Matrix", font=dict(size=30, color = 'white'), x=0.5,),
             annotations=[
                 dict(
                     x=0.5,
@@ -1873,14 +1658,14 @@ def update_heatmap(value):
                     text=(
                         f"*6-Month Rolling Correlation of Daily Returns; Source: Binance; Correlation data quoted here represents data as of {date}."
                     ),
-                    font=dict(size=10),
+                    font=dict(size=10, color = 'white'),
                 )
             ],
             autosize=False,
             width=700,
             height=700,
-            xaxis=dict(ticklen=1, tickcolor="#fff"),
-            yaxis=dict(ticklen=1, tickcolor="#fff"),
+            xaxis=dict(ticklen=1),
+            yaxis=dict(ticklen=1,),
             margin=dict(pad=0, b=125),
         )
 
@@ -1892,12 +1677,20 @@ def update_heatmap(value):
                     y=labels,
                     text=text_info,
                     hoverinfo="text",
-                    colorscale=[[0.0, "#00eead"], [1, "#131c4f"]],
+                    colorscale=[[0.0, "#3fb6dc"], [1, "#420DBB"]],
                 )
             ],
             layout=layout,
         )
-
+        fig.update_layout(
+            {
+                "plot_bgcolor": "rgba(255, 255, 255, 0)",
+                "paper_bgcolor": "rgba(255, 255, 255, 0)",
+            }
+        )
+        fig.update_xaxes(showgrid=False, color = 'white')
+        fig.update_yaxes(showgrid=False, color = 'white')
+        fig.update_layout(legend_font = dict(color = 'white'))
         return fig
 
     if value == "CC":
@@ -1915,7 +1708,7 @@ def update_heatmap(value):
 )
 def update_timeline(value):
     def graph_timeline(corr_df, xd):
-        _font = dict(family="Raleway, Bold")
+        _font = dict(family="Roboto", color = 'white')
         source = "Binance"
         axis_dict = dict(
             ticks="outside",
@@ -1976,7 +1769,7 @@ def update_timeline(value):
         data[0].visible = True
         start_title = buttons[0]["label"]
         updatemenus = list(
-            [dict(type="dropdown", active=0, y=1.09, x=-.01, buttons=buttons,),]
+            [dict(type="dropdown", active=0, y=1.09, x=-.01, buttons=buttons, font = dict(color = 'black'), bgcolor = 'white'),]
         )
 
         layout = dict(
@@ -2010,7 +1803,7 @@ def update_timeline(value):
             ],
             title=dict(
                 text="Relative Correlation Over Time",
-                font=dict(_font, size=40, color="#000"),
+                font=dict(_font, size=40, color="white"),
                 x=0.5,
             ),
             xaxis=dict(
@@ -2021,10 +1814,11 @@ def update_timeline(value):
                 tickfont=_font,
                 rangeselector=dict(
                     x=0.75,
+                    font = dict(color = 'black'),
                     buttons=list(
                         [
                             dict(
-                                count=3, label="3m", step="month", stepmode="backward"
+                                count=3, label="3m", step="month", stepmode="backward",
                             ),
                             dict(count=1, label="YTD", step="year", stepmode="todate"),
                             dict(count=1, label="1y", step="year", stepmode="backward"),
@@ -2049,10 +1843,10 @@ def update_timeline(value):
         )
 
         fig = go.Figure(data=data, layout=layout)
-        # fig.update_layout({
-        #     'plot_bgcolor': 'rgba(0, 0, 0, 0)',
-        #     'paper_bgcolor': 'rgba(0, 0, 0, 0)',
-        #     })
+        fig.update_layout({
+            'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+            'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+            })
 
         return fig
 

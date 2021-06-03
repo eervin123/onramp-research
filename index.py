@@ -17,14 +17,7 @@ dash_app.layout = html.Div(
 )
 
 dash_app.title = "Onramp Academy Tools"
-get_navbar()
-@dash_app.callback(Output("content", "children"), [Input("tabs", "active_tab")])
-def switch_tab(at):
-    if at == "tab-1":
-        return dashboard_page
-    elif at == "tab-2":
-        return vol_page
-    return html.P("This shouldn't ever be displayed...")
+
 
 @dash_app.callback(
     dash.dependencies.Output("page-content", "children"),

@@ -1112,14 +1112,15 @@ vol_page = html.Div(
                                         dcc.Loading(
                                             id="loading-icon_vol",
                                             children=[
-                                                html.Div(
+                                                
                                                     dcc.Graph(
                                                         id="vol_chart",
                                                         style={"responsive": True},
                                                     )
-                                                )
+                                                
                                             ],
                                             type="default",
+                                            style={"responsive": True},
                                         )
                                     ],
                                     style={"max-width": "100%", "margin": "auto"},

@@ -275,7 +275,7 @@ def scatter_plot(results_list):
                             template= onramp_template,
                             #width = 530, height = 350
                             )
-    fig.update_layout(legend = {"y": -.35})
+    fig.update_layout(legend = {"y": -.38})
     
     return fig
 

@@ -61,19 +61,19 @@ onramp_xaxis = {
     "linecolor": onramp_colors["gray"],
     "color": onramp_colors["gray"],
     "tickangle": 0,
-    "titlefont": {"size": 12, "color": onramp_colors["gray"]},
-    "tickfont": {"size": 11, "color": onramp_colors["gray"]},
+    "titlefont": {"size": 15, "color": onramp_colors["gray"]},
+    "tickfont": {"size": 13, "color": onramp_colors["gray"]},
     "zeroline": False,
 }
 
 corporate_yaxis = {
-    "showgrid": True,
+    "showgrid": False,
     "color": onramp_colors["gray"],
     "gridwidth": 0.5,
     "gridcolor": onramp_colors["gray"],
     "linecolor": onramp_colors["gray"],
-    "titlefont": {"size": 12, "color": onramp_colors["gray"]},
-    "tickfont": {"size": 11, "color": onramp_colors["gray"]},
+    "titlefont": {"size": 15, "color": onramp_colors["gray"]},
+    "tickfont": {"size": 13, "color": onramp_colors["gray"]},
     "zeroline": False,
 }
 onramp_font_family = "Roboto"
@@ -84,12 +84,12 @@ onramp_legend = {
     "y": -.3,
     "xanchor": "left",
     "x": 0,
-    "font": {"size": 15, "color": onramp_colors["gray"]},
+    "font": {"size": 17, "color": onramp_colors["gray"]},
 }  # Legend will be on the bottom middle
 
 onramp_margins = {
-    "l": 30,
-    "r": 10,
+    "l": 40,
+    "r": 20,
     "t": 0,
     "b": 140,
 }  # Set top margin to in case there is a legend

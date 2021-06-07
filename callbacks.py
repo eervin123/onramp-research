@@ -6,14 +6,25 @@ import dash
 from dash_app import dash_app
 from dash.dependencies import Output, Input, State
 import datetime
+from datetime import timedelta
 import time 
 import pytz
 import bt
+import redis
+from direct_redis import DirectRedis
+import pyarrow as pa
+import urllib.parse as urlparse
 from formatting import onramp_colors, onramp_template, custom_scale
 from helpers import *
 from bt_algos import RebalanceAssetThreshold
 #get_coin_data, get_coin_data_new, volatility, calc_volatility, calc_volatility_new, create_corr, create_corr_new, get_data, calculate_controls, pl
 
+#redis-16351.c263.us-east-1-2.ec2.cloud.redislabs.com:16351
+
+url = urlparse.urlparse('redis://default:mUtpOEwJc2F8tHYOGxF9JGvnIwHY3unu@redis-16351.c263.us-east-1-2.ec2.cloud.redislabs.com:16351')
+r = DirectRedis(host=url.hostname, port=url.port, password=url.password)
+
+#r = redis.Redis(host='localhost', port=6379)
 
 ####################################################################################################
 # 000 - IMPORT DATA DASHBOARD
@@ -205,7 +216,7 @@ def update_graphs(value):
         fig.update_traces(hovertemplate="%{value:.0%}")
         # print("plotly express hovertemplate:", fig.data[0].hovertemplate)
         fig.update_layout(
-            font=dict(family="Roboto", color="white"),
+            font=dict(family="Roboto", color= onramp_colors["gray"]),
             title={
                 "text": "<b>Portfolio Allocation<b>",
                 "y": 1,
@@ -221,7 +232,7 @@ def update_graphs(value):
             {"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)",}
         )
         fig.update_traces(textfont_size=17, marker=dict( line=dict(color='white', width=1)))
-        fig.update_layout(titlefont=dict(size=24, color="white"))
+        fig.update_layout(titlefont=dict(size=24, color= onramp_colors["gray"]))
         fig.update_layout(margin=dict(l=10, r=20, t=40, b=0))
 
         return fig
@@ -259,7 +270,7 @@ def update_graphs(value):
             legend=dict(
                 orientation="h", yanchor="bottom", y=-0.3, xanchor="right", x=0.80
             ),
-            font=dict(family="Roboto", color="white"),
+            font=dict(family="Roboto", color= onramp_colors["gray"]),
             title={
                 "text": "<b>Portfolio Performance<b>",
                 "y": 1,
@@ -275,7 +286,7 @@ def update_graphs(value):
             }
         )
         fig.update_yaxes(side="left", nticks=8)
-        fig.update_layout(titlefont=dict(size=24, color="white", family="Circular STD"))
+        fig.update_layout(titlefont=dict(size=24, color= onramp_colors["gray"]))
         fig.update_layout(margin=dict(l=70, r=30, t=0, b=0))
         return fig
 
@@ -349,13 +360,13 @@ def update_graphs(value):
         )
         fig.add_annotation(text="Annual Risk", 
                   xref="paper", yref="paper",
-                  x=0.5, y=-.2, showarrow=False, font=dict(family="Roboto", color="white", size = 20))
+                  x=0.5, y=-.2, showarrow=False, font=dict(family="Roboto", color= onramp_colors["gray"], size = 20))
         fig.update_layout(yaxis_tickformat="%")
         fig.update_layout(xaxis_tickformat="%")
-        fig.update_layout(titlefont=dict(size=24, color="white"))
+        fig.update_layout(titlefont=dict(size=24, color= onramp_colors["gray"]))
         fig.update_xaxes(title_font={"size": 20})
         fig.update_yaxes(title_font={"size": 20})
-        fig.update_layout(margin=dict(l=100, r=50, t=20, b=0))
+        fig.update_layout(margin=dict(l=50, r=30, t=20, b=0))
 
         return fig
 
@@ -895,10 +906,45 @@ def update_graph(num_click, stock_choice_1, alloc1, stock_choice_2, alloc2, stoc
     stock_choice_4 = stock_choice_4.lower()
 
     
-    stock_list = stock_choice_1 +',' + stock_choice_2 + ',' + stock_choice_3 + ',' + stock_choice_4
+    #stock_list = stock_choice_1 +',' + stock_choice_2 + ',' + stock_choice_3 + ',' + stock_choice_4
     
     data_s = time.time()
-    data = bt.get(stock_list, start = '2017-01-01') 
+    #data = bt.get(stock_list, start = '2017-01-01')
+    data = pd.DataFrame()
+    #context = pa.default_serialization_context()
+    for ticker in stock_list_pie:
+        data_x = r.get(ticker)
+        if data_x is None:
+            print("Could not find", ticker, "in the cache.")
+            data_x = bt.get(ticker, start = '2017-01-01')
+            r.set(ticker, data_x)
+            r.expire(ticker, timedelta(seconds = 86400))
+
+        data = data.join(data_x, how = 'outer')
+    
+
+
+
+
+    # data1 = r.get(stock_choice_1)
+    # context = pa.default_serialization_context()
+    # if data1 is None:
+    #     print("Could not find", stock_choice_1, "in the cache.")
+    #     data1 = bt.get(stock_choice_1, start = '2017-01-01')
+    #     r.set(stock_choice_1, context.serialize(data1).to_buffer().to_pybytes())
+
+    # data1 = bt.get(stock_choice_1, start = '2017-01-01')
+    # data2 = bt.get(stock_choice_2, start = '2017-01-01')
+    # data3 = bt.get(stock_choice_3, start = '2017-01-01')
+    # data4 = bt.get(stock_choice_4, start = '2017-01-01')
+    # data_2 = pd.DataFrame()
+    # data_2 = data_2.join(data1, how = 'outer')
+    # print(data_2)
+    # data = data1.join(data2, how='outer')
+    # data = data.join(data3, how='outer')
+    # data = data.join(data4, how='outer')
+    data = data.dropna()
+    #print(data)
     data_e = time.time()
     print("Finished Data", stock_choice_1, ":", data_e - data_s)
 

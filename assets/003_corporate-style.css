@@ -11,6 +11,25 @@
 - Img
 - Typography
 */
+/* change the background color */
+
+.nav-pills .nav-link.active {
+  color: #fff;
+  background-color: #00eead;
+}
+
+.nav-pills .nav-link:hover {
+  color: #fff;
+  background-color: #00eead;
+}
+
+.nav-item {
+  border-radius: 3px;
+  border-color: black;
+}
+
+
+
 .rc-slider-rail{
   background-color: #00eead;
 }

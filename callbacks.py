@@ -1,148 +1,30 @@
-import dash_core_components as dcc
-import dash_html_components as html
 import plotly.graph_objs as go
 import plotly.express as px
 import pandas as pd
 import numpy as np
 import dash
-import dash_table
-from dash_table.Format import Format, Group, Scheme
-import dash_table.FormatTemplate as FormatTemplate
-from datetime import datetime as dt
 from dash_app import dash_app
+from dash.dependencies import Output, Input, State
 import datetime
+from datetime import timedelta
+import time 
 import pytz
-import math
+import bt
+import redis
+from direct_redis import DirectRedis
+import pyarrow as pa
+import urllib.parse as urlparse
+from formatting import onramp_colors, onramp_template, custom_scale
+from helpers import *
+from bt_algos import RebalanceAssetThreshold
+#get_coin_data, get_coin_data_new, volatility, calc_volatility, calc_volatility_new, create_corr, create_corr_new, get_data, calculate_controls, pl
 
-####################################################################################################
-# 000 - FORMATTING INFO
-####################################################################################################
+#redis-16351.c263.us-east-1-2.ec2.cloud.redislabs.com:16351
 
-####################### Corporate css formatting
-corporate_colors = {
-    "onramp-dark": "#131c4f",
-    "dark-blue-grey": "#424972",
-    "medium-blue-grey": "#424972",
-    "superdark-green": "#424972",
-    "dark-green": "#424972",
-    "medium-green": "#b8bbca",
-    "light-green": "#b8bbca",
-    "pink-red": "#00eead",
-    "dark-pink-red": "#00eead",
-    "white": "rgb(251, 251, 252)",
-    "light-grey": "#b0b6bd",
-}
-externalgraph_rowstyling = {"margin-left": "15px", "margin-right": "15px"}
+url = urlparse.urlparse('redis://default:mUtpOEwJc2F8tHYOGxF9JGvnIwHY3unu@redis-16351.c263.us-east-1-2.ec2.cloud.redislabs.com:16351')
+r = DirectRedis(host=url.hostname, port=url.port, password=url.password)
 
-externalgraph_colstyling = {
-    "border-radius": "10px",
-    "border-style": "solid",
-    "border-width": "1px",
-    "border-color": corporate_colors["superdark-green"],
-    "background-color": corporate_colors["superdark-green"],
-    "box-shadow": "0px 0px 17px 0px rgba(186, 218, 212, .5)",
-    "padding-top": "10px",
-}
-
-filterdiv_borderstyling = {
-    "border-radius": "0px 0px 10px 10px",
-    "border-style": "solid",
-    "border-width": "1px",
-    "border-color": corporate_colors["light-green"],
-    "background-color": corporate_colors["light-green"],
-    "box-shadow": "2px 5px 5px 1px rgba(255, 101, 131, .5)",
-}
-
-navbarcurrentpage = {
-    "text-decoration": "underline",
-    "text-decoration-color": corporate_colors["pink-red"],
-    "text-shadow": "0px 0px 1px rgb(251, 251, 252)",
-}
-
-recapdiv = {
-    "border-radius": "10px",
-    "border-style": "solid",
-    "border-width": "1px",
-    "border-color": "rgb(251, 251, 252, 0.1)",
-    "margin-left": "15px",
-    "margin-right": "15px",
-    "margin-top": "15px",
-    "margin-bottom": "15px",
-    "padding-top": "5px",
-    "padding-bottom": "5px",
-    "background-color": "rgb(251, 251, 252, 0.1)",
-}
-
-recapdiv_text = {
-    "text-align": "left",
-    "font-weight": "350",
-    "color": corporate_colors["white"],
-    "font-size": "1.5rem",
-    "letter-spacing": "0.04em",
-}
-
-####################### Corporate chart formatting
-colors = ["#a90bfe", "#7540ee", "#3fb6dc"]
-corporate_title = {"font": {"size": 16, "color": corporate_colors["white"]}}
-
-corporate_xaxis = {
-    "showgrid": False,
-    "linecolor": corporate_colors["light-grey"],
-    "color": corporate_colors["white"],
-    "tickangle": 0,
-    "titlefont": {"size": 12, "color": corporate_colors["white"]},
-    "tickfont": {"size": 16, "color": corporate_colors["white"]},
-    "zeroline": False,
-}
-
-corporate_yaxis = {
-    "showgrid": True,
-    "color": corporate_colors["white"],
-    "gridwidth": 0.5,
-    "gridcolor": corporate_colors["light-grey"],
-    "linecolor": corporate_colors["light-grey"],
-    "titlefont": {"size": 12, "color": corporate_colors["white"]},
-    "tickfont": {"size": 16, "color": corporate_colors["white"]},
-    "zeroline": False,
-}
-
-corporate_font_family = "Circular STD"
-
-corporate_legend = {
-    "orientation": "h",
-    "yanchor": "bottom",
-    "y": 1.01,
-    "xanchor": "right",
-    "x": 1.05,
-    "font": {"size": 15, "color": corporate_colors["white"]},
-}  # Legend will be on the top right, above the graph, horizontally
-
-corporate_margins = {
-    "l": 5,
-    "r": 0,
-    "t": 45,
-    "b": 15,
-}  # Set top margin to in case there is a legend
-
-corporate_layout = go.Layout(
-    # font = {'family' : corporate_font_family},
-    title=corporate_title,
-    title_x=0.5,  # Align chart title to center
-    paper_bgcolor="rgba(0,0,0,0)",
-    plot_bgcolor="rgba(0,0,0,0)",
-    xaxis=corporate_xaxis,
-    yaxis=corporate_yaxis,
-    height=300,
-    legend=corporate_legend,
-    margin=corporate_margins,
-)
-
-my_template = dict(layout=go.Layout(corporate_layout))
-####################################################################################################
-# 000 - DATA MAPPING
-####################################################################################################
-
-# Sales mapping
+#r = redis.Redis(host='localhost', port=6379)
 
 ####################################################################################################
 # 000 - IMPORT DATA DASHBOARD
@@ -201,24 +83,77 @@ df_stats = pd.read_csv(
 )
 df_stats = df_stats.dropna()
 
-colors = [corporate_colors["onramp-dark"], "#3fb6dc", "#f2a900"]
-##################################################################################################################################################
+colors = [onramp_colors["dark_blue"], "#3fb6dc", "#f2a900"]
+####################################################################################################
+# 000 - LARGE CHARTS DATA
+####################################################################################################
+pairs_crypto = [
+    "BTC-USDT",
+    "BCHABC-USDT",
+    "TRX-USDT",
+    "IOTA-USDT",
+    "XLM-USDT",
+    "EOS-USDT",
+    "ADA-USDT",
+    "LTC-USDT",
+    "NEO-USDT",
+    "BNB-USDT",
+    "ETH-USDT",
+]
+
+pairs_mixed = [
+    "S&P 500",
+    "All World Index",
+    "High Yield",
+    "HFRXGL Index",
+    "Gold",
+    "Emerging Markets",
+    "Russell 2000",
+    "Oil",
+    "Frontier Markets",
+    "Biotech",
+    "Bitcoin",
+    "Ethereum",
+]
+
+
+############################################## VOLATILITTY ##########################################
+
+df_mixed = calc_volatility_new(pairs_mixed) #Used for Mixed Asset Class Vol Chart
+
+df_mixed = df_mixed[
+    df_mixed.index > datetime.datetime(2020, 1, 15)
+]  # make it so we only have 2020 data
+
+df_vol = calc_volatility(pairs_crypto) #Used for Crypto Vol Chart 
+
+today = datetime.datetime.now(tz=pytz.utc).date()
+xd = today - datetime.timedelta(days=30) 
+
+c = xd.strftime("%Y-%m-%d")
+
+
+############################################## HEATMAP/TIMELINE ##########################################
+
+corr_df = create_corr(pairs_crypto)
+
+corr_df_new = create_corr_new(pairs_mixed)
+
+####################################################################################################
+# 000 - CUSTOM PAGE DATA
+####################################################################################################
+
+data = get_data()
+returns = calculate_controls(data)
+
+results_control = returns[0]
+results_spy = returns[1]
+results_agg = returns[2]
 
 
 ####################################################################################################
-# 000 - IMPORT DATA Other Chart
+# DASHBOARD PAGE
 ####################################################################################################
-
-
-####################################################################################################
-####################################################################################################
-####################################################################################################
-# Dashboard PAGE
-####################################################################################################
-####################################################################################################
-####################################################################################################
-
-
 @dash_app.callback(
     [
         dash.dependencies.Output("pie_chart", "figure"),
@@ -261,7 +196,7 @@ def update_graphs(value):
     # print(value)
     def graph_pie(percent_dictionary):
 
-        colors_pie = [corporate_colors['onramp-dark'], "#f2a900"]  # BTC Orange
+        colors_pie = [onramp_colors['dark_blue'], "#f2a900"]  # BTC Orange
         assets = list(percent_dictionary.keys())
 
         percents = list(percent_dictionary.values())
@@ -274,14 +209,14 @@ def update_graphs(value):
             color_discrete_sequence=colors_pie,
             title="Portfolio Allocation",
             # width = 400, height = 400
-            template=my_template,
+            template=onramp_template,
             height=500,
             hole = .2
         )
         fig.update_traces(hovertemplate="%{value:.0%}")
         # print("plotly express hovertemplate:", fig.data[0].hovertemplate)
         fig.update_layout(
-            font=dict(family="Roboto", color="white"),
+            font=dict(family="Roboto", color= onramp_colors["gray"]),
             title={
                 "text": "<b>Portfolio Allocation<b>",
                 "y": 1,
@@ -297,7 +232,7 @@ def update_graphs(value):
             {"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)",}
         )
         fig.update_traces(textfont_size=17, marker=dict( line=dict(color='white', width=1)))
-        fig.update_layout(titlefont=dict(size=24, color="white"))
+        fig.update_layout(titlefont=dict(size=24, color= onramp_colors["gray"]))
         fig.update_layout(margin=dict(l=10, r=20, t=40, b=0))
 
         return fig
@@ -324,7 +259,7 @@ def update_graphs(value):
             labels={"value": "", "Date": "", "color": "", "variable": ""},
             title="Portfolio Performance",
             color_discrete_map=color_dict,
-            template=my_template,
+            template=onramp_template,
             height = 500
             # width = 450
         )
@@ -335,7 +270,7 @@ def update_graphs(value):
             legend=dict(
                 orientation="h", yanchor="bottom", y=-0.3, xanchor="right", x=0.80
             ),
-            font=dict(family="Roboto", color="white"),
+            font=dict(family="Roboto", color= onramp_colors["gray"]),
             title={
                 "text": "<b>Portfolio Performance<b>",
                 "y": 1,
@@ -351,7 +286,7 @@ def update_graphs(value):
             }
         )
         fig.update_yaxes(side="left", nticks=8)
-        fig.update_layout(titlefont=dict(size=24, color="white", family="Circular STD"))
+        fig.update_layout(titlefont=dict(size=24, color= onramp_colors["gray"]))
         fig.update_layout(margin=dict(l=70, r=30, t=0, b=0))
         return fig
 
@@ -369,7 +304,7 @@ def update_graphs(value):
     }
 
     def graph_scatter_plot(risk_dic, return_dic):
-        colors = [corporate_colors['onramp-dark'], "#3fb6dc", "#f2a900"]
+        colors = [onramp_colors['dark_blue'], "#3fb6dc", "#f2a900"]
         labels = list(risk_dic.keys())
 
         xaxis_vol = list(risk_dic.values())
@@ -385,7 +320,7 @@ def update_graphs(value):
             # color_discrete_sequence=['#A90BFE','#FF7052','#66F3EC', '#67F9AF'],
             color_discrete_sequence=colors,
             opacity=1,
-            template=my_template,
+            template=onramp_template,
             labels={
                 "x": "",
                 "y": "Annual Return",
@@ -425,13 +360,13 @@ def update_graphs(value):
         )
         fig.add_annotation(text="Annual Risk", 
                   xref="paper", yref="paper",
-                  x=0.5, y=-.2, showarrow=False, font=dict(family="Roboto", color="white", size = 20))
+                  x=0.5, y=-.2, showarrow=False, font=dict(family="Roboto", color= onramp_colors["gray"], size = 20))
         fig.update_layout(yaxis_tickformat="%")
         fig.update_layout(xaxis_tickformat="%")
-        fig.update_layout(titlefont=dict(size=24, color="white"))
+        fig.update_layout(titlefont=dict(size=24, color= onramp_colors["gray"]))
         fig.update_xaxes(title_font={"size": 20})
         fig.update_yaxes(title_font={"size": 20})
-        fig.update_layout(margin=dict(l=100, r=50, t=20, b=0))
+        fig.update_layout(margin=dict(l=50, r=30, t=20, b=0))
 
         return fig
 
@@ -456,7 +391,7 @@ def update_graphs(value):
 
     def graph_barchart(x_axis_rr_ss, y_combined, y_6040, y_spy):
 
-        colors = [corporate_colors['onramp-dark'], "#3fb6dc", "#f2a900"]
+        colors = [onramp_colors['dark_blue'], "#3fb6dc", "#f2a900"]
         if x_axis_rr_ss[0] == "Ann. Return":
             title = "<b>Ann. Return & Risk<b>"
             max_range = 0.4
@@ -496,7 +431,7 @@ def update_graphs(value):
             color="Strategy",
             barmode="group",
             color_discrete_sequence=colors,
-            template=my_template,
+            template=onramp_template,
             labels={"Type": "", "Values": "", "Strategy": ""},
             height = 490
         )
@@ -545,3 +480,523 @@ def update_graphs(value):
     bar_ss_fig = graph_barchart(x_axis_ss, y_combined_ss, y_6040_ss, y_spy_ss)
     return pie_fig, line_fig, scatter_fig, bar_rr_fig, bar_ss_fig
 
+####################################################################################################
+# VOLATILITY CHART PAGE
+####################################################################################################
+
+@dash_app.callback(
+    dash.dependencies.Output("vol_chart", "figure"),
+    [dash.dependencies.Input("dropdown", "value")],
+)
+def update_vol(value):
+    def graph_volatility(df, coins, xd):
+        source = "Binance"
+        yaxis_dict = dict(
+            title="Rolling 30-Day Volatility",
+            hoverformat=".2f",
+            ticks="outside",
+            tickcolor="#53585f",
+            ticklen=0,
+            tickwidth=3,
+            tick0=0,
+            tickprefix="                 ",
+        )
+        vols = [14, 30, 90]
+        colors = 6 * [
+            "black",
+            "#033F63",
+            "#28666E",
+            "#7C9885",
+            "#B5B682",
+            "#FEDC97",
+            "#F6AE2D",
+            "#F26419",
+            "#5F0F40",
+            "#9A031E",
+            "#CB793A",
+        ]
+
+        index = 0
+        data = []
+        for i in df.columns:
+            data.append(
+                go.Scatter(
+                    x=list(df.index),
+                    y=list(df[i]),
+                    name=i.split("_", 1)[0],
+                    visible=False,
+                    line_color=colors[index],
+                )
+            )
+            index += 1
+
+        num_coins = len(coins)
+
+        vis_init = [False] * len(vols)
+        vis_vol = dict()
+        for i, v in enumerate(list(vols)):
+            tmp = vis_init.copy()
+            tmp[i] = True
+            vis_vol[v] = tmp.copy()
+
+        updatemenus = list(
+            [
+                dict(
+                    type="dropdown",
+                    active=1,
+                    x=-0,
+                    y=1.2,
+                    bgcolor = 'white',
+                    font = dict(color = 'black'),
+                    buttons=[
+                        dict(
+                            label=f"{v}-Day",
+                            method="update",
+                            args=[
+                                {"visible": vis_vol[v] * num_coins},
+                                {
+                                    "yaxis": dict(
+                                        yaxis_dict, title=f"Rolling {v}-Day Volatility"
+                                    )
+                                },
+                            ],
+                        )
+                        for v in list(vols)
+                    ],
+                )
+            ]
+        )
+
+        # set initial to 0
+        for i, b in enumerate(vis_vol[30] * num_coins):
+            if b == True:
+                data[i].visible = b
+
+        layout = dict(
+            title=dict(
+                text="Changing Volatility Over Time",
+                font=dict(size=30, color="white"),
+                x=0.5,
+            ),
+            height=700,
+            width=1000,
+            dragmode="zoom",
+            xaxis=dict(
+                title="Date",
+                ticks="inside",
+                ticklen=0,
+                tickwidth=3,
+                rangeselector=dict(
+                    font = dict(color = 'black'),
+                    buttons=list(
+                        [
+                            dict(
+                                count=3, label="3m", step="month", stepmode="backward"
+                            ),
+                            dict(count=1, label="YTD", step="year", stepmode="todate"),
+                            dict(count=1, label="1y", step="year", stepmode="backward"),
+                            dict(step="all"),
+                        ]
+                    )
+                ),
+                type="date",
+                tickcolor="#53585f",
+            ),
+            yaxis=yaxis_dict,
+            margin=dict(pad=0, b=125),
+            updatemenus=updatemenus,
+            font=dict(size=14, color = 'white'),
+            annotations=[
+                dict(
+                    x=-0.18,
+                    y=-0.25,
+                    xref="paper",
+                    yref="paper",
+                    showarrow=False,
+                    text=f"*Source: {source}; Volatility data quoted here represents data as of {xd}.",
+                    font=dict(size=10),
+                )
+            ],
+        )
+
+        fig = go.Figure(data=data, layout=layout)
+        
+        fig.update_layout(
+        {
+            "plot_bgcolor": "rgba(0, 0, 0, 0)",  # Transparent
+            "paper_bgcolor": "rgba(0, 0, 0, 0)",
+        }
+        )
+        fig.update_xaxes(showgrid = False)
+        fig.update_yaxes(gridcolor = '#C3C3C3')
+        return fig
+
+    if value == "CC":
+        return graph_volatility(df_vol, pairs_crypto, c)
+    if value == "AC":
+        return graph_volatility(df_mixed, pairs_mixed, c)
+
+####################################################################################################
+# HEATMAP CHART PAGE
+####################################################################################################
+@dash_app.callback(
+    dash.dependencies.Output("heatmap", "figure"),
+    [dash.dependencies.Input("dropdown", "value")],
+)
+def update_heatmap(value):
+    def graph_heatmap(df, date):
+        corr_mtx = df.loc[date].values
+        text_info = np.round(corr_mtx, decimals=5).astype(str)
+
+        x = 0
+        for i in range(len(text_info)):
+            for j in range(len(text_info[0])):
+                if text_info[i, j] == "1.0":
+                    text_info[i, j] = ""
+                    corr_mtx[i, j] = np.nan
+
+        labels = df.columns
+        layout = go.Layout(
+            font = dict(color = 'white'),
+            title=dict(text="Correlation Matrix", font=dict(size=30, color = 'white'), x=0.5,),
+            annotations=[
+                dict(
+                    x=0.5,
+                    y=-0.25,
+                    xref="paper",
+                    yref="paper",
+                    showarrow=False,
+                    text=(
+                        f"*6-Month Rolling Correlation of Daily Returns; Source: Binance; Correlation data quoted here represents data as of {date}."
+                    ),
+                    font=dict(size=10, color = 'white'),
+                )
+            ],
+            autosize=False,
+            width=700,
+            height=700,
+            xaxis=dict(ticklen=1),
+            yaxis=dict(ticklen=1,),
+            margin=dict(pad=0, b=125),
+        )
+
+        fig = go.Figure(
+            data=[
+                go.Heatmap(
+                    z=corr_mtx,
+                    x=labels,
+                    y=labels,
+                    text=text_info,
+                    hoverinfo="text",
+                    colorscale=[[0.0, "#3fb6dc"], [1, "#420DBB"]],
+                )
+            ],
+            layout=layout,
+        )
+        fig.update_layout(
+            {
+                "plot_bgcolor": "rgba(255, 255, 255, 0)",
+                "paper_bgcolor": "rgba(255, 255, 255, 0)",
+            }
+        )
+        fig.update_xaxes(showgrid=False, color = 'white')
+        fig.update_yaxes(showgrid=False, color = 'white')
+        fig.update_layout(legend_font = dict(color = 'white'))
+        return fig
+
+    if value == "CC":
+        return graph_heatmap(corr_df, c)
+    if value == "AC":
+        return graph_heatmap(corr_df_new, c)
+
+####################################################################################################
+# TIMELINE CHART PAGE
+####################################################################################################
+@dash_app.callback(
+    dash.dependencies.Output("heatmap_timeline", "figure"),
+    [dash.dependencies.Input("dropdown", "value")],
+)
+def update_timeline(value):
+    def graph_timeline(corr_df, xd):
+        _font = dict(family="Roboto", color = 'white')
+        source = "Binance"
+        axis_dict = dict(
+            ticks="outside",
+            tickfont=_font,
+            tickcolor="#53585f",
+            ticklen=0,
+            tickwidth=2,
+            automargin=True,
+            fixedrange=True,
+            tickprefix="        ",
+        )
+
+        unique_coins = corr_df.columns
+        coin_set = set(unique_coins)
+        num_buttons = np.arange(1, len(unique_coins), 1).sum()
+        data, buttons = [], []
+        x = 0
+
+        if "USDT" in corr_df.columns[0]:
+            label_tag = "-USDT"
+        else:
+            label_tag = "-USD"
+
+        for i in unique_coins:
+            labels = []
+
+            info_ = i.replace(label_tag, "")
+            # z:vals, x:dates, y:coin names
+            cross_section = corr_df.xs(i, level=1).drop(i, axis=1)
+            labels = [x.replace(label_tag, "") for x in cross_section.columns]
+            data.append(
+                go.Heatmap(
+                    z=cross_section.T.values,
+                    x=cross_section.index,
+                    y=labels,
+                    name=info_,
+                    visible=False,
+                    colorscale=custom_scale,
+                )
+            )
+            buttons.append(
+                dict(
+                    label=info_,
+                    method="update",
+                    args=[
+                        {"visible": list(np.insert([False] * num_buttons, x, True))},
+                        {
+                            "yaxis": dict(
+                                axis_dict,
+                                title=f"{info_} 6-Month Rolling Return Correlation",
+                            )
+                        },
+                    ],
+                )
+            )
+            x += 1
+
+        data[0].visible = True
+        start_title = buttons[0]["label"]
+        updatemenus = list(
+            [dict(type="dropdown", active=0, y=1.09, x=-.01, buttons=buttons, font = dict(color = 'black'), bgcolor = 'white'),]
+        )
+
+        layout = dict(
+            font=_font,
+            images=[
+                dict(
+                    source="/static/onramp-logo.png",
+                    xref="paper",
+                    yref="paper",
+                    x=1.08,
+                    y=1.1,
+                    sizex=0.25,
+                    sizey=0.25,
+                    xanchor="right",
+                    yanchor="bottom",
+                )
+            ],
+            height=700,
+            width=800,
+            dragmode="zoom",
+            annotations=[
+                dict(
+                    x=-0.15,
+                    y=-0.20,
+                    xref="paper",
+                    yref="paper",
+                    showarrow=False,
+                    text=f"*Source: {source}; Correlation data quoted here represents data as of {xd}.",
+                    font=dict(size=9),
+                )
+            ],
+            title=dict(
+                text="Relative Correlation Over Time",
+                font=dict(_font, size=40, color="white"),
+                x=0.5,
+            ),
+            xaxis=dict(
+                title=dict(text="Date", font=dict(_font, size=20)),
+                ticks="inside",
+                ticklen=6,
+                tickwidth=2,
+                tickfont=_font,
+                rangeselector=dict(
+                    x=0.75,
+                    font = dict(color = 'black'),
+                    buttons=list(
+                        [
+                            dict(
+                                count=3, label="3m", step="month", stepmode="backward",
+                            ),
+                            dict(count=1, label="YTD", step="year", stepmode="todate"),
+                            dict(count=1, label="1y", step="year", stepmode="backward"),
+                            dict(step="all"),
+                        ]
+                    ),
+                ),
+                autorange=True,
+                type="date",
+                tickcolor="#53585f",
+            ),
+            yaxis=dict(
+                axis_dict,
+                title=dict(
+                    font=dict(_font, size=20),
+                    text=f"{start_title} 6-Month Rolling Return Correlation",
+                ),
+            ),
+            margin=dict(pad=5, b=105),
+            legend=dict(orientation="h"),
+            updatemenus=updatemenus,
+        )
+
+        fig = go.Figure(data=data, layout=layout)
+        fig.update_layout({
+            'plot_bgcolor': 'rgba(0, 0, 0, 0)',
+            'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+            })
+
+        return fig
+
+    if value == "CC":
+        return graph_timeline(corr_df, c)
+    if value == "AC":
+        return graph_timeline(corr_df_new, c)
+
+####################################################################################################
+# CUSTOM STRATEGY PAGE
+####################################################################################################
+@dash_app.callback(
+    [Output('pie_chart_c', 'figure'),
+    Output('line_chart_c', 'figure'),
+    Output('scatter_plot_c', 'figure'),
+    Output("stats_table", "figure"),
+    Output("month_table", "figure"),
+    Output("balance_table", "figure"),
+    Output("return_stats", "figure")
+    ],
+    
+    Input("submit_button", "n_clicks"),
+    State('Ticker1', 'value'),
+    State('Allocation1', 'value'),
+    State('Ticker2', 'value'),
+    State('Allocation2', 'value'),
+    State('Ticker3', 'value'),
+    State('Allocation3', 'value'),
+    State('Ticker4', 'value'),
+    State('Allocation4', 'value'),
+    State('Rebalance', 'value')
+    
+)
+def update_graph(num_click, stock_choice_1, alloc1, stock_choice_2, alloc2, stock_choice_3, alloc3, stock_choice_4, alloc4, rebalance = 1.2):
+    start = time.time()
+    ####################################################### PIE CHART ##########################################################################################
+    stock_list_pie = [stock_choice_1, stock_choice_2, stock_choice_3, stock_choice_4]
+    percent_list = [float(alloc1)/100, float(alloc2)/100, float(alloc3)/100, float(alloc4)/100]
+
+    fig = plotly_pie(stock_list_pie, percent_list)
+    #px.pie( values = percent_list, names = stock_list_pie, color = stock_list_pie, title="", template= onramp_template, hole = .3, height = 300)
+    
+    ##################################################### SETTING UP DATA #############################################################################################
+    stock_choice_1 = stock_choice_1.lower()
+    stock_choice_2 = stock_choice_2.lower()
+    stock_choice_3 = stock_choice_3.lower()
+    stock_choice_4 = stock_choice_4.lower()
+
+    
+    #stock_list = stock_choice_1 +',' + stock_choice_2 + ',' + stock_choice_3 + ',' + stock_choice_4
+    
+    data_s = time.time()
+    #data = bt.get(stock_list, start = '2017-01-01')
+    data = pd.DataFrame()
+    #context = pa.default_serialization_context()
+    for ticker in stock_list_pie:
+        data_x = r.get(ticker)
+        if data_x is None:
+            print("Could not find", ticker, "in the cache.")
+            data_x = bt.get(ticker, start = '2017-01-01')
+            r.set(ticker, data_x)
+            r.expire(ticker, timedelta(seconds = 86400))
+
+        data = data.join(data_x, how = 'outer')
+    
+
+
+
+
+    # data1 = r.get(stock_choice_1)
+    # context = pa.default_serialization_context()
+    # if data1 is None:
+    #     print("Could not find", stock_choice_1, "in the cache.")
+    #     data1 = bt.get(stock_choice_1, start = '2017-01-01')
+    #     r.set(stock_choice_1, context.serialize(data1).to_buffer().to_pybytes())
+
+    # data1 = bt.get(stock_choice_1, start = '2017-01-01')
+    # data2 = bt.get(stock_choice_2, start = '2017-01-01')
+    # data3 = bt.get(stock_choice_3, start = '2017-01-01')
+    # data4 = bt.get(stock_choice_4, start = '2017-01-01')
+    # data_2 = pd.DataFrame()
+    # data_2 = data_2.join(data1, how = 'outer')
+    # print(data_2)
+    # data = data1.join(data2, how='outer')
+    # data = data.join(data3, how='outer')
+    # data = data.join(data4, how='outer')
+    data = data.dropna()
+    #print(data)
+    data_e = time.time()
+    print("Finished Data", stock_choice_1, ":", data_e - data_s)
+
+    #need the '-' in cryptos to get the data, but bt needs it gone to work
+    data_st = time.time()
+    stock_choice_1 = stock_choice_1.replace('-', '')
+    stock_choice_2 = stock_choice_2.replace('-', '')
+    stock_choice_3 = stock_choice_3.replace('-', '')
+    stock_choice_4 = stock_choice_4.replace('-', '')
+
+    
+    stock_dic = {stock_choice_1: float(alloc1)/100, stock_choice_2: float(alloc2)/100, stock_choice_3: float(alloc3)/100, stock_choice_4: float(alloc4)/100} #dictonary for strat
+    
+    if(rebalance == None or rebalance == ""):
+        rebalance = 1.2
+    rebalance = float(rebalance)
+    strategy_ = bt.Strategy("Custom Strategy", 
+                              [ 
+                              bt.algos.RunDaily(),
+                              bt.algos.SelectAll(), 
+                              bt.algos.WeighSpecified(**stock_dic),
+                              RebalanceAssetThreshold(threshold = rebalance),
+                              bt.algos.RunMonthly(),
+                              bt.algos.Rebalance()]) #Creating strategy
+
+    test = bt.Backtest(strategy_, data)
+    results = bt.run(test)
+    
+    results_list = [results, results_control, results_spy, results_agg]
+    
+    data_et = time.time()
+    print("Finished Strategy", stock_choice_1, ":", data_et - data_st)
+    ################################################### LINE CHART ########################################################################################################
+    fig_line = line_chart(results_list)
+
+    fig_scat = scatter_plot(results_list)
+
+    fig_stats = stats_table(results_list)
+
+    fig_month_table = monthly_table(results_list)
+
+    fig_month_table.update_layout(height = 830)
+
+    fig_balance_table = balance_table(results, results_control)
+
+    fig_balance_table.update_layout(height = 100)
+
+    fig_returns_stats = short_stats_table(results_list)
+
+    fig_returns_stats.update_layout(height = 320)
+
+    end = time.time()
+    print("Finished Everything", stock_choice_1, ":", end - start)
+    return fig, fig_line, fig_scat, fig_stats, fig_month_table, fig_balance_table, fig_returns_stats
+##############################################################################################################################################################

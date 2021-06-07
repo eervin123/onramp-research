@@ -186,7 +186,7 @@ def get_navbar(p="dashboard"):
         dbc.Col([
         dbc.Nav(
         [
-        dbc.NavItem(dbc.NavLink("Dashboard", active=True, href="/apps/dashboard", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Dashboard", active=True, href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
         dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
         dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
         dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
@@ -1230,8 +1230,9 @@ def Inputs():
             dbc.CardBody([
                 #Inputs 1 
                 dbc.Row([
-                    dbc.Col(
-                        dcc.Input(
+                    dbc.Col([
+                        dbc.Label("Tickers"),
+                        dbc.Input(
                             id = "Ticker1",
                             type= 'text',
                             value = "spy",
@@ -1240,25 +1241,26 @@ def Inputs():
                             style = {"width" : "100%"}
 
                         ),
-                    width={'size':4}, className= " mb-4", 
+                    ],width={'size':4}, className= " mb-4", 
                     ), 
 
-                    dbc.Col(
-                        dcc.Input(
+                    dbc.Col([
+                        dbc.Label("Allocation %"),
+                        dbc.Input(
                             id = "Allocation1",
                             value = "40",
-                            type= 'text',
+                            type= 'numeric',
                             placeholder= "Enter Allocation %",
                             style = {"width" : "100%"}
 
-                        ), width={'size': 6, 'offset':1},
+                        ), ],width={'size': 6, 'offset':1},
                     ),
                 ]),
 
                 #Inputs 2 
                 dbc.Row([
                     dbc.Col(
-                        dcc.Input(
+                        dbc.Input(
                             id = "Ticker2",
                             type= 'text',
                             value = 'agg',
@@ -1270,7 +1272,7 @@ def Inputs():
                     ), 
 
                     dbc.Col(
-                        dcc.Input(
+                        dbc.Input(
                             id = "Allocation2",
                             type= 'text',
                             value = "20",
@@ -1284,7 +1286,7 @@ def Inputs():
                 #Inputs 3 
                 dbc.Row([
                     dbc.Col(
-                        dcc.Input(
+                        dbc.Input(
                             id = "Ticker3",
                             type= 'text',
                             value = 'btc-usd',
@@ -1296,7 +1298,7 @@ def Inputs():
                     ), 
 
                     dbc.Col(
-                        dcc.Input(
+                        dbc.Input(
                             id = "Allocation3",
                             type= 'text',
                             value = '20',
@@ -1310,7 +1312,7 @@ def Inputs():
                 #Inputs 4 
                 dbc.Row([
                     dbc.Col(
-                        dcc.Input(
+                        dbc.Input(
                             id = "Ticker4",
                             type= 'text',
                             value = 'tsla',
@@ -1322,7 +1324,7 @@ def Inputs():
                     ), 
 
                     dbc.Col(
-                        dcc.Input(
+                        dbc.Input(
                             id = "Allocation4",
                             type= 'text',
                             value = "20",
@@ -1340,7 +1342,7 @@ def Inputs():
                     ), 
 
                     dbc.Col(
-                        dcc.Input(
+                        dbc.Input(
                             id = "Rebalance",
                             type= 'text',
                             placeholder= "Rebalance Threshold %",
@@ -1354,13 +1356,13 @@ def Inputs():
                 dbc.Row([
                     
                     dbc.Col(
-                        html.Button(
+                        dbc.Button(
                             id = "submit_button",
                             children= "Create Strategy",
                             n_clicks=0,
                             style= {"width": "100%"}
 
-                        ), width={'size':12, 'offset':0},
+                        ), width={'size':11, 'offset':0},
                     ),
                 ]),
                 
@@ -1426,7 +1428,7 @@ def DisplayScatter():
             )
             )
         ]),  
-    ], className= "text-center mb-2 mr-2", style= {"max-width" : "100%", "margin": "auto", "height": "31rem"}, color= onramp_colors["dark_blue"], inverse = True)
+    ], className= "text-center mb-2 mr-2", style= {"max-width" : "100%", "margin": "auto", "height": "33rem"}, color= onramp_colors["dark_blue"], inverse = True)
 
     return scat        
 
@@ -1441,7 +1443,7 @@ def DisplayStats():
             )
             )
         ]),  
-    ], className= "text-center mb-2", style= {"max-width" : "100%", "margin": "auto", "height": "31rem"}, color= onramp_colors["dark_blue"], inverse = True)
+    ], className= "text-center mb-2", style= {"max-width" : "100%", "margin": "auto", "height": "33rem"}, color= onramp_colors["dark_blue"], inverse = True)
 
     return stats        
 
@@ -1464,7 +1466,7 @@ def DisplayReturnStats():
             
                             
         ])
-    ],  className= "text-center mb-2 mr-2", style= {"max-width" : "100%", "margin": "auto", "height": "31rem"}, color= onramp_colors["dark_blue"], inverse = True)
+    ],  className= "text-center mb-2 mr-2", style= {"max-width" : "100%", "margin": "auto", "height": "33rem"}, color= onramp_colors["dark_blue"], inverse = True)
 
     return stats      
 
@@ -1486,18 +1488,20 @@ def DisplayMonthTable():
 custom_page = dbc.Container([
     
     get_navbar('custom'),
+
+    get_emptyrow(),
     #Title 
     dbc.Row(
         dbc.Col(
             dbc.Card(
                 dbc.CardBody([
-                    html.H1(children="Custom Strategy Dashboard", style = {"color": onramp_colors["gray"]}), 
+                    html.H1(children="Custom Strategy Dashboard", style = {"color": onramp_colors["white"]}), 
                     
                     html.P(children= "Commerce on the Internet has come to rely almost exclusively on financial institutions serving as trusted third parties to process electronic payments. While the system works well enough for most transactions, it still suffers from the inherent weaknesses of the trust based model. Completely non-reversible transactions are not really possible, since financial institutions cannotavoid mediating disputes.", 
-                            style = {"fontSize": "vmin", "color": onramp_colors["gray"]}),
+                            style = {"fontSize": "vmin", "color": onramp_colors["white"]}),
                             
                     html.P(children= "Commerce on the Internet has come to rely almost exclusively on financial institutions serving as trusted third parties to process electronic payments. While the system works well enough for most transactions, it still suffers from the inherent weaknesses of the trust based model. Completely non-reversible transactions are not really possible, since financial institutions cannotavoid mediating disputes.",
-                            style = {"fontSize": "vmin", "color": onramp_colors["gray"] })
+                            style = {"fontSize": "vmin", "color": onramp_colors["white"] })
                 ]),
             className="text-center mb-2", color= onramp_colors["dark_blue"], inverse= True,), 
         width = 12)

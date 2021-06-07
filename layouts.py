@@ -5,7 +5,7 @@ from dash_bootstrap_components._components.Row import Row
 import dash_bootstrap_components as dbc
 import plotly.graph_objs as go
 from dash_app import dash_app
-from formatting import corporate_colors, externalgraph_rowstyling, externalgraph_colstyling, filterdiv_borderstyling, recapdiv, recapdiv_text, my_template
+from formatting import onramp_colors, externalgraph_rowstyling, externalgraph_colstyling, recapdiv
 from helpers import get_coin_data, get_coin_data_new, volatility, calc_volatility, calc_volatility_btc_vol, calc_volatility_new, create_corr, create_corr_new
 
 
@@ -172,7 +172,7 @@ def get_header():
             ),
         ],
         className="row",
-        style={"height": "4%", "background-color": corporate_colors["onramp-dark"]},
+        style={"height": "4%", "background-color": onramp_colors["dark_blue"]},
     )
 
     return header
@@ -191,6 +191,7 @@ def get_navbar(p="dashboard"):
         dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
         dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
         dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
         ],
         pills=True, 
         )
@@ -207,6 +208,7 @@ def get_navbar(p="dashboard"):
         dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
         dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
         dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
         ],
         pills=True, 
         )
@@ -223,6 +225,7 @@ def get_navbar(p="dashboard"):
         dbc.NavItem(dbc.NavLink("Correlation Matrix",active=True, href="/apps/correlation-matrix", style = {"color": "black"})),
         dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
         dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
         ],
         pills=True, 
         )
@@ -239,6 +242,7 @@ def get_navbar(p="dashboard"):
         dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
         dbc.NavItem(dbc.NavLink("Correlation Over Time", active=True, href="/apps/correlation-timeline", style = {"color": "black"})),
         dbc.NavItem(dbc.NavLink("Bitcoin Volatility",  href="/apps/bitcoin-volatility", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
         ],
         pills=True, 
         )
@@ -255,6 +259,24 @@ def get_navbar(p="dashboard"):
         dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
         dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
         dbc.NavItem(dbc.NavLink("Bitcoin Volatility", active=True, href="/apps/bitcoin-volatility", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
+        ],
+        pills=True, 
+        )
+        ])
+    ], className = "bg-white")
+
+    navbar_custom = dbc.Row([
+        dbc.Col( width = {"size" : 0}, className = "mr-3" ),
+        dbc.Col([
+        dbc.Nav(
+        [
+        dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
+        dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", active=True, href="/apps/custom-dashboard", style = {"color": "black"})),
         ],
         pills=True, 
         )
@@ -328,7 +350,7 @@ def get_navbar(p="dashboard"):
     #     ],
     #     className="row",
     #     style={
-    #         "background-color": corporate_colors["dark-green"],  # behind nav
+    #         "background-color": onramp_colors["dark-green"],  # behind nav
     #         "box-shadow": "2px 5px 5px 1px #00eead",
     #     },
     # )
@@ -381,7 +403,7 @@ def get_navbar(p="dashboard"):
     #     ],
     #     className="row",
     #     style={
-    #         "background-color": corporate_colors["dark-green"],  # behind nav
+    #         "background-color": onramp_colors["dark-green"],  # behind nav
     #         "box-shadow": "2px 5px 5px 1px #00eead",
     #     },
     # )
@@ -436,7 +458,7 @@ def get_navbar(p="dashboard"):
     #     ],
     #     className="row",
     #     style={
-    #         "background-color": corporate_colors["dark-green"],  # behind nav
+    #         "background-color": onramp_colors["dark-green"],  # behind nav
     #         "box-shadow": "2px 5px 5px 1px #00eead",
     #     },
     # )
@@ -492,7 +514,7 @@ def get_navbar(p="dashboard"):
     #     ],
     #     className="row",
     #     style={
-    #         "background-color": corporate_colors["dark-green"],  # behind nav
+    #         "background-color": onramp_colors["dark-green"],  # behind nav
     #         "box-shadow": "2px 5px 5px 1px #00eead",
     #     },
     # )
@@ -548,7 +570,7 @@ def get_navbar(p="dashboard"):
     #     ],
     #     className="row",
     #     style={
-    #         "background-color": corporate_colors["dark-green"],  # behind nav
+    #         "background-color": onramp_colors["dark-green"],  # behind nav
     #         "box-shadow": "2px 5px 5px 1px #00eead",
     #     },
     # )
@@ -563,6 +585,8 @@ def get_navbar(p="dashboard"):
         return navbar_timeline
     elif p == "btc_vol":
         return btc_vol
+    elif p == "custom":
+        return navbar_custom
     else:
         return navbar_dashboard
 
@@ -607,12 +631,12 @@ dashboard_page = html.Div(
                     [  # External 10-column
                         html.H2(
                             children="Impact of Adding BTC to a 60/40 Portfolio",
-                            style={"color": corporate_colors["white"]},
+                            style={"color": onramp_colors["white"]},
                         ),
                         #html.Br(),
                         html.H6(
                             children="Cryptoassets such as Bitcoin (BTC) and Ether (ETH) have emerged as an asset class that clients are interested in holding long term. Cryptoassets are usually held away from advisors. As a trusted confidante and risk manager, Advisors should have access to tools and insights that help them manage portfolios holistically. Use the slider to show the performance change of adding 1-5% BTC to a typical 60/40 portfolio. ",
-                            style={"color": corporate_colors["white"]},
+                            style={"color": onramp_colors["white"]},
                         ),
                         html.Div(
                             [  # Internal row - RECAPS
@@ -621,7 +645,7 @@ dashboard_page = html.Div(
                                         # $html.Br(),
                                         html.H3(
                                             children="100% 60/40",
-                                            style={"color": corporate_colors["white"]},
+                                            style={"color": onramp_colors["white"]},
                                         ),
                                     ],
                                     className="col-2 slider-text",
@@ -667,7 +691,7 @@ dashboard_page = html.Div(
                                         # html.Br(),
                                         html.H3(
                                             children="10% Bitcoin",
-                                            style={"color": corporate_colors["white"]},
+                                            style={"color": onramp_colors["white"]},
                                         ),
                                         
                                     ],
@@ -784,12 +808,12 @@ vol_page = html.Div(
                     [  # External 10-column
                         html.H2(
                             children="Rolling Volatility Charts",
-                            style={"color": corporate_colors["white"]},
+                            style={"color": onramp_colors["white"]},
                         ),
                         #html.Br(),
                         html.H6(
                             children="Advisors will now have remote access to held-away client cryptoasset accounts via Read-Only or direct access to allocate on clients’ behalf via the Onramp platform, allowing Advisors to comprehensively manage clients’ assets and risk. Here we show how dynamic volatility can be in the cryptoasset ecosystem creating multiple opportunities to reach out to clients and discuss their risk tolerance and ability to withstand this volatility. ",
-                            style={"color": corporate_colors["white"]},
+                            style={"color": onramp_colors["white"]},
                         ),
                         html.Div(
                             [  # Internal row - RECAPS
@@ -814,7 +838,7 @@ vol_page = html.Div(
                                     [
                                         # #html.Br(),
                                         # html.H3(children= "10% Bitcoin",
-                                        # style = {'color' : corporate_colors['white']}),
+                                        # style = {'color' : onramp_colors['white']}),
                                     ],
                                     className="col-2",
                                 ),  # Empty column
@@ -894,12 +918,12 @@ btc_vol_page = html.Div(
                     [  # External 10-column
                         html.H2(
                             children="Annualized Bitcoin Volatility",
-                            style={"color": corporate_colors["white"]},
+                            style={"color": onramp_colors["white"]},
                         ),
                         #html.Br(),
                         html.H6(
                             children="Advisors will now have remote access to held-away client cryptoasset accounts via Read-Only or direct access to allocate on clients’ behalf via the Onramp platform, allowing Advisors to comprehensively manage clients’ assets and risk. Here we show how dynamic volatility can be in the cryptoasset ecosystem creating multiple opportunities to reach out to clients and discuss their risk tolerance and ability to withstand this volatility. ",
-                            style={"color": corporate_colors["white"]},
+                            style={"color": onramp_colors["white"]},
                         ),
                         html.Div(
                             [  # Internal row - RECAPS
@@ -924,7 +948,7 @@ btc_vol_page = html.Div(
                                     [
                                         # #html.Br(),
                                         # html.H3(children= "10% Bitcoin",
-                                        # style = {'color' : corporate_colors['white']}),
+                                        # style = {'color' : onramp_colors['white']}),
                                     ],
                                     className="col-2",
                                 ),  # Empty column
@@ -997,12 +1021,12 @@ heatmap_page = html.Div(
                     [  # External 10-column
                         html.H2(
                             children="Correlation Matrix",
-                            style={"color": corporate_colors["white"]},
+                            style={"color": onramp_colors["white"]},
                         ),
                         #html.Br(),
                         html.H6(
                             children="Advisors can now manage the overall expected return, risk, Sharpe ratio, et cetera, of clients’ total mix of financial assets, including cryptocurrencies and decentralized finance. This heatmap, updated daily, shows current intra-asset correlations for: BTC, ETH, S&P500, All World Equities, High Yield, Global Hedge Funds, Gold, Emerging Market Indices, Russell 2000, Oil, Frontier Markets, and Biotech. Historical correlations are presented in the next tab.",
-                            style={"color": corporate_colors["white"]},
+                            style={"color": onramp_colors["white"]},
                         ),
                         html.Div(
                             [  # Internal row - RECAPS
@@ -1028,7 +1052,7 @@ heatmap_page = html.Div(
                                     [
                                         # #html.Br(),
                                         # html.H3(children= "10% Bitcoin",
-                                        # style = {'color' : corporate_colors['white']}),
+                                        # style = {'color' : onramp_colors['white']}),
                                     ],
                                     className="col-2",
                                 ),  # Empty column
@@ -1109,12 +1133,12 @@ heatmap_timeline_page = html.Div(
                     [  # External 10-column
                         html.H2(
                             children="Correlation Over Time",
-                            style={"color": corporate_colors["white"]},
+                            style={"color": onramp_colors["white"]},
                         ),
                         #html.Br(),
                         html.H6(
                             children="Advisors may have or receive questions about the value of adding cryptoassets, particularly BTC and ETH, to a traditional portfolio. Price returns speak for themselves but the history of their correlation to traditional assets is meaningful to holistic portfolio construction and client discussions. For example, the May 2021 drawdown in cryptoassets had very little correlation to the broader markets, illustrating its value as a minimally-correlated asset in a broader portfolio.",
-                            style={"color": corporate_colors["white"]},
+                            style={"color": onramp_colors["white"]},
                         ),
                         html.Div(
                             [  # Internal row - RECAPS
@@ -1139,7 +1163,7 @@ heatmap_timeline_page = html.Div(
                                     [
                                         # #html.Br(),
                                         # html.H3(children= "10% Bitcoin",
-                                        # style = {'color' : corporate_colors['white']}),
+                                        # style = {'color' : onramp_colors['white']}),
                                     ],
                                     className="col-2",
                                 ),  # Empty column
@@ -1195,3 +1219,357 @@ heatmap_timeline_page = html.Div(
         ),  # External row
     ]
 )
+####################################################################################################
+# 005 - Custom Strategy Page
+####################################################################################################
+
+def Inputs():
+
+    inputs_ = dbc.Card([
+            dbc.CardHeader(children= html.H3("Inputs"), style = {"font": "Roboto", "color": onramp_colors["gray"]}),
+            dbc.CardBody([
+                #Inputs 1 
+                dbc.Row([
+                    dbc.Col(
+                        dcc.Input(
+                            id = "Ticker1",
+                            type= 'text',
+                            value = "spy",
+                            placeholder= "Enter Ticker",
+                            debounce = True,
+                            style = {"width" : "100%"}
+
+                        ),
+                    width={'size':4}, className= " mb-4", 
+                    ), 
+
+                    dbc.Col(
+                        dcc.Input(
+                            id = "Allocation1",
+                            value = "40",
+                            type= 'text',
+                            placeholder= "Enter Allocation %",
+                            style = {"width" : "100%"}
+
+                        ), width={'size': 6, 'offset':1},
+                    ),
+                ]),
+
+                #Inputs 2 
+                dbc.Row([
+                    dbc.Col(
+                        dcc.Input(
+                            id = "Ticker2",
+                            type= 'text',
+                            value = 'agg',
+                            placeholder= "Enter Ticker",
+                            style = {"width" : "100%"}
+
+                        ),
+                    width={'size':4}, className= "mb-4"
+                    ), 
+
+                    dbc.Col(
+                        dcc.Input(
+                            id = "Allocation2",
+                            type= 'text',
+                            value = "20",
+                            placeholder= "Enter Allocation %",
+                            style = {"width" : "100%"}
+
+                        ), width={'size':6, 'offset':1},
+                    ),
+                ]),
+
+                #Inputs 3 
+                dbc.Row([
+                    dbc.Col(
+                        dcc.Input(
+                            id = "Ticker3",
+                            type= 'text',
+                            value = 'btc-usd',
+                            placeholder= "Enter Ticker",
+                            style = {"width" : "100%"}
+
+                        ),
+                    width={'size':4}, className= "mb-4"
+                    ), 
+
+                    dbc.Col(
+                        dcc.Input(
+                            id = "Allocation3",
+                            type= 'text',
+                            value = '20',
+                            placeholder= "Enter Allocation %",
+                            style = {"width" : "100%"}
+
+                        ), width={'size':6, 'offset':1},
+                    ),
+                ]),
+
+                #Inputs 4 
+                dbc.Row([
+                    dbc.Col(
+                        dcc.Input(
+                            id = "Ticker4",
+                            type= 'text',
+                            value = 'tsla',
+                            placeholder= "Enter Ticker",
+                            style = {"width" : "100%"}
+
+                        ),
+                    width={'size':4}, className= "mb-4"
+                    ), 
+
+                    dbc.Col(
+                        dcc.Input(
+                            id = "Allocation4",
+                            type= 'text',
+                            value = "20",
+                            placeholder= "Enter Allocation %",
+                            style = {"width" : "100%"}
+
+                        ), width={'size':6, 'offset':1},
+                    ),
+                ]),
+
+                #Inputs 5 
+                dbc.Row([
+                    dbc.Col(
+                    width={'size':4}, className= "mb-4" #Empty Col for Rebalance 
+                    ), 
+
+                    dbc.Col(
+                        dcc.Input(
+                            id = "Rebalance",
+                            type= 'text',
+                            placeholder= "Rebalance Threshold %",
+                            style = {"width" : "100%"}
+
+                        ), width={'size':6, 'offset':1}, className= "mb-4"
+                    ),
+                ]),
+
+                #Submit Button
+                dbc.Row([
+                    
+                    dbc.Col(
+                        html.Button(
+                            id = "submit_button",
+                            children= "Create Strategy",
+                            n_clicks=0,
+                            style= {"width": "100%"}
+
+                        ), width={'size':12, 'offset':0},
+                    ),
+                ]),
+                
+            ]), 
+    ], className= "text-center mb-2 mr-2", style= {"height": "31rem"}, color= onramp_colors["dark_blue"], inverse= True,)
+
+    return inputs_
+
+def Description():
+
+    descript = dbc.Card(
+                dbc.CardBody([
+                   
+                            html.P(children= "Commerce on the Internet has come to rely almost exclusively on financial institutions serving as trusted third parties to process electronic payments. While the system works well enough for most transactions, it still suffers from the inherent weaknesses of the trust based model. Completely non-reversible transactions are not really possible, since financial institutions cannotavoid mediating disputes.", 
+                            style = {"fontSize": "vmin" }),
+                            
+                            html.P(children= "Commerce on the Internet has come to rely almost exclusively on financial institutions serving as trusted third parties to process electronic payments. While the system works well enough for most transactions, it still suffers from the inherent weaknesses of the trust based model. Completely non-reversible transactions are not really possible, since financial institutions cannotavoid mediating disputes.",
+                            style = {"fontSize": "vmin" })
+                            
+                
+                ]), className= "text-center", style= {"height": "22rem"}, color= onramp_colors["dark_blue"], inverse= True
+    )
+
+    return descript
+
+def DisplayPie():
+    pie = dbc.Card([
+        dbc.CardHeader(children= html.H3("Portfolio Allocation"), style = {"font": "Roboto", "color": onramp_colors["gray"]}),
+        dbc.CardBody([
+            
+            dcc.Loading( id = "loading_pie", children=
+            dcc.Graph(
+                id = "pie_chart_c"
+            )
+            )
+        ]),
+    ],  className= "text-center mb-2 mr-2", style= {"height": "31rem"}, color= onramp_colors["dark_blue"], inverse = True)
+
+    return pie
+           
+def DisplayLineChart():
+    line = dbc.Card([
+        dbc.CardHeader(children= html.H3("Portfolio Performance"), style = {"font": "Roboto", "color": onramp_colors["gray"]}),
+        dbc.CardBody([
+            dcc.Loading(id = "loading_line", children=
+            dcc.Graph(
+                id = "line_chart_c",
+                style= {"responsive": True}
+            ))
+        ]), 
+    ], className= "text-center mb-2", style= {"max-width" : "100%", "margin": "auto", "height": "31rem"}, color= onramp_colors["dark_blue"], inverse = True)
+
+    return line        
+
+def DisplayScatter():
+    scat = dbc.Card([
+        dbc.CardHeader(children= html.H3("Risk vs. Return"), style = {"font": "Roboto", "color": onramp_colors["gray"]}),
+        dbc.CardBody([
+            dcc.Loading(id = "loading-scatter", children=
+            dcc.Graph(
+                id = "scatter_plot_c",
+                style= {"responsive": True}
+            )
+            )
+        ]),  
+    ], className= "text-center mb-2 mr-2", style= {"max-width" : "100%", "margin": "auto", "height": "31rem"}, color= onramp_colors["dark_blue"], inverse = True)
+
+    return scat        
+
+def DisplayStats():
+    stats = dbc.Card([
+        dbc.CardHeader(children= html.H3("Performance Statistics"), style = {"font": "Roboto", "color": onramp_colors["gray"]}),
+        dbc.CardBody([
+            dcc.Loading(id = "loading_stats", children=
+            dcc.Graph(
+                id = "stats_table",
+                style= {"responsive": True}
+            )
+            )
+        ]),  
+    ], className= "text-center mb-2", style= {"max-width" : "100%", "margin": "auto", "height": "31rem"}, color= onramp_colors["dark_blue"], inverse = True)
+
+    return stats        
+
+def DisplayReturnStats():
+    stats = dbc.Card([
+        dbc.CardHeader(children= html.H3("Returns Recap"), style = {"font": "Roboto", "color": onramp_colors["gray"]}),
+        dbc.CardBody([
+            dcc.Loading(id = "loading_return1", children= 
+                dcc.Graph(
+                id = "balance_table",
+                style= {"responsive": True}
+                )
+            ),
+            dcc.Loading(id = "loading_returns2", children=
+                dcc.Graph(
+                id = "return_stats",
+                style= {"responsive": True}
+                )
+            )
+            
+                            
+        ])
+    ],  className= "text-center mb-2 mr-2", style= {"max-width" : "100%", "margin": "auto", "height": "31rem"}, color= onramp_colors["dark_blue"], inverse = True)
+
+    return stats      
+
+def DisplayMonthTable():
+    stats = dbc.Card([
+        dbc.CardHeader(children= html.H3("Returns Breakdown"), style = {"font": "Roboto", "color": onramp_colors["gray"]}),
+        dbc.CardBody([
+            dcc.Loading( id = "loading_month", children=
+            dcc.Graph(
+                id = "month_table",
+                style= {"responsive": True}
+            )
+            )
+        ])
+    ],  className= "text-center", style= {"max-width" : "100%", "margin": "auto", "height": "59rem"}, color= onramp_colors["dark_blue"], inverse = True)
+
+    return stats        
+
+custom_page = dbc.Container([
+    
+    get_navbar('custom'),
+    #Title 
+    dbc.Row(
+        dbc.Col(
+            dbc.Card(
+                dbc.CardBody([
+                    html.H1(children="Custom Strategy Dashboard", style = {"color": onramp_colors["gray"]}), 
+                    
+                    html.P(children= "Commerce on the Internet has come to rely almost exclusively on financial institutions serving as trusted third parties to process electronic payments. While the system works well enough for most transactions, it still suffers from the inherent weaknesses of the trust based model. Completely non-reversible transactions are not really possible, since financial institutions cannotavoid mediating disputes.", 
+                            style = {"fontSize": "vmin", "color": onramp_colors["gray"]}),
+                            
+                    html.P(children= "Commerce on the Internet has come to rely almost exclusively on financial institutions serving as trusted third parties to process electronic payments. While the system works well enough for most transactions, it still suffers from the inherent weaknesses of the trust based model. Completely non-reversible transactions are not really possible, since financial institutions cannotavoid mediating disputes.",
+                            style = {"fontSize": "vmin", "color": onramp_colors["gray"] })
+                ]),
+            className="text-center mb-2", color= onramp_colors["dark_blue"], inverse= True,), 
+        width = 12)
+    ),
+
+    
+    # Inputs | Pie Chart | Line Chart
+    dbc.Row([
+        
+        dbc.Col([
+            dbc.Row(
+                dbc.Col([
+                    Inputs()
+                ],  ),
+            ),
+        ], xs = 12, sm = 12, md = 12, lg = 3, xl = 3),
+
+        dbc.Col([
+            
+            dbc.Row([
+                dbc.Col([
+                    DisplayPie()
+                ],  ),
+            ]),
+        ], xs = 12, sm = 12, md = 12, lg = 3, xl = 3),
+        dbc.Col([
+            dbc.Row(
+                dbc.Col([
+                    DisplayLineChart()
+                ]),
+            )
+        ], xs = 12, sm = 12, md = 12, lg = 6, xl = 6 )
+    ],no_gutters = True),
+
+    # Stats | Scatter Plot | Return Recap
+    dbc.Row([
+        dbc.Col([
+            dbc.Row(
+                dbc.Col([
+                    DisplayScatter()
+                ],),
+            ),
+        ], xs = 12, sm = 12, md = 12, lg = 4, xl = 4),
+
+
+        dbc.Col([
+            dbc.Row(
+                dbc.Col([
+                    DisplayReturnStats()
+                    
+                ],),
+            ),
+        ], xs = 12, sm = 12, md = 12, lg = 4, xl = 4),
+        
+        dbc.Col([
+            dbc.Row(
+                dbc.Col([
+                    DisplayStats()
+                ]),
+            ),
+        ], xs = 12, sm = 12, md = 12, lg = 4, xl = 4)
+    ], no_gutters = True),
+
+    
+    dbc.Row([
+        dbc.Col([
+            dbc.Row(
+                dbc.Col([
+                    DisplayMonthTable(),
+                ]),
+            ),
+        ], xs = 12, sm = 12, md = 12, lg = 12, xl = 12),
+    ]),
+], fluid=True)
+

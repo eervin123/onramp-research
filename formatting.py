@@ -7,19 +7,17 @@ import plotly.graph_objs as go
 # 000 - FORMATTING INFO
 ####################################################################################################
 
-####################### Corporate css formatting
-corporate_colors = {
-    "onramp-dark": "#131c4f",
-    "dark-blue-grey": "#424972",
-    "medium-blue-grey": "#424972",
-    "superdark-green": "#424972",
-    "dark-green": "#424972",
-    "medium-green": "#b8bbca",
-    "light-green": "#b8bbca",
-    "pink-red": "#00eead",
-    "dark-pink-red": "#00eead",
-    "white": "rgb(251, 251, 252)",
-    "light-grey": "#b0b6bd",
+onramp_colors = {
+    "dark_blue" : "#131C4F",
+    "seafoam"   : "#00EEAD",
+    "gray"      : "#B0B6BD",
+    "light_blue": "#2F61D5",
+    "pink"      : "#A90BFE",
+    "purple"    : "#7540EE",
+    "cyan"      : "#3FB6DC",
+    "orange"    : "#FF7052",
+    "white"     : "white",
+    "btc"       : "#f2a900"
 }
 
 externalgraph_rowstyling = {"margin-left": "15px", "margin-right": "15px"}
@@ -28,24 +26,15 @@ externalgraph_colstyling = {
     "border-radius": "10px",
     "border-style": "solid",
     "border-width": "1px",
-    "border-color": corporate_colors["light-grey"],
-    "background-color": corporate_colors["onramp-dark"],
+    "border-color": onramp_colors["gray"],
+    "background-color": onramp_colors["dark_blue"],
     "box-shadow": "0px 0px 17px 0px rgba(186, 218, 212, .5)",
     "padding-top": "10px",
 }
 
-filterdiv_borderstyling = {
-    "border-radius": "0px 0px 10px 10px",
-    "border-style": "solid",
-    "border-width": "1px",
-    "border-color": "#424972",
-    "background-color": "#424972",
-    "box-shadow": "2px 5px 5px 1px rgba(255, 101, 131, .5)",
-}
-
 navbarcurrentpage = {
     "text-decoration": "underline",
-    "text-decoration-color": corporate_colors["pink-red"],
+    "text-decoration-color": onramp_colors["seafoam"],
     "text-shadow": "0px 0px 1px rgb(251, 251, 252)",
     "font-family": "Circular STD",
 }
@@ -64,71 +53,63 @@ recapdiv = {
     "background-color": "rgb(251, 251, 252, 0.1)",  # behind slider
 }
 
-recapdiv_text = {
-    "text-align": "left",
-    "font-weight": "350",
-    "color": corporate_colors["white"],
-    "font-size": "1.5rem",
-    "letter-spacing": "0.04em",
-}
 
-####################### Corporate chart formatting
+onramp_title = {"font": {"size": 20, "color": onramp_colors["gray"]}}
 
-corporate_title = {"font": {"size": 16, "color": corporate_colors["white"]}}
-
-corporate_xaxis = {
+onramp_xaxis = {
     "showgrid": False,
-    "linecolor": corporate_colors["light-grey"],
-    "color": corporate_colors["light-grey"],
-    "tickangle": 315,
-    "titlefont": {"size": 12, "color": corporate_colors["light-grey"]},
-    "tickfont": {"size": 14, "color": corporate_colors["light-grey"]},
+    "linecolor": onramp_colors["gray"],
+    "color": onramp_colors["gray"],
+    "tickangle": 0,
+    "titlefont": {"size": 12, "color": onramp_colors["gray"]},
+    "tickfont": {"size": 11, "color": onramp_colors["gray"]},
     "zeroline": False,
 }
 
 corporate_yaxis = {
     "showgrid": True,
-    "color": corporate_colors["light-grey"],
+    "color": onramp_colors["gray"],
     "gridwidth": 0.5,
-    "gridcolor": corporate_colors["dark-green"],
-    "linecolor": corporate_colors["light-grey"],
-    "titlefont": {"size": 12, "color": corporate_colors["light-grey"]},
-    "tickfont": {"size": 11, "color": corporate_colors["light-grey"]},
+    "gridcolor": onramp_colors["gray"],
+    "linecolor": onramp_colors["gray"],
+    "titlefont": {"size": 12, "color": onramp_colors["gray"]},
+    "tickfont": {"size": 11, "color": onramp_colors["gray"]},
     "zeroline": False,
 }
+onramp_font_family = "Roboto"
 
-corporate_font_family = "Circular STD"
-
-corporate_legend = {
+onramp_legend = {
     "orientation": "h",
     "yanchor": "bottom",
-    "y": 1.01,
-    "xanchor": "right",
-    "x": 1.05,
-    "font": {"size": 13, "color": corporate_colors["light-grey"]},
-}  # Legend will be on the top right, above the graph, horizontally
+    "y": -.3,
+    "xanchor": "left",
+    "x": 0,
+    "font": {"size": 15, "color": onramp_colors["gray"]},
+}  # Legend will be on the bottom middle
 
-corporate_margins = {
-    "l": 5,
-    "r": 5,
-    "t": 45,
-    "b": 15,
+onramp_margins = {
+    "l": 30,
+    "r": 10,
+    "t": 0,
+    "b": 140,
 }  # Set top margin to in case there is a legend
 
-corporate_layout = go.Layout(
-    font={"family": corporate_font_family},
-    title=corporate_title,
-    title_x=0.5,  # Align chart title to center
+
+onramp_layout = go.Layout(
+    colorway= [onramp_colors["btc"], onramp_colors["white"], onramp_colors["cyan"], '#1a1a1a'],
+    font = {'family' : onramp_font_family},
+    title=onramp_title,
+    title_x=0.5, # Align chart title to center
     paper_bgcolor="rgba(0,0,0,0)",
     plot_bgcolor="rgba(0,0,0,0)",
-    xaxis=corporate_xaxis,
+    xaxis=onramp_xaxis,
     yaxis=corporate_yaxis,
-    height=270,
-    legend=corporate_legend,
-    margin=corporate_margins,
+    height=200,
+    legend=onramp_legend,
+    margin=onramp_margins,
 )
 
-my_template = dict(layout=go.Layout(corporate_layout))
+onramp_template = dict(layout=go.Layout(onramp_layout))
 
 custom_scale = [
     # Let first 10% (0.1) of the values have color rgb(0, 0, 0)

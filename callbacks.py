@@ -4,10 +4,15 @@ import pandas as pd
 import numpy as np
 import dash
 from dash_app import dash_app
+from dash.dependencies import Output, Input, State
 import datetime
+import time 
 import pytz
-from formatting import corporate_colors, externalgraph_rowstyling, externalgraph_colstyling, filterdiv_borderstyling, recapdiv, recapdiv_text, my_template, custom_scale
-from helpers import get_coin_data, get_coin_data_new, volatility, calc_volatility, calc_volatility_btc_vol, calc_volatility_new, create_corr, create_corr_new
+import bt
+from formatting import onramp_colors, onramp_template, custom_scale
+from helpers import *
+from bt_algos import RebalanceAssetThreshold
+#get_coin_data, get_coin_data_new, volatility, calc_volatility, calc_volatility_new, create_corr, create_corr_new, get_data, calculate_controls, pl
 
 
 ####################################################################################################
@@ -67,12 +72,9 @@ df_stats = pd.read_csv(
 )
 df_stats = df_stats.dropna()
 
-colors = [corporate_colors["onramp-dark"], "#3fb6dc", "#f2a900"]
-##################################################################################################################################################
-
-
+colors = [onramp_colors["dark_blue"], "#3fb6dc", "#f2a900"]
 ####################################################################################################
-# 000 - IMPORT DATA OTHER CHARTS
+# 000 - LARGE CHARTS DATA
 ####################################################################################################
 pairs_crypto = [
     "BTC-USDT",
@@ -104,7 +106,7 @@ pairs_mixed = [
 ]
 
 
-# ----------------------------------------Volitility ----------------------------------------------------------
+############################################## VOLATILITTY ##########################################
 
 df_mixed = calc_volatility_new(pairs_mixed) #Used for Mixed Asset Class Vol Chart
 
@@ -120,13 +122,22 @@ xd = today - datetime.timedelta(days=30)
 c = xd.strftime("%Y-%m-%d")
 
 
-# -----------------------------------------------------------Heatmap------------------------------------------
-
+############################################## HEATMAP/TIMELINE ##########################################
 
 corr_df = create_corr(pairs_crypto)
 
 corr_df_new = create_corr_new(pairs_mixed)
 
+####################################################################################################
+# 000 - CUSTOM PAGE DATA
+####################################################################################################
+
+data = get_data()
+returns = calculate_controls(data)
+
+results_control = returns[0]
+results_spy = returns[1]
+results_agg = returns[2]
 
 
 ####################################################################################################
@@ -174,7 +185,7 @@ def update_graphs(value):
     # print(value)
     def graph_pie(percent_dictionary):
 
-        colors_pie = [corporate_colors['onramp-dark'], "#f2a900"]  # BTC Orange
+        colors_pie = [onramp_colors['dark_blue'], "#f2a900"]  # BTC Orange
         assets = list(percent_dictionary.keys())
 
         percents = list(percent_dictionary.values())
@@ -187,7 +198,7 @@ def update_graphs(value):
             color_discrete_sequence=colors_pie,
             title="Portfolio Allocation",
             # width = 400, height = 400
-            template=my_template,
+            template=onramp_template,
             height=500,
             hole = .2
         )
@@ -237,7 +248,7 @@ def update_graphs(value):
             labels={"value": "", "Date": "", "color": "", "variable": ""},
             title="Portfolio Performance",
             color_discrete_map=color_dict,
-            template=my_template,
+            template=onramp_template,
             height = 500
             # width = 450
         )
@@ -282,7 +293,7 @@ def update_graphs(value):
     }
 
     def graph_scatter_plot(risk_dic, return_dic):
-        colors = [corporate_colors['onramp-dark'], "#3fb6dc", "#f2a900"]
+        colors = [onramp_colors['dark_blue'], "#3fb6dc", "#f2a900"]
         labels = list(risk_dic.keys())
 
         xaxis_vol = list(risk_dic.values())
@@ -298,7 +309,7 @@ def update_graphs(value):
             # color_discrete_sequence=['#A90BFE','#FF7052','#66F3EC', '#67F9AF'],
             color_discrete_sequence=colors,
             opacity=1,
-            template=my_template,
+            template=onramp_template,
             labels={
                 "x": "",
                 "y": "Annual Return",
@@ -369,7 +380,7 @@ def update_graphs(value):
 
     def graph_barchart(x_axis_rr_ss, y_combined, y_6040, y_spy):
 
-        colors = [corporate_colors['onramp-dark'], "#3fb6dc", "#f2a900"]
+        colors = [onramp_colors['dark_blue'], "#3fb6dc", "#f2a900"]
         if x_axis_rr_ss[0] == "Ann. Return":
             title = "<b>Ann. Return & Risk<b>"
             max_range = 0.4
@@ -409,7 +420,7 @@ def update_graphs(value):
             color="Strategy",
             barmode="group",
             color_discrete_sequence=colors,
-            template=my_template,
+            template=onramp_template,
             labels={"Type": "", "Values": "", "Strategy": ""},
             height = 490
         )
@@ -843,3 +854,103 @@ def update_timeline(value):
     if value == "AC":
         return graph_timeline(corr_df_new, c)
 
+####################################################################################################
+# CUSTOM STRATEGY PAGE
+####################################################################################################
+@dash_app.callback(
+    [Output('pie_chart_c', 'figure'),
+    Output('line_chart_c', 'figure'),
+    Output('scatter_plot_c', 'figure'),
+    Output("stats_table", "figure"),
+    Output("month_table", "figure"),
+    Output("balance_table", "figure"),
+    Output("return_stats", "figure")
+    ],
+    
+    Input("submit_button", "n_clicks"),
+    State('Ticker1', 'value'),
+    State('Allocation1', 'value'),
+    State('Ticker2', 'value'),
+    State('Allocation2', 'value'),
+    State('Ticker3', 'value'),
+    State('Allocation3', 'value'),
+    State('Ticker4', 'value'),
+    State('Allocation4', 'value'),
+    State('Rebalance', 'value')
+    
+)
+def update_graph(num_click, stock_choice_1, alloc1, stock_choice_2, alloc2, stock_choice_3, alloc3, stock_choice_4, alloc4, rebalance = 1.2):
+    start = time.time()
+    ####################################################### PIE CHART ##########################################################################################
+    stock_list_pie = [stock_choice_1, stock_choice_2, stock_choice_3, stock_choice_4]
+    percent_list = [float(alloc1)/100, float(alloc2)/100, float(alloc3)/100, float(alloc4)/100]
+
+    fig = plotly_pie(stock_list_pie, percent_list)
+    #px.pie( values = percent_list, names = stock_list_pie, color = stock_list_pie, title="", template= onramp_template, hole = .3, height = 300)
+    
+    ##################################################### SETTING UP DATA #############################################################################################
+    stock_choice_1 = stock_choice_1.lower()
+    stock_choice_2 = stock_choice_2.lower()
+    stock_choice_3 = stock_choice_3.lower()
+    stock_choice_4 = stock_choice_4.lower()
+
+    
+    stock_list = stock_choice_1 +',' + stock_choice_2 + ',' + stock_choice_3 + ',' + stock_choice_4
+    
+    data_s = time.time()
+    data = bt.get(stock_list, start = '2017-01-01') 
+    data_e = time.time()
+    print("Finished Data", stock_choice_1, ":", data_e - data_s)
+
+    #need the '-' in cryptos to get the data, but bt needs it gone to work
+    data_st = time.time()
+    stock_choice_1 = stock_choice_1.replace('-', '')
+    stock_choice_2 = stock_choice_2.replace('-', '')
+    stock_choice_3 = stock_choice_3.replace('-', '')
+    stock_choice_4 = stock_choice_4.replace('-', '')
+
+    
+    stock_dic = {stock_choice_1: float(alloc1)/100, stock_choice_2: float(alloc2)/100, stock_choice_3: float(alloc3)/100, stock_choice_4: float(alloc4)/100} #dictonary for strat
+    
+    if(rebalance == None or rebalance == ""):
+        rebalance = 1.2
+    rebalance = float(rebalance)
+    strategy_ = bt.Strategy("Custom Strategy", 
+                              [ 
+                              bt.algos.RunDaily(),
+                              bt.algos.SelectAll(), 
+                              bt.algos.WeighSpecified(**stock_dic),
+                              RebalanceAssetThreshold(threshold = rebalance),
+                              bt.algos.RunMonthly(),
+                              bt.algos.Rebalance()]) #Creating strategy
+
+    test = bt.Backtest(strategy_, data)
+    results = bt.run(test)
+    
+    results_list = [results, results_control, results_spy, results_agg]
+    
+    data_et = time.time()
+    print("Finished Strategy", stock_choice_1, ":", data_et - data_st)
+    ################################################### LINE CHART ########################################################################################################
+    fig_line = line_chart(results_list)
+
+    fig_scat = scatter_plot(results_list)
+
+    fig_stats = stats_table(results_list)
+
+    fig_month_table = monthly_table(results_list)
+
+    fig_month_table.update_layout(height = 830)
+
+    fig_balance_table = balance_table(results, results_control)
+
+    fig_balance_table.update_layout(height = 100)
+
+    fig_returns_stats = short_stats_table(results_list)
+
+    fig_returns_stats.update_layout(height = 320)
+
+    end = time.time()
+    print("Finished Everything", stock_choice_1, ":", end - start)
+    return fig, fig_line, fig_scat, fig_stats, fig_month_table, fig_balance_table, fig_returns_stats
+##############################################################################################################################################################

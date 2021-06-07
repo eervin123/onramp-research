@@ -196,7 +196,7 @@ def line_chart(results_list):
         result_final = pd.concat([result_final, temp], axis = 1) #result dataframe
         #color_dict[result_final.columns[i]] = colors[i] #colors
 
-    fig = px.line(result_final, labels=dict(index="Click Legend Icons to Toggle Viewing", value="", variable=""),
+    fig = px.line(result_final, labels=dict(index="<b>Click Legend Icons to Toggle Viewing<b>", value="", variable=""),
                     title="",
                     template= onramp_template
                     #height = 350
@@ -267,8 +267,8 @@ def scatter_plot(results_list):
     
     fig = px.scatter( x= xaxis_vol, y= yaxis_return, size = size_list, color = labels,
                             labels={
-                            "x": "Monthly Vol (ann.) %",
-                            "y": "Monthly Mean (ann.) %",
+                            "x": "<b>Monthly Vol (ann.) %<b>",
+                            "y": "<b>Monthly Mean (ann.) %<b>",
                             "color" : ""
                             },
                             title="", 
@@ -300,6 +300,7 @@ def balance_table(results, results_con):
                                 cells=dict(values=[['60-40 Portfolio', series_res.columns[0]], ["$100", "$100"], [final_con, final_res]],
                                             line_color = 'rgba(100, 100, 100, 0.36)',
                                             font = dict(color = [text_color*3], size = 12),
+                                            height = 30,
                                             fill_color = onramp_colors["dark_blue"] )) ])
     fig.update_layout(
             {

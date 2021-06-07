@@ -61,19 +61,19 @@ onramp_xaxis = {
     "linecolor": onramp_colors["gray"],
     "color": onramp_colors["gray"],
     "tickangle": 0,
-    "titlefont": {"size": 15, "color": onramp_colors["gray"]},
-    "tickfont": {"size": 13, "color": onramp_colors["gray"]},
+    "titlefont": {"size": 16, "color": onramp_colors["gray"]},
+    "tickfont": {"size": 14, "color": onramp_colors["gray"]},
     "zeroline": False,
 }
 
-corporate_yaxis = {
+onramp_yaxis = {
     "showgrid": False,
     "color": onramp_colors["gray"],
     "gridwidth": 0.5,
     "gridcolor": onramp_colors["gray"],
     "linecolor": onramp_colors["gray"],
-    "titlefont": {"size": 15, "color": onramp_colors["gray"]},
-    "tickfont": {"size": 13, "color": onramp_colors["gray"]},
+    "titlefont": {"size": 16, "color": onramp_colors["gray"]},
+    "tickfont": {"size": 14, "color": onramp_colors["gray"]},
     "zeroline": False,
 }
 onramp_font_family = "Roboto"
@@ -103,7 +103,7 @@ onramp_layout = go.Layout(
     paper_bgcolor="rgba(0,0,0,0)",
     plot_bgcolor="rgba(0,0,0,0)",
     xaxis=onramp_xaxis,
-    yaxis=corporate_yaxis,
+    yaxis=onramp_yaxis,
     height=200,
     legend=onramp_legend,
     margin=onramp_margins,

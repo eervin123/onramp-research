@@ -421,7 +421,7 @@ def monthly_table(results_list):
     con_rows = [] #this creates the list of the "60-40 Portfolio " then all the numbers
     for i in range(len(res_con.index)):
         temp = []
-        temp += ["60-40 Portfolio"]
+        temp += [df_results[1].iloc[0][1]]
         for j in range(len(res_con.columns)):
             temp += [str((round(df_c.iloc[i][j] *100, 2))) + '%'] #this takes the value in, round to 2 decimal places, and adds the percent sign
         con_rows.append(temp)
@@ -548,19 +548,26 @@ def optomize_table(df):
 
     df.columns = ["Allocation"]
     df = df.dropna()
-    
+    df.index = df.index.map(str.upper)
     fig = go.Figure(data=[go.Table(
                             header=dict(values= labels,
-                                        line_color= 'black',
-                                        fill_color= '#131c4f',
+                                        line_color= 'rgba(100, 100, 100, 0.36)',
+                                        fill_color= onramp_colors["cyan"],
                                         align=['center','center'],
-                                        font=dict(color='white', size=10)),
+                                        font=dict(color='black', size=12)),
                             cells=dict(values=[df.index, df.Allocation],
-                                        line_color = 'black',
+                                        line_color = 'rgba(100, 100, 100, 0.36)',
                                         height = 30,
-                                        font = dict(color = 'black'),
-                                        fill_color = '#f7f7f7' )) ])
+                                        font = dict(color = 'white'),
+                                        fill_color = onramp_colors["dark_blue"] )) ])
     fig.update_layout(margin = dict(l=1, r=0, t=0, b=0))
+    
+    fig.update_layout(
+            {
+                "plot_bgcolor": "rgba(0, 0, 0, 0)",  # Transparent
+                "paper_bgcolor": "rgba(0, 0, 0, 0)",
+            }
+        )
     return fig
 
 def optomize_table_combine(df):
@@ -629,7 +636,7 @@ def stats_table(results_list):
     #creates a datframe with exactly what we need
     df = pd.DataFrame(list(zip(stats_col, strat1_col, strat2_col)), 
                columns =['Stats', 'Your_Strategy', 'Portfolio6040'])
-    labels = ['<b>Stats<b>', '<b>' +stats_combined.iloc[0][1] + '<b>', "<b>60-40 Portfolio<b>"]
+    labels = ['<b>Stats<b>', '<b>' +stats_combined.iloc[0][1] + '<b>', '<b>' +stats_combined.iloc[0][2] + '<b>',]
     
     text_color = []
     n = len(df)

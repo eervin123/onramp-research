@@ -1,3 +1,6 @@
+from dash_bootstrap_components._components.DropdownMenu import DropdownMenu
+from dash_bootstrap_components._components.InputGroup import InputGroup
+from dash_bootstrap_components._components.Label import Label
 import dash_core_components as dcc
 import dash_html_components as html
 from dash_bootstrap_components._components.CardBody import CardBody
@@ -190,6 +193,7 @@ def get_navbar(p="dashboard"):
                 dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
                 dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
                 dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Portfolio Optimizer", href="/apps/portfolio-optimizer", style = {"color": "black"})),
             ],
             pills=True, 
             ), 
@@ -204,6 +208,7 @@ def get_navbar(p="dashboard"):
                 dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
                 dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
                 dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Portfolio Optimizer", href="/apps/portfolio-optimizer", style = {"color": "black"})),
             ],
             pills=True, 
             ), 
@@ -218,6 +223,7 @@ def get_navbar(p="dashboard"):
                 dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
                 dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
                 dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Portfolio Optimizer", href="/apps/portfolio-optimizer", style = {"color": "black"})),
             ],
             pills=True, 
             ), 
@@ -232,6 +238,7 @@ def get_navbar(p="dashboard"):
                 dbc.NavItem(dbc.NavLink("Correlation Over Time", active=True, href="/apps/correlation-timeline", style = {"color": "black"})),
                 dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
                 dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Portfolio Optimizer", href="/apps/portfolio-optimizer", style = {"color": "black"})),
             ],
             pills=True, 
             ), 
@@ -246,6 +253,7 @@ def get_navbar(p="dashboard"):
                 dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
                 dbc.NavItem(dbc.NavLink("Bitcoin Volatility", active=True, href="/apps/bitcoin-volatility", style = {"color": "black"})),
                 dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Portfolio Optimizer", href="/apps/portfolio-optimizer", style = {"color": "black"})),
             ],
             pills=True, 
             ), 
@@ -260,6 +268,22 @@ def get_navbar(p="dashboard"):
                 dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
                 dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
                 dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", active=True, href="/apps/custom-dashboard", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Portfolio Optimizer", href="/apps/portfolio-optimizer", style = {"color": "black"})),
+            ],
+            pills=True, 
+            ), 
+        ], sticky = "top", className = "m-n4", style = {"width": "10000px"})
+
+    navbar_optimizer = dbc.Navbar([
+            dbc.Nav(
+            [
+                dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
+                dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Portfolio Optimizer", active=True, href="/apps/portfolio-optimizer", style = {"color": "black"})),
             ],
             pills=True, 
             ), 
@@ -279,6 +303,8 @@ def get_navbar(p="dashboard"):
         return navbar_btc_vol
     elif p == "custom":
         return navbar_custom
+    elif p == "optimize":
+        return navbar_optimizer
     else:
         return navbar_dashboard
 
@@ -939,14 +965,18 @@ def Inputs():
 
                     dbc.Col([
                         dbc.Label("Allocation %"),
-                        dbc.Input(
-                            id = "Allocation1",
-                            value = "50",
-                            type= 'numeric',
-                            placeholder= "Enter Allocation %",
-                            style = {"width" : "100%"}
+                        dbc.InputGroup([
+                            dbc.Input(
+                                id = "Allocation1",
+                                value = "50",
+                                type= 'numeric',
+                                placeholder= "Enter Allocation %",
+                                style = {"width" : "100%"}
 
-                        ), ],width={'size': 6, 'offset':1},
+                            ), 
+                            dbc.InputGroupAddon("%", addon_type = "append"),
+                        ])
+                        ],width={'size': 6, 'offset':1},
                     ),
                 ]),
 
@@ -964,16 +994,19 @@ def Inputs():
                     width={'size':4}, className= "mb-4"
                     ), 
 
-                    dbc.Col(
-                        dbc.Input(
-                            id = "Allocation2",
-                            type= 'text',
-                            value = "40",
-                            placeholder= "Enter Allocation %",
-                            style = {"width" : "100%"}
+                    dbc.Col([
+                        dbc.InputGroup([
+                            dbc.Input(
+                                id = "Allocation2",
+                                type= 'text',
+                                value = "40",
+                                placeholder= "Enter Allocation %",
+                                style = {"width" : "100%"}
 
-                        ), width={'size':6, 'offset':1},
-                    ),
+                            ), 
+                            dbc.InputGroupAddon("%", addon_type = "append"),
+                        ])
+                    ], width={'size':6, 'offset':1}),
                 ]),
 
                 #Inputs 3 
@@ -990,15 +1023,19 @@ def Inputs():
                     width={'size':4}, className= "mb-4"
                     ), 
 
-                    dbc.Col(
-                        dbc.Input(
-                            id = "Allocation3",
-                            type= 'text',
-                            value = '7',
-                            placeholder= "Enter Allocation %",
-                            style = {"width" : "100%"}
+                    dbc.Col([
+                        dbc.InputGroup([
+                            dbc.Input(
+                                id = "Allocation3",
+                                type= 'text',
+                                value = '7',
+                                placeholder= "Enter Allocation %",
+                                style = {"width" : "100%"}
 
-                        ), width={'size':6, 'offset':1},
+                            ), 
+                            dbc.InputGroupAddon("%", addon_type = "append"),
+                        ])
+                        ], width={'size':6, 'offset':1},
                     ),
                 ]),
 
@@ -1016,15 +1053,18 @@ def Inputs():
                     width={'size':4}, className= "mb-4"
                     ), 
 
-                    dbc.Col(
+                    dbc.Col([
+                        dbc.InputGroup([
                         dbc.Input(
                             id = "Allocation4",
                             type= 'text',
                             value = "3",
                             placeholder= "Enter Allocation %",
                             style = {"width" : "100%"}
-
-                        ), width={'size':6, 'offset':1},
+                        ), 
+                        dbc.InputGroupAddon("%", addon_type = "append"),
+                        ])
+                        ],width={'size':6, 'offset':1},
                     ),
                 ]),
 
@@ -1034,14 +1074,18 @@ def Inputs():
                     width={'size':4}, className= "mb-4" #Empty Col for Rebalance 
                     ), 
 
-                    dbc.Col(
-                        dbc.Input(
-                            id = "Rebalance",
-                            type= 'text',
-                            placeholder= "Rebalance Threshold %",
-                            style = {"width" : "100%"}
+                    dbc.Col([
+                        dbc.InputGroup([
+                            dbc.Input(
+                                id = "Rebalance",
+                                type= 'text',
+                                placeholder= "Rebalance Threshold %",
+                                style = {"width" : "100%"}
 
-                        ), width={'size':6, 'offset':1}, className= "mb-4"
+                            ), 
+                            dbc.InputGroupAddon("%", addon_type = "append"),
+                        ])
+                        ],width={'size':6, 'offset':1}, className= "mb-4"
                     ),
                 ]),
 
@@ -1063,7 +1107,6 @@ def Inputs():
     ], className= "text-center mb-2 mr-2", style= {"height": "31rem"}, color= onramp_colors["dark_blue"], inverse= True,)
 
     return inputs_
-
 
 def DisplayPie():
     pie = dbc.Card([
@@ -1252,3 +1295,297 @@ custom_page = dbc.Container([
     ]),
 ], fluid=True)
 
+####################################################################################################
+# 005 - Portfolio Optimizer Page
+####################################################################################################
+
+def Inputs():
+
+    inputs_ = dbc.Card([
+            dbc.CardHeader(children= html.H3("Inputs"), style = {"font": "Roboto", "color": onramp_colors["gray"]}),
+            dbc.CardBody([
+                #Stock Ticker 
+                dbc.Row([
+                    dbc.Col([
+                        dbc.Label("Enter Stock Tickers Comma Seperated"),
+                        dbc.Input(
+                            id = "Ticker_o",
+                            type= 'text',
+                            value = "spy,agg,tsla,msft",
+                            placeholder= "Enter Tickers",
+                            debounce = True,
+                            style = {"width" : "100%"}
+
+                        ),
+                    ],width={'size':12}, className= "text-left mb-4", 
+                    ), 
+                ]),
+
+                #Inputs 1 
+                dbc.Row([
+                    dbc.Col([
+                        dbc.Label("Enter Crypto Tickers Comma Seperated"),
+                        dbc.Input(
+                            id = "cTicker_o",
+                            type= 'text',
+                            value = "btc-usd,eth-usd,bnb-usd",
+                            placeholder= "Enter Cryptos",
+                            debounce = True,
+                            style = {"width" : "100%"}
+
+                        ),
+                    ],width={'size':12}, className= "text-left mb-4", 
+                    ), 
+                ]),
+                
+                #Inputs 2
+                dbc.Row([
+                    dbc.Col([
+                        dbc.Label("Select Optimization Type"),
+                        dbc.Select(
+                            id = "opti_sel",
+                            options=[
+                                {"label": "Efficient Frontier Optimization", "value": "ef"},
+                                {"label": "Equal Risk Contribution", "value": "er"},
+                                {"label": "Inverse Volitility", "value": "iv"},
+                            ],
+                            value = "ef",
+                            style = {"width" : "100%"}
+
+                        ),
+                    ],width={'size':12}, className= "text-left mb-4"), 
+                ]),
+
+                #Inputs 3
+                dbc.Row([
+                    dbc.Col([
+                        dbc.Label("Frequency of Rebalance"),
+                        dbc.Select(
+                            id = "Frequency_sel",
+                            options=[
+                                {"label": "Daily Rebalance", "value": "Daily"},
+                                {"label": "Monthly Rebalance", "value": "Month"},
+                                {"label": "Quarterly Rebalance", "value": "Quart"},
+                                {"label": "Yearly Rebalance", "value": "Year"},
+                                {"label": "Compare All", "value": "Compare"},
+                            ],
+                            value = "Quart",
+                            style = {"width" : "100%"}
+
+                        ),
+                    ], width={'size':6}, className= "mb-5 text-left"
+                    ), 
+
+                    dbc.Col([
+                        dbc.Label("Maximum Crypto Allocation"),
+                        dbc.InputGroup([
+                        dbc.Input(
+                            id = "crypto_alloc",
+                            type= 'text',
+                            placeholder= "Optional",
+                            style = {"width" : "100%"}
+                        ), 
+                        dbc.InputGroupAddon("%", addon_type = "append")
+                        ])
+                    ], width={'size':6, 'offset':0}, className = "text-left"),
+                ]),
+
+                
+
+                #Submit Button
+                dbc.Row([
+                    
+                    dbc.Col(
+                        dbc.Button(
+                            id = "submit_button_o",
+                            children= "Create Strategy",
+                            n_clicks=0,
+                            style= {"width": "100%"}
+
+                        ), width={'size':12, 'offset':0},
+                    ),
+                ]),
+                
+            ]), 
+    ], className= "text-center mb-2 mr-2", style= {"height": "33rem"}, color= onramp_colors["dark_blue"], inverse= True,)
+
+    return inputs_
+
+def DisplayPie():
+    pie = dbc.Card([
+        dbc.CardHeader(children= html.H3("Portfolio Allocation"), style = {"font": "Roboto", "color": onramp_colors["gray"]}),
+        dbc.CardBody([
+            
+            dcc.Loading( id = "loading_pie_o", children=
+            dcc.Graph(
+                id = "pie_chart_o"
+            )
+            )
+        ]),
+    ],  className= "text-center mb-2 mr-2", style= {"height": "33rem"}, color= onramp_colors["dark_blue"], inverse = True)
+
+    return pie
+           
+def DisplayLineChart():
+    line = dbc.Card([
+        dbc.CardHeader(children= html.H3("Portfolio Performance"), style = {"font": "Roboto", "color": onramp_colors["gray"]}),
+        dbc.CardBody([
+            dcc.Loading(id = "loading_line", children=
+            dcc.Graph(
+                id = "line_chart_o",
+                style= {"responsive": True}
+            ))
+        ]), 
+    ], className= "text-center mb-2", style= {"max-width" : "100%", "margin": "auto", "height": "33rem"}, color= onramp_colors["dark_blue"], inverse = True)
+
+    return line        
+
+def DisplayScatter():
+    scat = dbc.Card([
+        dbc.CardHeader(children= html.H3("Risk vs. Return"), style = {"font": "Roboto", "color": onramp_colors["gray"]}),
+        dbc.CardBody([
+            dcc.Loading(id = "loading-scatter", children=
+            dcc.Graph(
+                id = "scatter_plot_o",
+                style= {"responsive": True}
+            )
+            )
+        ]),  
+    ], className= "text-center mb-2 mr-2", style= {"max-width" : "100%", "margin": "auto", "height": "33rem"}, color= onramp_colors["dark_blue"], inverse = True)
+
+    return scat        
+
+def DisplayStats():
+    stats = dbc.Card([
+        dbc.CardHeader(children= html.H3("Performance Statistics"), style = {"font": "Roboto", "color": onramp_colors["gray"]}),
+        dbc.CardBody([
+            dcc.Loading(id = "loading_stats", children=
+            dcc.Graph(
+                id = "stats_table_o",
+                style= {"responsive": True}
+            )
+            )
+        ]),  
+    ], className= "text-center mb-2", style= {"max-width" : "100%", "margin": "auto", "height": "33rem"}, color= onramp_colors["dark_blue"], inverse = True)
+
+    return stats        
+
+def DisplayOptomizeTable():
+    stats = dbc.Card([
+        dbc.CardHeader(children= html.H3("Portfolio Allocation"), style = {"font": "Roboto", "color": onramp_colors["gray"]}),
+        dbc.CardBody([
+            dcc.Loading(id = "loading_return1", children= 
+                dcc.Graph(
+                id = "opto_table",
+                style= {"responsive": True}
+                )
+            ),                
+        ])
+    ],  className= "text-center mb-2 mr-2", style= {"max-width" : "100%", "margin": "auto", "height": "33rem"}, color= onramp_colors["dark_blue"], inverse = True)
+
+    return stats      
+
+def DisplayMonthTable():
+    stats = dbc.Card([
+        dbc.CardHeader(children= html.H3("Returns Breakdown"), style = {"font": "Roboto", "color": onramp_colors["gray"]}),
+        dbc.CardBody([
+            dcc.Loading( id = "loading_month", children=
+            dcc.Graph(
+                id = "month_table_o",
+                style= {"responsive": True}
+            )
+            )
+        ])
+    ],  className= "text-center", style= {"max-width" : "100%", "margin": "auto", "height": "63rem"}, color= onramp_colors["dark_blue"], inverse = True)
+
+    return stats        
+
+optimizer_page = dbc.Container([
+    
+    get_navbar('optimize'),
+
+    get_emptyrow(),
+    get_emptyrow(),
+    #Title 
+    dbc.Row(
+        dbc.Col(
+            dbc.Card(
+                dbc.CardBody([
+                    html.H1(children="Portfolio Optimizer Dashboard", style = {"color": onramp_colors["white"]}), 
+                    
+                    html.P(children= "Use the following tool to build hypothetical portfolios of equities, ETFs, and various Cryptoassets.  Analyze the impact of cryptoassets modeled in a traditional portfolio allocation. Over time we will enable advisors to create custom reports for clients based on the output.", 
+                            style = {"fontSize": "vmin", "color": onramp_colors["white"]}),
+                ]),
+            className="text-center mb-2", color= onramp_colors["dark_blue"], inverse= True,), 
+        width = 12)
+    ),
+
+    
+    # Inputs | Pie Chart | Line Chart
+    dbc.Row([
+        
+        dbc.Col([
+            dbc.Row(
+                dbc.Col([
+                    Inputs()
+                ],  ),
+            ),
+        ], xs = 12, sm = 12, md = 12, lg = 3, xl = 3),
+
+        dbc.Col([
+            
+            dbc.Row([
+                dbc.Col([
+                    DisplayPie()
+                ],  ),
+            ]),
+        ], xs = 12, sm = 12, md = 12, lg = 3, xl = 3),
+        dbc.Col([
+            dbc.Row(
+                dbc.Col([
+                    DisplayLineChart()
+                ]),
+            )
+        ], xs = 12, sm = 12, md = 12, lg = 6, xl = 6 )
+    ],no_gutters = True),
+
+    # Stats | Scatter Plot | Return Recap
+    dbc.Row([
+        dbc.Col([
+            dbc.Row(
+                dbc.Col([
+                    DisplayOptomizeTable()
+                ],),
+            ),
+        ], xs = 12, sm = 12, md = 12, lg = 2, xl = 2),
+
+
+        dbc.Col([
+            dbc.Row(
+                dbc.Col([
+                    DisplayScatter()
+                    
+                ],),
+            ),
+        ], xs = 12, sm = 12, md = 12, lg = 5, xl = 5),
+        
+        dbc.Col([
+            dbc.Row(
+                dbc.Col([
+                    DisplayStats()
+                ]),
+            ),
+        ], xs = 12, sm = 12, md = 12, lg = 5, xl = 5)
+    ], no_gutters = True),
+
+    
+    dbc.Row([
+        dbc.Col([
+            dbc.Row(
+                dbc.Col([
+                    DisplayMonthTable(),
+                ]),
+            ),
+        ], xs = 12, sm = 12, md = 12, lg = 12, xl = 12),
+    ]),
+], fluid=True)

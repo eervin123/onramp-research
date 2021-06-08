@@ -7,7 +7,7 @@ import dash_bootstrap_components as dbc
 from dash_app import dash_app
 
 # from dash_app import server #Eric modified to move in code for gunicorn
-from layouts import dashboard_page, vol_page, heatmap_page, heatmap_timeline_page, btc_vol_page, custom_page
+from layouts import dashboard_page, vol_page, heatmap_page, heatmap_timeline_page, btc_vol_page, custom_page, optimizer_page
 import callbacks
 
 server = dash_app.server  # Eric moved this here after struggling with gunicorn
@@ -36,6 +36,8 @@ def display_page(pathname):
         return btc_vol_page
     elif pathname == "/apps/custom-dashboard":
         return custom_page
+    elif pathname == "/apps/portfolio-optimizer":
+        return optimizer_page
     else:
         return dashboard_page  # This is the "home page"
 

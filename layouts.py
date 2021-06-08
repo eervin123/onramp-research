@@ -1248,7 +1248,7 @@ def Inputs():
                         dbc.Label("Allocation %"),
                         dbc.Input(
                             id = "Allocation1",
-                            value = "40",
+                            value = "60",
                             type= 'numeric',
                             placeholder= "Enter Allocation %",
                             style = {"width" : "100%"}
@@ -1275,7 +1275,7 @@ def Inputs():
                         dbc.Input(
                             id = "Allocation2",
                             type= 'text',
-                            value = "20",
+                            value = "40",
                             placeholder= "Enter Allocation %",
                             style = {"width" : "100%"}
 
@@ -1301,7 +1301,7 @@ def Inputs():
                         dbc.Input(
                             id = "Allocation3",
                             type= 'text',
-                            value = '20',
+                            value = '7',
                             placeholder= "Enter Allocation %",
                             style = {"width" : "100%"}
 
@@ -1315,7 +1315,7 @@ def Inputs():
                         dbc.Input(
                             id = "Ticker4",
                             type= 'text',
-                            value = 'tsla',
+                            value = 'eth-usd',
                             placeholder= "Enter Ticker",
                             style = {"width" : "100%"}
 
@@ -1327,7 +1327,7 @@ def Inputs():
                         dbc.Input(
                             id = "Allocation4",
                             type= 'text',
-                            value = "20",
+                            value = "3",
                             placeholder= "Enter Allocation %",
                             style = {"width" : "100%"}
 
@@ -1497,11 +1497,8 @@ custom_page = dbc.Container([
                 dbc.CardBody([
                     html.H1(children="Custom Strategy Dashboard", style = {"color": onramp_colors["white"]}), 
                     
-                    html.P(children= "Commerce on the Internet has come to rely almost exclusively on financial institutions serving as trusted third parties to process electronic payments. While the system works well enough for most transactions, it still suffers from the inherent weaknesses of the trust based model. Completely non-reversible transactions are not really possible, since financial institutions cannotavoid mediating disputes.", 
+                    html.P(children= "Use the following tool to build hypothetical portfolios of equities, ETFs, and various Cryptoassets.  Analyze the impact of cryptoassets modeled in a traditional portfolio allocation. Over time we will enable advisors to create custom reports for clients based on the output.", 
                             style = {"fontSize": "vmin", "color": onramp_colors["white"]}),
-                            
-                    html.P(children= "Commerce on the Internet has come to rely almost exclusively on financial institutions serving as trusted third parties to process electronic payments. While the system works well enough for most transactions, it still suffers from the inherent weaknesses of the trust based model. Completely non-reversible transactions are not really possible, since financial institutions cannotavoid mediating disputes.",
-                            style = {"fontSize": "vmin", "color": onramp_colors["white"] })
                 ]),
             className="text-center mb-2", color= onramp_colors["dark_blue"], inverse= True,), 
         width = 12)

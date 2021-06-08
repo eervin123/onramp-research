@@ -1248,7 +1248,7 @@ def Inputs():
                         dbc.Label("Allocation %"),
                         dbc.Input(
                             id = "Allocation1",
-                            value = "60",
+                            value = "50",
                             type= 'numeric',
                             placeholder= "Enter Allocation %",
                             style = {"width" : "100%"}
@@ -1371,22 +1371,22 @@ def Inputs():
 
     return inputs_
 
-def Description():
+# def Description():
 
-    descript = dbc.Card(
-                dbc.CardBody([
+#     descript = dbc.Card(
+#                 dbc.CardBody([
                    
-                            html.P(children= "Commerce on the Internet has come to rely almost exclusively on financial institutions serving as trusted third parties to process electronic payments. While the system works well enough for most transactions, it still suffers from the inherent weaknesses of the trust based model. Completely non-reversible transactions are not really possible, since financial institutions cannotavoid mediating disputes.", 
-                            style = {"fontSize": "vmin" }),
+#                             html.P(children= "Commerce on the Internet has come to rely almost exclusively on financial institutions serving as trusted third parties to process electronic payments. While the system works well enough for most transactions, it still suffers from the inherent weaknesses of the trust based model. Completely non-reversible transactions are not really possible, since financial institutions cannotavoid mediating disputes.", 
+#                             style = {"fontSize": "vmin" }),
                             
-                            html.P(children= "Commerce on the Internet has come to rely almost exclusively on financial institutions serving as trusted third parties to process electronic payments. While the system works well enough for most transactions, it still suffers from the inherent weaknesses of the trust based model. Completely non-reversible transactions are not really possible, since financial institutions cannotavoid mediating disputes.",
-                            style = {"fontSize": "vmin" })
+#                             html.P(children= "Commerce on the Internet has come to rely almost exclusively on financial institutions serving as trusted third parties to process electronic payments. While the system works well enough for most transactions, it still suffers from the inherent weaknesses of the trust based model. Completely non-reversible transactions are not really possible, since financial institutions cannotavoid mediating disputes.",
+#                             style = {"fontSize": "vmin" })
                             
                 
-                ]), className= "text-center", style= {"height": "22rem"}, color= onramp_colors["dark_blue"], inverse= True
-    )
+#                 ]), className= "text-center", style= {"height": "22rem"}, color= onramp_colors["dark_blue"], inverse= True
+#     )
 
-    return descript
+#     return descript
 
 def DisplayPie():
     pie = dbc.Card([

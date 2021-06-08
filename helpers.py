@@ -153,13 +153,13 @@ def get_data():
   btc = bt.get('btc-usd', start = '2017-01-01') #had to implement this seperatly because eth data got cut out one day on yahoo finance 
   data_cache = btc.join(s_data, how='outer')
   data_cache = data_cache.dropna()
-  return data_cache
+  return data_cache #TODO: #5 @cyrus something is messed up with this. AGG is reading in as zero
 
 def calculate_controls(data):
     # TODO @cyrus It looks like you were using VWO not AGG for the bond portion I made the change but please confirm you agree.
-  stock_dic_control = {'spy': float(60)/100, 'agg': float(40)/100, 'agg': float(0)/100}
-  stock_dic_spy = {'spy': float(100)/100, 'agg': float(0)/100, 'agg': float(0)/100}
-  stock_dic_agg = {'spy': float(0)/100, 'agg': float(100)/100, 'agg': float(0)/100}
+  stock_dic_control = {'spy': float(60)/100, 'agg': float(40)/100, 'btc-usd': float(0)/100}
+  stock_dic_spy = {'spy': float(100)/100, 'agg': float(0)/100, 'btc-usd': float(0)/100}
+  stock_dic_agg = {'spy': float(0)/100, 'agg': float(100)/100, 'btc-usd': float(0)/100}
                             
   strategy_control = bt.Strategy('60-40 Portfolio', 
                           [bt.algos.RunMonthly(), 

@@ -1235,7 +1235,7 @@ def Inputs():
                         dbc.Input(
                             id = "Ticker1",
                             type= 'text',
-                            value = "spy",
+                            value = "SPY",
                             placeholder= "Enter Ticker",
                             debounce = True,
                             style = {"width" : "100%"}
@@ -1263,7 +1263,7 @@ def Inputs():
                         dbc.Input(
                             id = "Ticker2",
                             type= 'text',
-                            value = 'agg',
+                            value = 'AGG',
                             placeholder= "Enter Ticker",
                             style = {"width" : "100%"}
 
@@ -1289,7 +1289,7 @@ def Inputs():
                         dbc.Input(
                             id = "Ticker3",
                             type= 'text',
-                            value = 'btc-usd',
+                            value = 'BTC-USD',
                             placeholder= "Enter Ticker",
                             style = {"width" : "100%"}
 
@@ -1315,7 +1315,7 @@ def Inputs():
                         dbc.Input(
                             id = "Ticker4",
                             type= 'text',
-                            value = 'eth-usd',
+                            value = 'ETH-USD',
                             placeholder= "Enter Ticker",
                             style = {"width" : "100%"}
 
@@ -1370,7 +1370,7 @@ def Inputs():
     ], className= "text-center mb-2 mr-2", style= {"height": "31rem"}, color= onramp_colors["dark_blue"], inverse= True,)
 
     return inputs_
-
+# @CYRUS I removed the following because it wasn't being used.  Feel free to delete or modify
 # def Description():
 
 #     descript = dbc.Card(

@@ -959,8 +959,8 @@ def update_graph(num_click, stock_choice_1, alloc1, stock_choice_2, alloc2, stoc
     stock_dic = {stock_choice_1: float(alloc1)/100, stock_choice_2: float(alloc2)/100, stock_choice_3: float(alloc3)/100, stock_choice_4: float(alloc4)/100} #dictonary for strat
     
     if(rebalance == None or rebalance == ""):
-        rebalance = 1.2
-    rebalance = float(rebalance)
+        rebalance = 120
+    rebalance = float(rebalance)/100
     strategy_ = bt.Strategy("Custom Strategy", 
                               [ 
                               bt.algos.RunDaily(),

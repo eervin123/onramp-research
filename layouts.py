@@ -181,399 +181,91 @@ def get_header():
 # Nav bar
 def get_navbar(p="dashboard"):
 
-    navbar_dashboard = dbc.Row([
-        dbc.Col( width = {"size" : 0}, className = "mr-3" ),
-        dbc.Col([
-        dbc.Nav(
-        [
-        dbc.NavItem(dbc.NavLink("Dashboard", active=True, href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
-        dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
-        ],
-        pills=True, 
-        )
-        ])
-    ], className = "bg-white")
+    navbar_dashboard = dbc.Navbar([
+            dbc.Nav(
+            [
+                dbc.NavItem(dbc.NavLink("Dashboard", active=True, href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
+                dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
+            ],
+            pills=True, 
+            ), 
+        ], sticky = "top")
 
-    navbar_vol = dbc.Row([
-        dbc.Col( width = {"size" : 0}, className = "mr-3" ),
-        dbc.Col([
-        dbc.Nav(
-        [
-        dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Volatility Chart",active=True, href="/apps/volatility-chart", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
-        ],
-        pills=True, 
-        )
-        ])
-    ], className = "bg-white")
+    navbar_vol = dbc.Navbar([
+            dbc.Nav(
+            [
+                dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
+                dbc.NavItem(dbc.NavLink("Volatility Chart", active=True, href="/apps/volatility-chart", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
+            ],
+            pills=True, 
+            ), 
+        ], sticky = "top")
 
-    navbar_heatmap = dbc.Row([
-        dbc.Col( width = {"size" : 0}, className = "mr-3" ),
-        dbc.Col([
-        dbc.Nav(
-        [
-        dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Correlation Matrix",active=True, href="/apps/correlation-matrix", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
-        ],
-        pills=True, 
-        )
-        ])
-    ], className = "bg-white")
+    navbar_heatmap = dbc.Navbar([
+            dbc.Nav(
+            [
+                dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
+                dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Correlation Matrix", active=True, href="/apps/correlation-matrix", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
+            ],
+            pills=True, 
+            ), 
+        ], sticky = "top")
 
-    navbar_timeline = dbc.Row([
-        dbc.Col( width = {"size" : 0}, className = "mr-3" ),
-        dbc.Col([
-        dbc.Nav(
-        [
-        dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Correlation Over Time", active=True, href="/apps/correlation-timeline", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Bitcoin Volatility",  href="/apps/bitcoin-volatility", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
-        ],
-        pills=True, 
-        )
-        ])
-    ], className = "bg-white")
+    navbar_timeline = dbc.Navbar([
+            dbc.Nav(
+            [
+                dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
+                dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Correlation Over Time", active=True, href="/apps/correlation-timeline", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
+            ],
+            pills=True, 
+            ), 
+        ], sticky = "top")
 
-    btc_vol = dbc.Row([
-        dbc.Col( width = {"size" : 0}, className = "mr-3" ),
-        dbc.Col([
-        dbc.Nav(
-        [
-        dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Bitcoin Volatility", active=True, href="/apps/bitcoin-volatility", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
-        ],
-        pills=True, 
-        )
-        ])
-    ], className = "bg-white")
+    navbar_btc_vol = dbc.Navbar([
+            dbc.Nav(
+            [
+                dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
+                dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Bitcoin Volatility", active=True, href="/apps/bitcoin-volatility", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
+            ],
+            pills=True, 
+            ), 
+        ], sticky = "top")
 
-    navbar_custom = dbc.Row([
-        dbc.Col( width = {"size" : 0}, className = "mr-3" ),
-        dbc.Col([
-        dbc.Nav(
-        [
-        dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", active=True, href="/apps/custom-dashboard", style = {"color": "black"})),
-        ],
-        pills=True, 
-        )
-        ])
-    ], className = "bg-white")
+    navbar_custom = dbc.Navbar([
+            dbc.Nav(
+            [
+                dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
+                dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", active=True, href="/apps/custom-dashboard", style = {"color": "black"})),
+            ],
+            pills=True, 
+            ), 
+        ], sticky = "top", className = "m-n4", style = {"width": "10000px"})
+   
 
-    # navbar_dashboard = html.Div(
-    #     [
-    #         html.Div([], className="col-1"),
-    #         html.Div(
-    #             [   html.Div(
-    #                      [
-    #                  dbc.Tabs(
-    #                     [
-    #                         dbc.Tab(label="Tab 1", tab_id="tab-1"),
-    #                         dbc.Tab(label="Tab 2", tab_id="tab-2"),
-    #                     ],
-    #                     id="tabs",
-    #                     active_tab="tab-1",
-    #                 ),
-    #                 html.Div(id="content"),
-    #                         ]
-    #                     ),
-
-
-    #                 dcc.Link(
-    #                     html.H4(children="Dashboard", style=navbarcurrentpage),
-    #                     href="/apps/dashboard",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Volatility Chart"),
-    #                     href="/apps/volatility-chart",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Correlation Matrix"),
-    #                     href="/apps/correlation-matrix",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Correlation Over Time"),
-    #                     href="/apps/correlation-timeline",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-            
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Bitcoin Rolling Volatility"),
-    #                     href="/apps/bitcoin-volatility",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-    #         html.Div([], className="col-3"),
-    #     ],
-    #     className="row",
-    #     style={
-    #         "background-color": onramp_colors["dark-green"],  # behind nav
-    #         "box-shadow": "2px 5px 5px 1px #00eead",
-    #     },
-    # )
-
-    # navbar_vol = html.Div(
-    #     [
-    #         html.Div([], className="col-1"),
-    #         html.Div(
-    #             [dcc.Link(html.H4(children="Dashboard"), href="/apps/dashboard")],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Volatility Chart", style=navbarcurrentpage),
-    #                     href="/apps/volatility-chart",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Correlation Matrix"),
-    #                     href="/apps/correlation-matrix",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Correlation Over Time"),
-    #                     href="/apps/correlation-timeline",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #         [
-    #             dcc.Link(
-    #                 html.H4(children="Bitcoin Rolling Volatility"),
-    #                 href="/apps/bitcoin-volatility",
-    #             )
-    #         ],
-    #         className="col-2",
-    #         ),
-            
-    #         html.Div([], className="col-3"),
-    #     ],
-    #     className="row",
-    #     style={
-    #         "background-color": onramp_colors["dark-green"],  # behind nav
-    #         "box-shadow": "2px 5px 5px 1px #00eead",
-    #     },
-    # )
-
-    # navbar_heatmap = html.Div(
-    #     [
-    #         html.Div([], className="col-1"), #Empty Col
-            
-            
-    #         html.Div(
-    #             [dcc.Link(html.H4(children="Dashboard"), href="/apps/dashboard")],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Volatility Chart"),
-    #                     href="/apps/volatility-chart",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Correlation Matrix", style=navbarcurrentpage),
-    #                     href="/apps/correlation-matrix",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Correlation Over Time"),
-    #                     href="/apps/correlation-timeline",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-
-    #         html.Div(
-    #         [
-    #             dcc.Link(
-    #                 html.H4(children="Bitcoin Rolling Volatility"),
-    #                 href="/apps/bitcoin-volatility",
-    #             )
-    #         ],
-    #         className="col-2",
-    #         ),
-    #         html.Div([], className="col-3"),
-    #     ],
-    #     className="row",
-    #     style={
-    #         "background-color": onramp_colors["dark-green"],  # behind nav
-    #         "box-shadow": "2px 5px 5px 1px #00eead",
-    #     },
-    # )
-
-    # navbar_timeline = html.Div(
-    #     [
-    #         html.Div([], className="col-1"),
-    #         html.Div(
-    #             [dcc.Link(html.H4(children="Dashboard"), href="/apps/dashboard")],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Volatility Chart"),
-    #                     href="/apps/volatility-chart",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Correlation Matrix"),
-    #                     href="/apps/correlation-matrix",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(
-    #                         children="Correlation Over Time", style=navbarcurrentpage
-    #                     ),
-    #                     href="/apps/correlation-timeline",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-
-    #         html.Div(
-    #         [
-    #             dcc.Link(
-    #                 html.H4(children="Bitcoin Rolling Volatility"),
-    #                 href="/apps/bitcoin-volatility",
-    #             )
-    #         ],
-    #         className="col-2",
-    #         ),
-
-    #         html.Div([], className="col-3"),
-    #     ],
-    #     className="row",
-    #     style={
-    #         "background-color": onramp_colors["dark-green"],  # behind nav
-    #         "box-shadow": "2px 5px 5px 1px #00eead",
-    #     },
-    # )
-
-    # btc_vol = html.Div(
-    #     [
-    #         html.Div([], className="col-1"),
-    #         html.Div(
-    #             [dcc.Link(html.H4(children="Dashboard"), href="/apps/dashboard")],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Volatility Chart"),
-    #                     href="/apps/volatility-chart",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Correlation Matrix"),
-    #                     href="/apps/correlation-matrix",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(
-    #                         children="Correlation Over Time"
-    #                     ),
-    #                     href="/apps/correlation-timeline",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-
-    #         html.Div(
-    #         [
-    #             dcc.Link(
-    #                 html.H4(children="Bitcoin Rolling Volatility", style = navbarcurrentpage),
-    #                 href="/apps/bitcoin-volatility",
-    #             )
-    #         ],
-    #         className="col-2",
-    #         ),
-
-    #         html.Div([], className="col-3"),
-    #     ],
-    #     className="row",
-    #     style={
-    #         "background-color": onramp_colors["dark-green"],  # behind nav
-    #         "box-shadow": "2px 5px 5px 1px #00eead",
-    #     },
-    # )
 
     if p == "dashboard":
         return navbar_dashboard
@@ -584,7 +276,7 @@ def get_navbar(p="dashboard"):
     elif p == "timeline":
         return navbar_timeline
     elif p == "btc_vol":
-        return btc_vol
+        return navbar_btc_vol
     elif p == "custom":
         return navbar_custom
     else:
@@ -616,6 +308,7 @@ dashboard_page = html.Div(
         #####################
         # Row 2 : Nav bar
         get_navbar("dashboard"),
+        
         
         #####################
         # Row 3 : Filters
@@ -1371,22 +1064,6 @@ def Inputs():
 
     return inputs_
 
-# def Description():
-
-#     descript = dbc.Card(
-#                 dbc.CardBody([
-                   
-#                             html.P(children= "Commerce on the Internet has come to rely almost exclusively on financial institutions serving as trusted third parties to process electronic payments. While the system works well enough for most transactions, it still suffers from the inherent weaknesses of the trust based model. Completely non-reversible transactions are not really possible, since financial institutions cannotavoid mediating disputes.", 
-#                             style = {"fontSize": "vmin" }),
-                            
-#                             html.P(children= "Commerce on the Internet has come to rely almost exclusively on financial institutions serving as trusted third parties to process electronic payments. While the system works well enough for most transactions, it still suffers from the inherent weaknesses of the trust based model. Completely non-reversible transactions are not really possible, since financial institutions cannotavoid mediating disputes.",
-#                             style = {"fontSize": "vmin" })
-                            
-                
-#                 ]), className= "text-center", style= {"height": "22rem"}, color= onramp_colors["dark_blue"], inverse= True
-#     )
-
-#     return descript
 
 def DisplayPie():
     pie = dbc.Card([
@@ -1489,6 +1166,7 @@ custom_page = dbc.Container([
     
     get_navbar('custom'),
 
+    get_emptyrow(),
     get_emptyrow(),
     #Title 
     dbc.Row(

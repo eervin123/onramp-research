@@ -904,7 +904,7 @@ def update_graph(num_click, stock_choice_1, alloc1, stock_choice_2, alloc2, stoc
     stock_choice_2 = stock_choice_2.lower()
     stock_choice_3 = stock_choice_3.lower()
     stock_choice_4 = stock_choice_4.lower()
-
+    stock_list_pie = [stock_choice_1, stock_choice_2, stock_choice_3, stock_choice_4]
     
     #stock_list = stock_choice_1 +',' + stock_choice_2 + ',' + stock_choice_3 + ',' + stock_choice_4
     

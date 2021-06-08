@@ -156,6 +156,7 @@ def get_data():
   return data_cache
 
 def calculate_controls(data):
+    # TODO @cyrus It looks like you are using VWO not AGG for the bond portion
   stock_dic_control = {'spy': float(60)/100, 'agg': float(40)/100, 'vwo': float(0)/100}
   stock_dic_spy = {'spy': float(100)/100, 'agg': float(0)/100, 'vwo': float(0)/100}
   stock_dic_agg = {'spy': float(0)/100, 'agg': float(100)/100, 'vwo': float(0)/100}

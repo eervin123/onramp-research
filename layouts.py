@@ -1436,7 +1436,7 @@ def DisplayLineChart():
             dcc.Loading(id = "loading_line", children=
             dcc.Graph(
                 id = "line_chart_o",
-                style= {"responsive": True}
+                style= {"responsive": True,}
             ))
         ]), 
     ], className= "text-center mb-2", style= {"max-width" : "100%", "margin": "auto", "height": "33rem"}, color= onramp_colors["dark_blue"], inverse = True)
@@ -1533,7 +1533,7 @@ optimizer_page = dbc.Container([
                     Inputs()
                 ],  ),
             ),
-        ], xs = 12, sm = 12, md = 12, lg = 3, xl = 3),
+        ], xs = 12, sm = 12, md = 12, lg = 6, xl = 3),
 
         dbc.Col([
             
@@ -1542,14 +1542,14 @@ optimizer_page = dbc.Container([
                     DisplayPie()
                 ],  ),
             ]),
-        ], xs = 12, sm = 12, md = 12, lg = 3, xl = 3),
+        ], xs = 12, sm = 12, md = 12, lg = 6, xl = 3),
         dbc.Col([
             dbc.Row(
                 dbc.Col([
                     DisplayLineChart()
                 ]),
             )
-        ], xs = 12, sm = 12, md = 12, lg = 6, xl = 6 )
+        ], xs = 12, sm = 12, md = 12, lg = 12, xl = 6 )
     ],no_gutters = True),
 
     # Stats | Scatter Plot | Return Recap

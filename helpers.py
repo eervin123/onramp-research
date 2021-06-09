@@ -301,7 +301,7 @@ def balance_table(results, results_con):
                                 cells=dict(values=[['60-40 Portfolio', series_res.columns[0]], ["$100", "$100"], [final_con, final_res]],
                                             line_color = 'rgba(100, 100, 100, 0.36)',
                                             font = dict(color = [text_color*3], size = 12),
-                                            height = 30,
+                                            height = 26,
                                             fill_color = onramp_colors["dark_blue"] )) ])
     fig.update_layout(
             {
@@ -344,7 +344,7 @@ def short_stats_table(results_list):
                                         font=dict(color='black', size=12)),
                             cells=dict(values=[stats_combined.index, stats_combined.Your_Strategy, stats_combined.Portfolio6040, stats_combined.Difference],
                                         line_color = 'rgba(100, 100, 100, 0.36)',
-                                        height = 30,
+                                        height = 26,
                                         font = dict(color = text_color),
                                         fill_color = onramp_colors["dark_blue"] )) ])
     fig.update_layout(
@@ -653,7 +653,7 @@ def stats_table(results_list):
                                         font=dict(color='black', size=12)),
                             cells=dict(values=[df.Stats, df.Your_Strategy, df.Portfolio6040],
                                         line_color = 'rgba(100, 100, 100, 0.36)',
-                                        height = 30,
+                                        height = 26,
                                         font = dict(color = text_color, size = 12),
                                         fill_color =  onramp_colors["dark_blue"])) ])
     fig.update_layout(margin = dict(l=2, r=1, t=0, b=10), 

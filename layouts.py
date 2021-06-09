@@ -1,6 +1,7 @@
 from dash_bootstrap_components._components.DropdownMenu import DropdownMenu
 from dash_bootstrap_components._components.InputGroup import InputGroup
 from dash_bootstrap_components._components.Label import Label
+from dash_bootstrap_components._components.PopoverHeader import PopoverHeader
 import dash_core_components as dcc
 import dash_html_components as html
 from dash_bootstrap_components._components.CardBody import CardBody
@@ -953,21 +954,21 @@ def Inputs():
                 #Inputs 1 
                 dbc.Row([
                     dbc.Col([
-                        dbc.Label("Tickers"),
+                        dbc.FormText("Enter Tickers"),
                         dbc.Input(
                             id = "Ticker1",
                             type= 'text',
                             value = "spy",
                             placeholder= "Enter Ticker",
                             debounce = True,
-                            style = {"width" : "100%"}
+                            style = {"width" : "100%", "height": "50%"}
 
                         ),
                     ],width={'size':4}, className= " mb-4", 
                     ), 
 
                     dbc.Col([
-                        dbc.Label("Allocation %"),
+                        dbc.FormText("Allocation %"),
                         dbc.InputGroup([
                             dbc.Input(
                                 id = "Allocation1",
@@ -978,7 +979,7 @@ def Inputs():
 
                             ), 
                             dbc.InputGroupAddon("%", addon_type = "append"),
-                        ])
+                        ], size = 'sm' )
                         ],width={'size': 6, 'offset':1},
                     ),
                 ]),
@@ -991,7 +992,7 @@ def Inputs():
                             type= 'text',
                             value = 'agg',
                             placeholder= "Enter Ticker",
-                            style = {"width" : "100%"}
+                            style = {"width" : "100%", "height": "100%"}
 
                         ),
                     width={'size':4}, className= "mb-4"
@@ -1008,7 +1009,7 @@ def Inputs():
 
                             ), 
                             dbc.InputGroupAddon("%", addon_type = "append"),
-                        ])
+                        ], size = 'sm')
                     ], width={'size':6, 'offset':1}),
                 ]),
 
@@ -1020,7 +1021,7 @@ def Inputs():
                             type= 'text',
                             value = 'btc-usd',
                             placeholder= "Enter Ticker",
-                            style = {"width" : "100%"}
+                            style = {"width" : "100%", "height": "100%"}
 
                         ),
                     width={'size':4}, className= "mb-4"
@@ -1037,7 +1038,7 @@ def Inputs():
 
                             ), 
                             dbc.InputGroupAddon("%", addon_type = "append"),
-                        ])
+                        ], size = 'sm')
                         ], width={'size':6, 'offset':1},
                     ),
                 ]),
@@ -1050,10 +1051,10 @@ def Inputs():
                             type= 'text',
                             value = 'eth-usd',
                             placeholder= "Enter Ticker",
-                            style = {"width" : "100%"}
+                            style = {"width" : "100%", "height": "100%"}
 
                         ),
-                    width={'size':4}, className= "mb-4"
+                    width={'size':4}, className= "mb-2"
                     ), 
 
                     dbc.Col([
@@ -1066,7 +1067,7 @@ def Inputs():
                             style = {"width" : "100%"}
                         ), 
                         dbc.InputGroupAddon("%", addon_type = "append"),
-                        ])
+                        ], size = 'sm')
                         ],width={'size':6, 'offset':1},
                     ),
                 ]),
@@ -1078,16 +1079,27 @@ def Inputs():
                     ), 
 
                     dbc.Col([
+                        dbc.FormText("Rebalance Threshold %"),
                         dbc.InputGroup([
                             dbc.Input(
                                 id = "Rebalance",
                                 type= 'text',
-                                placeholder= "Rebalance Threshold %",
-                                style = {"width" : "100%"}
+                                placeholder= "Optional",
+                                style = {"width" : "100%", "height": "100%"}
 
                             ), 
                             dbc.InputGroupAddon("%", addon_type = "append"),
-                        ])
+                        ], size = "sm", style = {"height": "60%"}),
+                        dbc.Popover(
+                            children = [
+                            dbc.PopoverHeader("Rebalance Threshold", style = {"color": "black"}),
+                            dbc.PopoverBody("If given a rebalance threshold, a portfolio rebalance will occur whenever any asset increases by x%."),
+                            dbc.PopoverBody("Ex. Bitcoin has a 5% allocation in your portfolio with a 5% threshold. If bitcoin ever becomes 10% or over of the portfolio, a rebalance will occur."),
+                            ],
+                            id = "pop_rebal",
+                            target = "Rebalance",
+                            trigger = "hover"
+                        )
                         ],width={'size':6, 'offset':1}, className= "mb-4"
                     ),
                 ]),
@@ -1100,14 +1112,14 @@ def Inputs():
                             id = "submit_button",
                             children= "Create Strategy",
                             n_clicks=0,
-                            style= {"width": "100%"}
+                            style= {"width": "100%", "height": "100%"}
 
                         ), width={'size':11, 'offset':0},
                     ),
                 ]),
                 
             ]), 
-    ], className= "text-center mb-2 mr-2", style= {"height": "31rem"}, color= onramp_colors["dark_blue"], inverse= True,)
+    ], className= "text-center mb-2 mr-2", style= {"height": "28rem"}, color= onramp_colors["dark_blue"], inverse= True,)
 
     return inputs_
 
@@ -1118,11 +1130,12 @@ def DisplayPie():
             
             dcc.Loading( id = "loading_pie", children=
             dcc.Graph(
-                id = "pie_chart_c"
+                id = "pie_chart_c",
+                style = {"responsive": True,  "width": "95%", "height": "40vh"}
             )
             )
         ]),
-    ],  className= "text-center mb-2 mr-2", style= {"height": "31rem"}, color= onramp_colors["dark_blue"], inverse = True)
+    ],  className= "text-center mb-2 mr-2", style= {"height": "28rem"}, color= onramp_colors["dark_blue"], inverse = True)
 
     return pie
            
@@ -1133,10 +1146,10 @@ def DisplayLineChart():
             dcc.Loading(id = "loading_line", children=
             dcc.Graph(
                 id = "line_chart_c",
-                style= {"responsive": True}
+                style= {"responsive": True,  "width": "95%", "height": "40vh"}
             ))
         ]), 
-    ], className= "text-center mb-2", style= {"max-width" : "100%", "margin": "auto", "height": "31rem"}, color= onramp_colors["dark_blue"], inverse = True)
+    ], className= "text-center mb-2", style= {"max-width" : "100%", "margin": "auto", "height": "28rem"}, color= onramp_colors["dark_blue"], inverse = True)
 
     return line        
 
@@ -1147,11 +1160,11 @@ def DisplayScatter():
             dcc.Loading(id = "loading-scatter", children=
             dcc.Graph(
                 id = "scatter_plot_c",
-                style= {"responsive": True}
+                style= {"responsive": True, "height": "43vh"}
             )
             )
         ]),  
-    ], className= "text-center mb-2 mr-2", style= {"max-width" : "100%", "margin": "auto", "height": "33rem"}, color= onramp_colors["dark_blue"], inverse = True)
+    ], className= "text-center mb-2 mr-2", style= {"max-width" : "100%", "margin": "auto", "height": "29rem"}, color= onramp_colors["dark_blue"], inverse = True)
 
     return scat        
 
@@ -1166,7 +1179,7 @@ def DisplayStats():
             )
             )
         ]),  
-    ], className= "text-center mb-2", style= {"max-width" : "100%", "margin": "auto", "height": "33rem"}, color= onramp_colors["dark_blue"], inverse = True)
+    ], className= "text-center mb-2", style= {"max-width" : "100%", "margin": "auto", "height": "29rem"}, color= onramp_colors["dark_blue"], inverse = True)
 
     return stats        
 
@@ -1189,7 +1202,7 @@ def DisplayReturnStats():
             
                             
         ])
-    ],  className= "text-center mb-2 mr-2", style= {"max-width" : "100%", "margin": "auto", "height": "33rem"}, color= onramp_colors["dark_blue"], inverse = True)
+    ],  className= "text-center mb-2 mr-2", style= {"max-width" : "100%", "margin": "auto", "height": "29rem"}, color= onramp_colors["dark_blue"], inverse = True)
 
     return stats      
 
@@ -1213,7 +1226,7 @@ custom_page = dbc.Container([
     get_navbar('custom'),
 
     get_emptyrow(),
-    get_emptyrow(),
+    #get_emptyrow(),
     #Title 
     dbc.Row(
         dbc.Col(
@@ -1348,7 +1361,7 @@ def Inputs():
                         dbc.Select(
                             id = "opti_sel",
                             options=[
-                                {"label": "Efficient Frontier Optimization", "value": "ef"},
+                                {"label": "Mean Variance Optimization", "value": "ef"},
                                 {"label": "Equal Risk Contribution", "value": "er"},
                                 {"label": "Inverse Volitility", "value": "iv"},
                             ],
@@ -1356,6 +1369,17 @@ def Inputs():
                             style = {"width" : "100%"}
 
                         ),
+                        dbc.Popover(
+                            children = [
+                            dbc.PopoverHeader("Optimization Types", style = {"color": "black"}),
+                            dbc.PopoverBody("Mean Variance: This type utilizes the Efficient Frontier approach of maximizing returns for each unit of risk"),
+                            dbc.PopoverBody("Equal Risk Contribution: This gives equal risk of each asset"),
+                            dbc.PopoverBody("Inverse Volatility: Gives the inverse of the volatility for each asset"),
+                            ],
+                            id = "pop_opti",
+                            target = "opti_sel",
+                            trigger = "hover"
+                        )
                     ],width={'size':12}, className= "text-left mb-4"), 
                 ]),
 
@@ -1374,8 +1398,17 @@ def Inputs():
                             ],
                             value = "Quart",
                             style = {"width" : "100%"}
-
                         ),
+                        dbc.Popover(
+                            children = [
+                            dbc.PopoverHeader("Rebalance Frequency", style = {"color": "black"}),
+                            dbc.PopoverBody("Use this to select the frequency that the data is rebalanced for during optimization"),
+                            ],
+                            id = "pop_freq",
+                            target = "Frequency_sel",
+                            trigger = "hover"
+                        )
+                        
                     ], width={'size':6}, className= "mb-5 text-left"
                     ), 
 
@@ -1387,7 +1420,16 @@ def Inputs():
                             type= 'text',
                             placeholder= "Optional",
                             style = {"width" : "100%"}
-                        ), 
+                        ),
+                        dbc.Popover(
+                            children = [
+                            dbc.PopoverHeader("Maximum Crypto Allocation", style = {"color": "black"}),
+                            dbc.PopoverBody("Although the optimizer may reccomend a high crypto allocation, we understand that is not viable for most people. Use this box to limit the amount of crypto in the final optimization"),
+                            ],
+                            id = "pop_max",
+                            target = "crypto_alloc",
+                            trigger = "hover"
+                        ),
                         dbc.InputGroupAddon("%", addon_type = "append")
                         ])
                     ], width={'size':6, 'offset':0}, className = "text-left"),
@@ -1508,7 +1550,7 @@ optimizer_page = dbc.Container([
     get_navbar('optimize'),
 
     get_emptyrow(),
-    get_emptyrow(),
+    #get_emptyrow(),
     #Title 
     dbc.Row(
         dbc.Col(

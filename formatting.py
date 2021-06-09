@@ -81,7 +81,7 @@ onramp_font_family = "Roboto"
 onramp_legend = {
     "orientation": "h",
     "yanchor": "bottom",
-    "y": -.2,
+    "y": -.3,
     "xanchor": "left",
     "x": 0,
     "font": {"size": 17, "color": onramp_colors["gray"]},

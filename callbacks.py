@@ -14,7 +14,7 @@ import redis
 from direct_redis import DirectRedis
 import pyarrow as pa
 import urllib.parse as urlparse
-from formatting import onramp_colors, onramp_template, custom_scale
+from formatting import onramp_colors, onramp_template, onramp_template_dashboard, custom_scale
 from helpers import *
 from bt_algos import RebalanceAssetThreshold
 #get_coin_data, get_coin_data_new, volatility, calc_volatility, calc_volatility_new, create_corr, create_corr_new, get_data, calculate_controls, pl
@@ -980,8 +980,10 @@ def update_graph(num_click, stock_choice_1, alloc1, stock_choice_2, alloc2, stoc
     print("Finished Strategy", stock_choice_1, ":", data_et - data_st)
     ################################################### LINE CHART ########################################################################################################
     fig_line = line_chart(results_list)
+    fig_line.update_layout(template = onramp_template_dashboard) #legend in top left
 
     fig_scat = scatter_plot(results_list)
+    fig_scat.update_layout(template = onramp_template_dashboard) #legend in top left
 
     fig_stats = stats_table(results_list)
 
@@ -1189,9 +1191,11 @@ def update_graph(num_click, tickers, crypto_tickers, opti_sel, freq_sel, crypto_
 
     results_list = [results_op_d, results_port, results_spy, results_agg]
     fig_line = line_chart(results_list)
+    fig_line.update_layout(template = onramp_template_dashboard)
 
     
     fig_scat = scatter_plot(results_list) #scatter function in functions
+    fig_scat.update_layout(template = onramp_template_dashboard)
 
     fig_stats = stats_table(results_list)
 

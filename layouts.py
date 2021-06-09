@@ -1238,7 +1238,7 @@ custom_page = dbc.Container([
                     Inputs()
                 ],  ),
             ),
-        ], xs = 12, sm = 12, md = 12, lg = 3, xl = 3),
+        ], xs = 12, sm = 12, md = 12, lg = 6, xl = 3),
 
         dbc.Col([
             
@@ -1247,14 +1247,14 @@ custom_page = dbc.Container([
                     DisplayPie()
                 ],  ),
             ]),
-        ], xs = 12, sm = 12, md = 12, lg = 3, xl = 3),
+        ], xs = 12, sm = 12, md = 12, lg = 6, xl = 3),
         dbc.Col([
             dbc.Row(
                 dbc.Col([
                     DisplayLineChart()
                 ]),
             )
-        ], xs = 12, sm = 12, md = 12, lg = 6, xl = 6 )
+        ], xs = 12, sm = 12, md = 12, lg = 12, xl = 6 )
     ],no_gutters = True),
 
     # Stats | Scatter Plot | Return Recap
@@ -1265,7 +1265,7 @@ custom_page = dbc.Container([
                     DisplayScatter()
                 ],),
             ),
-        ], xs = 12, sm = 12, md = 12, lg = 4, xl = 4),
+        ], xs = 12, sm = 12, md = 12, lg = 12, xl = 4),
 
 
         dbc.Col([
@@ -1275,7 +1275,7 @@ custom_page = dbc.Container([
                     
                 ],),
             ),
-        ], xs = 12, sm = 12, md = 12, lg = 4, xl = 4),
+        ], xs = 12, sm = 12, md = 12, lg = 6, xl = 4),
         
         dbc.Col([
             dbc.Row(
@@ -1283,7 +1283,7 @@ custom_page = dbc.Container([
                     DisplayStats()
                 ]),
             ),
-        ], xs = 12, sm = 12, md = 12, lg = 4, xl = 4)
+        ], xs = 12, sm = 12, md = 12, lg = 6, xl = 4)
     ], no_gutters = True),
 
     
@@ -1310,7 +1310,7 @@ def Inputs():
                 #Stock Ticker 
                 dbc.Row([
                     dbc.Col([
-                        dbc.Label("Enter Stock Tickers Comma Seperated"),
+                        dbc.FormText("Enter Stock Tickers Comma Seperated"),
                         dbc.Input(
                             id = "Ticker_o",
                             type= 'text',
@@ -1327,7 +1327,7 @@ def Inputs():
                 #Inputs 1 
                 dbc.Row([
                     dbc.Col([
-                        dbc.Label("Enter Crypto Tickers Comma Seperated"),
+                        dbc.FormText("Enter Crypto Tickers Comma Seperated"),
                         dbc.Input(
                             id = "cTicker_o",
                             type= 'text',
@@ -1344,7 +1344,7 @@ def Inputs():
                 #Inputs 2
                 dbc.Row([
                     dbc.Col([
-                        dbc.Label("Select Optimization Type"),
+                        dbc.FormText("Select Optimization Type"),
                         dbc.Select(
                             id = "opti_sel",
                             options=[
@@ -1362,7 +1362,7 @@ def Inputs():
                 #Inputs 3
                 dbc.Row([
                     dbc.Col([
-                        dbc.Label("Frequency of Rebalance"),
+                        dbc.FormText("Rebalance Freq"),
                         dbc.Select(
                             id = "Frequency_sel",
                             options=[
@@ -1380,7 +1380,7 @@ def Inputs():
                     ), 
 
                     dbc.Col([
-                        dbc.Label("Maximum Crypto Allocation"),
+                        dbc.FormText("Max Crypto Alloc"),
                         dbc.InputGroup([
                         dbc.Input(
                             id = "crypto_alloc",

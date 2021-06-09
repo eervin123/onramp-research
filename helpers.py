@@ -3,7 +3,7 @@ import pandas as pd
 import bt
 import plotly.express as px
 import plotly.graph_objects as go
-from formatting import onramp_colors, onramp_template
+from formatting import onramp_colors, onramp_template, onramp_template_dashboard
 
 def get_coin_data(symbol):
     df = pd.read_csv(f"datafiles/{symbol}_data.csv")
@@ -206,12 +206,12 @@ def line_chart(results_list):
     fig.update_yaxes( # the y-axis is in dollars
         tickprefix="$"
     )
-    fig.update_layout(
-        legend = {
-            "xanchor": "left",
-            "x": .2,
-        }  
-    )
+    # fig.update_layout(
+    #     legend = {
+    #         "xanchor": "left",
+    #         "x": .2,
+    #     }  
+    # )
     return fig
 
 def plotly_pie(stock_list, percent_list):
@@ -276,7 +276,7 @@ def scatter_plot(results_list):
                             template= onramp_template,
                             #width = 530, height = 350
                             )
-    fig.update_layout(legend = {"y": -.38})
+    #fig.update_layout(legend = {"y": -.38})
     
     return fig
 

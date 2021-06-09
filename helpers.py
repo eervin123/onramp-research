@@ -220,7 +220,7 @@ def plotly_pie(stock_list, percent_list):
     fig = px.pie( values = percent_list, names = stock_list, color = stock_list, template = onramp_template, hole = .3)
     
     fig.update_traces(textfont_size=17, marker=dict( line=dict(color='white', width=1)))
-    #fig.update_traces(marker=dict(line=dict(color='white', width=1.3)))
+    fig.update_layout(font = dict(color = "white"))
     
 
     return fig

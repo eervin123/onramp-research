@@ -96,7 +96,7 @@ onramp_margins = {
 
 
 onramp_layout = go.Layout(
-    colorway= [onramp_colors["btc"], onramp_colors["white"], onramp_colors["cyan"], '#B0B6BD'],
+    colorway= [onramp_colors["btc"], onramp_colors["white"], onramp_colors["cyan"], '#B0B6BD', onramp_colors["pink"], onramp_colors["purple"], onramp_colors["light_blue"], onramp_colors["orange"]],
     font = {'family' : onramp_font_family},
     title=onramp_title,
     title_x=0.5, # Align chart title to center

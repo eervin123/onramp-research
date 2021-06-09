@@ -157,9 +157,9 @@ def get_data():
 
 def calculate_controls(data):
     # TODO @cyrus It looks like you were using VWO not AGG for the bond portion I made the change but please confirm you agree.
-  stock_dic_control = {'spy': float(60)/100, 'agg': float(40)/100, 'btc-usd': float(0)/100}
-  stock_dic_spy = {'spy': float(100)/100, 'agg': float(0)/100, 'btc-usd': float(0)/100}
-  stock_dic_agg = {'spy': float(0)/100, 'agg': float(100)/100, 'btc-usd': float(0)/100}
+  stock_dic_control = {'spy': float(60)/100, 'agg': float(40)/100}
+  stock_dic_spy = {'spy': float(100)/100}
+  stock_dic_agg = {'agg': float(100)/100}
                             
   strategy_control = bt.Strategy('60-40 Portfolio', 
                           [bt.algos.RunMonthly(), 

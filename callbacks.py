@@ -27,7 +27,7 @@ r = DirectRedis(host=url.hostname, port=url.port, password=url.password)
 #r = redis.Redis(host='localhost', port=6379)
 
 ####################################################################################################
-# 000 - IMPORT DATA DASHBOARD
+# 000 - IMPORT DATA SLIDER DASHBOARD
 ####################################################################################################
 
 df = pd.read_csv(
@@ -85,7 +85,7 @@ df_stats = df_stats.dropna()
 
 colors = [onramp_colors["dark_blue"], "#3fb6dc", "#f2a900"]
 ####################################################################################################
-# 000 - LARGE CHARTS DATA
+# 001 - LARGE CHARTS DATA
 ####################################################################################################
 pairs_crypto = [
     "BTC-USDT",
@@ -191,7 +191,7 @@ def update_graphs(value):
         10: 21,
     }
 
-    percent_dict = {"Traditional 60/40": 1 - float(value) / 100, "Bitcoin": float(value) / 100}
+    percent_dict = {"Traditional 60/40": float(1 - float(value)) / 100, "Bitcoin": float(float(value) / 100)}
 
     # print(value)
     def graph_pie(percent_dictionary):
@@ -489,6 +489,7 @@ def update_graphs(value):
     [dash.dependencies.Input("dropdown", "value")],
 )
 def update_vol(value):
+    
     def graph_volatility(df, coins, xd):
         source = "Binance"
         yaxis_dict = dict(
@@ -503,7 +504,7 @@ def update_vol(value):
         )
         vols = [14, 30, 90]
         colors = 6 * [
-            "black",
+            "grey",
             "#033F63",
             "#28666E",
             "#7C9885",
@@ -1049,7 +1050,7 @@ def update_graph(num_click, tickers, crypto_tickers, opti_sel, freq_sel, crypto_
         crypto_max = 120
     crypto_max = float(crypto_max)/100
 
-    print(data)
+    
     ####################################################################################################################################################
     ############### PREPARE DATA
     ####################################################################################################################################################

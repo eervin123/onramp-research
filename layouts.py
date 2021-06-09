@@ -30,25 +30,28 @@ pairs = [
 ]
 
 df = calc_volatility_btc_vol(pairs) #Used for Crypto Vol Chart 
+#print(df)
+df_btc = df[['BTC_vol_30', 'BTC_vol_60', 'BTC_vol_7', 'BTC_vol_14']].copy() #Annualized bitcoin vol chart
 
-df_btc = df[['BTC_vol_30', 'BTC_vol_60', 'BTC_vol_7']] #Annualized bitcoin vol chart
+df_btc.columns = ['Ann. 30D Volatility', 'Ann. 60D Volatility', 'Ann. 7D Volatility', 'Avg30DVolatility']
 
-df_btc.columns = ['Ann. 30D Volatility', 'Ann. 60D Volatility', 'Ann. 7D Volatility']
 
 for col in df_btc.columns:
-    df_btc[col] = df_btc[col].map(lambda element: element/100)
+    df_btc.loc[col] = df_btc[col].map(lambda element: element/100)
 
 avg_7 = df_btc["Ann. 7D Volatility"].mean()
 avg_30 = df_btc["Ann. 30D Volatility"].mean()
 avg_60 = df_btc["Ann. 60D Volatility"].mean()
-df_btc["Avg. 30D Volatility"] = avg_30
+
+df_btc = df_btc.assign(Avg30DVolatility = avg_30)
+
 
 def graph_btc_vol(df):
     fig = go.Figure()
     fig.add_trace(go.Scatter( x = df.index, y = df['Ann. 30D Volatility'], name = 'Ann. 30D Volatility', line = dict(color = "#00EEAD", width = 2, dash = 'solid')))
     fig.add_trace(go.Scatter( x = df.index, y = df['Ann. 60D Volatility'], name = 'Ann. 60D Volatility', line = dict(color = "white", width = 2, dash = 'solid')))
     fig.add_trace(go.Scatter( x = df.index, y = df['Ann. 7D Volatility'], name = 'Ann. 7D Volatility', line = dict(color = "#B0B6BD", width = 2, dash = 'dot')))
-    fig.add_trace(go.Scatter( x = df.index, y = df['Avg. 30D Volatility'], name = 'Avg. 30D Volatility', line = dict(color = "white", width = 2, dash = 'dash')))
+    fig.add_trace(go.Scatter( x = df.index, y = df['Avg30DVolatility'], name = 'Avg. 30D Volatility', line = dict(color = "white", width = 2, dash = 'dash')))
     fig.update_xaxes(showgrid = False)
     fig.update_yaxes(showgrid=False) 
     fig.update_layout(yaxis_tickformat="%")

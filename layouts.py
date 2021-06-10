@@ -1621,14 +1621,14 @@ optimizer_page = dbc.Container([
                     DisplayPie()
                 ],  ),
             ]),
-        ], xs = 12, sm = 12, md = 12, lg = 6, xl = 3),
+        ], xs = 12, sm = 12, md = 12, lg = 6, xl = 4),
         dbc.Col([
             dbc.Row(
                 dbc.Col([
                     DisplayLineChart()
                 ]),
             )
-        ], xs = 12, sm = 12, md = 12, lg = 12, xl = 6 )
+        ], xs = 12, sm = 12, md = 12, lg = 12, xl = 5 )
     ],no_gutters = True),
 
     # Stats | Scatter Plot | Return Recap

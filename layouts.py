@@ -1,3 +1,4 @@
+from dash_bootstrap_components._components.CardHeader import CardHeader
 from dash_bootstrap_components._components.DropdownMenu import DropdownMenu
 from dash_bootstrap_components._components.InputGroup import InputGroup
 from dash_bootstrap_components._components.Label import Label
@@ -1323,36 +1324,50 @@ def Inputs():
                 #Stock Ticker 
                 dbc.Row([
                     dbc.Col([
-                        dbc.FormText("Enter Stock Tickers Comma Seperated"),
+                        dbc.FormText("Stock Tickers"),
                         dbc.Input(
                             id = "Ticker_o",
                             type= 'text',
                             value = "spy,agg,tsla,msft",
                             placeholder= "Enter Tickers",
                             debounce = True,
-                            style = {"width" : "100%"}
+                            style = {"width" : "100%", "height": "62%"}
 
                         ),
-                    ],width={'size':12}, className= "text-left mb-4", 
-                    ), 
-                ]),
-
-                #Inputs 1 
-                dbc.Row([
+                    ],width={'size':6}, className= "text-left mb-3", 
+                    ),
                     dbc.Col([
-                        dbc.FormText("Enter Crypto Tickers Comma Seperated"),
+                        dbc.FormText("Crypto Tickers"),
                         dbc.Input(
                             id = "cTicker_o",
                             type= 'text',
                             value = "btc-usd,eth-usd,bnb-usd",
                             placeholder= "Enter Cryptos",
                             debounce = True,
-                            style = {"width" : "100%"}
+                            style = {"width" : "100%", "height": "62%"}
 
                         ),
-                    ],width={'size':12}, className= "text-left mb-4", 
+                    ],width={'size':6}, className= "text-left mb-3", 
                     ), 
+
                 ]),
+
+                #Inputs 1 
+                # dbc.Row([
+                #     dbc.Col([
+                #         dbc.FormText("Enter Crypto Tickers Comma Seperated"),
+                #         dbc.Input(
+                #             id = "cTicker_o",
+                #             type= 'text',
+                #             value = "btc-usd,eth-usd,bnb-usd",
+                #             placeholder= "Enter Cryptos",
+                #             debounce = True,
+                #             style = {"width" : "100%", "height": "50%"}
+
+                #         ),
+                #     ],width={'size':12}, className= "text-left mb-3", 
+                #     ), 
+                # ]),
                 
                 #Inputs 2
                 dbc.Row([
@@ -1366,7 +1381,7 @@ def Inputs():
                                 {"label": "Inverse Volitility", "value": "iv"},
                             ],
                             value = "ef",
-                            style = {"width" : "100%"}
+                            style = {"width" : "100%", "height": "62%"}
 
                         ),
                         dbc.Popover(
@@ -1380,7 +1395,7 @@ def Inputs():
                             target = "opti_sel",
                             trigger = "hover"
                         )
-                    ],width={'size':12}, className= "text-left mb-4"), 
+                    ],width={'size':12}, className= "text-left mb-3"), 
                 ]),
 
                 #Inputs 3
@@ -1397,7 +1412,7 @@ def Inputs():
                                 {"label": "Compare All", "value": "Compare"},
                             ],
                             value = "Quart",
-                            style = {"width" : "100%"}
+                            style = {"width" : "100%", "height": "62%"}
                         ),
                         dbc.Popover(
                             children = [
@@ -1431,7 +1446,7 @@ def Inputs():
                             trigger = "hover"
                         ),
                         dbc.InputGroupAddon("%", addon_type = "append")
-                        ])
+                        ], )
                     ], width={'size':6, 'offset':0}, className = "text-left"),
                 ]),
 
@@ -1452,7 +1467,7 @@ def Inputs():
                 ]),
                 
             ]), 
-    ], className= "text-center mb-2 mr-2", style= {"height": "33rem"}, color= onramp_colors["dark_blue"], inverse= True,)
+    ], className= "text-center mb-2 mr-2", style= {"height": "25rem"}, color= onramp_colors["dark_blue"], inverse= True,)
 
     return inputs_
 
@@ -1463,11 +1478,12 @@ def DisplayPie():
             
             dcc.Loading( id = "loading_pie_o", children=
             dcc.Graph(
-                id = "pie_chart_o"
+                id = "pie_chart_o",
+                style = {"responsive": True, "height": "37vh"}
             )
             )
         ]),
-    ],  className= "text-center mb-2 mr-2", style= {"height": "33rem"}, color= onramp_colors["dark_blue"], inverse = True)
+    ],  className= "text-center mb-2 mr-2", style= {"height": "25rem"}, color= onramp_colors["dark_blue"], inverse = True)
 
     return pie
            
@@ -1478,12 +1494,12 @@ def DisplayLineChart():
             dcc.Loading(id = "loading_line", children=
             dcc.Graph(
                 id = "line_chart_o",
-                style= {"responsive": True,}
+                style= {"height": "36vh"}
             ))
         ]), 
-    ], className= "text-center mb-2", style= {"max-width" : "100%", "margin": "auto", "height": "33rem"}, color= onramp_colors["dark_blue"], inverse = True)
-
-    return line        
+    ], className= "text-center mb-2", style= {"max-width" : "100%", "margin": "auto", "height": "25rem"}, color= onramp_colors["dark_blue"], inverse = True)
+    
+    return line            
 
 def DisplayScatter():
     scat = dbc.Card([
@@ -1492,11 +1508,11 @@ def DisplayScatter():
             dcc.Loading(id = "loading-scatter", children=
             dcc.Graph(
                 id = "scatter_plot_o",
-                style= {"responsive": True}
+                style= {"responsive": True, "height": "36vh"}
             )
             )
         ]),  
-    ], className= "text-center mb-2 mr-2", style= {"max-width" : "100%", "margin": "auto", "height": "33rem"}, color= onramp_colors["dark_blue"], inverse = True)
+    ], className= "text-center mb-2 mr-2", style= {"max-width" : "100%", "margin": "auto", "height": "25rem"}, color= onramp_colors["dark_blue"], inverse = True)
 
     return scat        
 
@@ -1511,7 +1527,7 @@ def DisplayStats():
             )
             )
         ]),  
-    ], className= "text-center mb-2", style= {"max-width" : "100%", "margin": "auto", "height": "33rem"}, color= onramp_colors["dark_blue"], inverse = True)
+    ], className= "text-center mb-2", style= {"max-width" : "100%", "margin": "auto", "height": "25rem"}, color= onramp_colors["dark_blue"], inverse = True)
 
     return stats        
 
@@ -1526,7 +1542,7 @@ def DisplayOptomizeTable():
                 )
             ),                
         ])
-    ],  className= "text-center mb-2 mr-2", style= {"max-width" : "100%", "margin": "auto", "height": "33rem"}, color= onramp_colors["dark_blue"], inverse = True)
+    ],  className= "text-center mb-2 mr-2", style= {"max-width" : "100%", "margin": "auto", "height": "25rem"}, color= onramp_colors["dark_blue"], inverse = True)
 
     return stats      
 
@@ -1554,14 +1570,15 @@ optimizer_page = dbc.Container([
     #Title 
     dbc.Row(
         dbc.Col(
-            dbc.Card(
+            dbc.Card([
+                #dbc.CardHeader(children = html.H1("Portfolio Optimizer Dashboard")),
                 dbc.CardBody([
                     html.H1(children="Portfolio Optimizer Dashboard", style = {"color": onramp_colors["white"]}), 
                     
                     html.P(children= "Use the following tool to build hypothetical portfolios of equities, ETFs, and various Cryptoassets.  Analyze the impact of cryptoassets modeled in a traditional portfolio allocation. Over time we will enable advisors to create custom reports for clients based on the output.", 
                             style = {"fontSize": "vmin", "color": onramp_colors["white"]}),
                 ]),
-            className="text-center mb-2", color= onramp_colors["dark_blue"], inverse= True,), 
+            ],className="text-center mb-2", color= onramp_colors["dark_blue"], inverse= True,), 
         width = 12)
     ),
 

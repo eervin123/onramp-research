@@ -28,7 +28,10 @@
   border-color: black;
 }
 
-
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+  color: #fff;
+  background-color: #00eead;
+}
 
 .rc-slider-rail{
   background-color: #00eead;

@@ -191,9 +191,9 @@ def update_graphs(value):
         10: 21,
     }
 
-    percent_dict = {"Traditional 60/40": float(1 - float(value)) / 100, "Bitcoin": float(float(value) / 100)}
+    percent_dict = {"Traditional 60/40": 1 - float(value) / 100, "Bitcoin": float(value) / 100}
 
-    # print(value)
+    #print(value)
     def graph_pie(percent_dictionary):
 
         colors_pie = [onramp_colors['dark_blue'], "#f2a900"]  # BTC Orange

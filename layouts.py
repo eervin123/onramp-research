@@ -1,5 +1,6 @@
 from dash_bootstrap_components._components.CardHeader import CardHeader
 from dash_bootstrap_components._components.DropdownMenu import DropdownMenu
+from dash_bootstrap_components._components.DropdownMenuItem import DropdownMenuItem
 from dash_bootstrap_components._components.InputGroup import InputGroup
 from dash_bootstrap_components._components.Label import Label
 from dash_bootstrap_components._components.PopoverHeader import PopoverHeader
@@ -195,72 +196,28 @@ def get_navbar(p="dashboard"):
             dbc.Nav(
             [
                 dbc.NavItem(dbc.NavLink("Dashboard", active=True, href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
-                dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
                 dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
                 dbc.NavItem(dbc.NavLink("Portfolio Optimizer", href="/apps/portfolio-optimizer", style = {"color": "black"})),
-            ],
-            pills=True, 
-            ), 
-        ], color = "rgba(230,230,230,0.92)", sticky = "top")
-
-    navbar_vol = dbc.Navbar([
-            dbc.Nav(
-            [
-                dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
-                dbc.NavItem(dbc.NavLink("Volatility Chart", active=True, href="/apps/volatility-chart", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Portfolio Optimizer", href="/apps/portfolio-optimizer", style = {"color": "black"})),
-            ],
-            pills=True, 
-            ), 
-        ], color = "rgba(230,230,230,0.92)", sticky = "top")
-
-    navbar_heatmap = dbc.Navbar([
-            dbc.Nav(
-            [
-                dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
-                dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Correlation Matrix", active=True, href="/apps/correlation-matrix", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Portfolio Optimizer", href="/apps/portfolio-optimizer", style = {"color": "black"})),
-            ],
-            pills=True, 
-            ), 
-        ], color = "rgba(230,230,230,0.92)", sticky = "top")
-
-    navbar_timeline = dbc.Navbar([
-            dbc.Nav(
-            [
-                dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
-                dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Correlation Over Time", active=True, href="/apps/correlation-timeline", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Portfolio Optimizer", href="/apps/portfolio-optimizer", style = {"color": "black"})),
-            ],
-            pills=True, 
-            ), 
-        ], color = "rgba(230,230,230,0.92)", sticky = "top")
-
-    navbar_btc_vol = dbc.Navbar([
-            dbc.Nav(
-            [
-                dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
-                dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Bitcoin Volatility", active=True, href="/apps/bitcoin-volatility", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Portfolio Optimizer", href="/apps/portfolio-optimizer", style = {"color": "black"})),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
+                    ],
+                    label = "Volatility Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                ),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
+                    ],
+                    label = "Correlation Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                ),
             ],
             pills=True, 
             ), 
@@ -270,32 +227,191 @@ def get_navbar(p="dashboard"):
             dbc.Nav(
             [
                 dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
-                dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", active=True, href="/apps/custom-dashboard", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard",active=True, href="/apps/custom-dashboard", style = {"color": "black"})),
                 dbc.NavItem(dbc.NavLink("Portfolio Optimizer", href="/apps/portfolio-optimizer", style = {"color": "black"})),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
+                    ],
+                    label = "Volatility Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                ),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
+                    ],
+                    label = "Correlation Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                ),
             ],
             pills=True, 
             ), 
-        ], color = "rgba(230,230,230,0.92)", sticky = "top", className = "m-n4", style = {"width": "10000px"})
+        ], color = "rgba(230,230,230,0.92)", sticky = "top")
 
     navbar_optimizer = dbc.Navbar([
             dbc.Nav(
             [
                 dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
-                dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
-                dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
                 dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
                 dbc.NavItem(dbc.NavLink("Portfolio Optimizer", active=True, href="/apps/portfolio-optimizer", style = {"color": "black"})),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
+                    ],
+                    label = "Volatility Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                ),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
+                    ],
+                    label = "Correlation Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                ),
             ],
             pills=True, 
             ), 
-        ], color = "rgba(230,230,230,0.92)", sticky = "top", className = "m-n4", style = {"width": "10000px"})
-   
+        ], color = "rgba(230,230,230,0.92)", sticky = "top")
+
+    navbar_vol = dbc.Navbar([
+            dbc.Nav(
+            [
+                dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
+                dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Portfolio Optimizer", href="/apps/portfolio-optimizer", style = {"color": "black"})),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Volatility Chart", active=True, href="/apps/volatility-chart", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
+                    ],
+                    label = "Volatility Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                    
+                ),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
+                    ],
+                    label = "Correlation Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                ),
+            ],
+            pills=True, 
+            ), 
+        ], color = "rgba(230,230,230,0.92)", sticky = "top")
+
+    navbar_btc_vol = dbc.Navbar([
+            dbc.Nav(
+            [
+                dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
+                dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Portfolio Optimizer", href="/apps/portfolio-optimizer", style = {"color": "black"})),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Volatility Chart",  href="/apps/volatility-chart", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Bitcoin Volatility", active=True, href="/apps/bitcoin-volatility", style = {"color": "black"})),
+                    ],
+                    label = "Volatility Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                    
+                ),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
+                    ],
+                    label = "Correlation Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                ),
+            ],
+            pills=True, 
+            ), 
+        ], color = "rgba(230,230,230,0.92)", sticky = "top")
+
+    navbar_heatmap = dbc.Navbar([
+            dbc.Nav(
+            [
+                dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
+                dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Portfolio Optimizer", href="/apps/portfolio-optimizer", style = {"color": "black"})),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
+                    ],
+                    label = "Volatility Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                ),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Matrix", active=True, href="/apps/correlation-matrix", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
+                    ],
+                    label = "Correlation Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                    
+                ),
+            ],
+            pills=True, 
+            ), 
+        ], color = "rgba(230,230,230,0.92)", sticky = "top")
+
+    navbar_timeline = dbc.Navbar([
+            dbc.Nav(
+            [
+                dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
+                dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Portfolio Optimizer", href="/apps/portfolio-optimizer", style = {"color": "black"})),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
+                    ],
+                    label = "Volatility Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                ),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Matrix",  href="/apps/correlation-matrix", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Over Time", active=True, href="/apps/correlation-timeline", style = {"color": "black"})),
+                    ],
+                    label = "Correlation Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                    
+                ),
+            ],
+            pills=True, 
+            ), 
+        ], color = "rgba(230,230,230,0.92)", sticky = "top")
 
 
     if p == "dashboard":
@@ -314,7 +430,6 @@ def get_navbar(p="dashboard"):
         return navbar_optimizer
     else:
         return navbar_dashboard
-
 
 #####################
 # Empty row
@@ -979,7 +1094,7 @@ def Inputs():
                             placeholder= "Enter Ticker",
                             list = 'list-suggested-inputs',
                             debounce = True,
-                            style = {"width" : "100%", "height": "50%"}
+                            style = {"width" : "100%", "height": "60%"}
 
                         ),
                     ],width={'size':4}, className= " mb-4", 
@@ -1246,7 +1361,7 @@ custom_page = dbc.Container([
     
     get_navbar('custom'),
 
-    get_emptyrow(),
+    #get_emptyrow(),
     #get_emptyrow(),
     #Title 
     dbc.Row(
@@ -1585,7 +1700,7 @@ optimizer_page = dbc.Container([
     
     get_navbar('optimize'),
 
-    get_emptyrow(),
+    #get_emptyrow(),
     #get_emptyrow(),
     #Title 
     dbc.Row(

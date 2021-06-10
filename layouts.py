@@ -9,6 +9,8 @@ from dash_bootstrap_components._components.CardBody import CardBody
 from dash_bootstrap_components._components.Row import Row
 import dash_bootstrap_components as dbc
 import plotly.graph_objs as go
+import pandas as pd
+import numpy as np
 from dash_app import dash_app
 from formatting import onramp_colors, externalgraph_rowstyling, externalgraph_colstyling, recapdiv
 from helpers import get_coin_data, get_coin_data_new, volatility, calc_volatility, calc_volatility_btc_vol, calc_volatility_new, create_corr, create_corr_new
@@ -946,21 +948,36 @@ heatmap_timeline_page = html.Div(
 ####################################################################################################
 # 005 - Custom Strategy Page
 ####################################################################################################
+stock_df = pd.read_csv('datafiles/tickerlist.csv')
+stock_df = stock_df.dropna(how = "all")
+
+ticker_list = list(stock_df["Ticker"])
+
+
+for crypto in stock_df["Cryptos"]:
+    if crypto is not np.nan:
+        ticker_list.append(crypto)
 
 def Inputs():
 
     inputs_ = dbc.Card([
             dbc.CardHeader(children= html.H3("Inputs"), style = {"font": "Roboto", "color": onramp_colors["gray"]}),
             dbc.CardBody([
-                #Inputs 1 
+                #Inputs 1
+
                 dbc.Row([
                     dbc.Col([
+                        html.Datalist(
+                            id='list-suggested-inputs', 
+                            children=[html.Option(value=word) for word in ticker_list]
+                        ),
                         dbc.FormText("Enter Tickers"),
                         dbc.Input(
                             id = "Ticker1",
                             type= 'text',
                             value = "spy",
                             placeholder= "Enter Ticker",
+                            list = 'list-suggested-inputs',
                             debounce = True,
                             style = {"width" : "100%", "height": "50%"}
 
@@ -993,6 +1010,7 @@ def Inputs():
                             type= 'text',
                             value = 'agg',
                             placeholder= "Enter Ticker",
+                            list = 'list-suggested-inputs',
                             style = {"width" : "100%", "height": "100%"}
 
                         ),
@@ -1022,6 +1040,7 @@ def Inputs():
                             type= 'text',
                             value = 'btc-usd',
                             placeholder= "Enter Ticker",
+                            list = 'list-suggested-inputs',
                             style = {"width" : "100%", "height": "100%"}
 
                         ),
@@ -1052,6 +1071,7 @@ def Inputs():
                             type= 'text',
                             value = 'eth-usd',
                             placeholder= "Enter Ticker",
+                            list = 'list-suggested-inputs',
                             style = {"width" : "100%", "height": "100%"}
 
                         ),

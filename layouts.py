@@ -1090,7 +1090,7 @@ def Inputs():
                         dbc.Input(
                             id = "Ticker1",
                             type= 'text',
-                            value = "spy",
+                            value = "SPY",
                             placeholder= "Enter Ticker",
                             list = 'list-suggested-inputs',
                             debounce = True,
@@ -1123,7 +1123,7 @@ def Inputs():
                         dbc.Input(
                             id = "Ticker2",
                             type= 'text',
-                            value = 'agg',
+                            value = 'AGG',
                             placeholder= "Enter Ticker",
                             list = 'list-suggested-inputs',
                             style = {"width" : "100%", "height": "100%"}
@@ -1153,7 +1153,7 @@ def Inputs():
                         dbc.Input(
                             id = "Ticker3",
                             type= 'text',
-                            value = 'btc-usd',
+                            value = 'BTC-USD',
                             placeholder= "Enter Ticker",
                             list = 'list-suggested-inputs',
                             style = {"width" : "100%", "height": "100%"}
@@ -1184,7 +1184,7 @@ def Inputs():
                         dbc.Input(
                             id = "Ticker4",
                             type= 'text',
-                            value = 'eth-usd',
+                            value = 'ETH-USD',
                             placeholder= "Enter Ticker",
                             list = 'list-suggested-inputs',
                             style = {"width" : "100%", "height": "100%"}
@@ -1258,6 +1258,26 @@ def Inputs():
     ], className= "text-center mb-2 mr-2", style= {"height": "28rem"}, color= onramp_colors["dark_blue"], inverse= True,)
 
     return inputs_
+
+=======
+# @CYRUS I removed the following because it wasn't being used.  Feel free to delete or modify
+# def Description():
+
+#     descript = dbc.Card(
+#                 dbc.CardBody([
+                   
+#                             html.P(children= "Commerce on the Internet has come to rely almost exclusively on financial institutions serving as trusted third parties to process electronic payments. While the system works well enough for most transactions, it still suffers from the inherent weaknesses of the trust based model. Completely non-reversible transactions are not really possible, since financial institutions cannotavoid mediating disputes.", 
+#                             style = {"fontSize": "vmin" }),
+                            
+#                             html.P(children= "Commerce on the Internet has come to rely almost exclusively on financial institutions serving as trusted third parties to process electronic payments. While the system works well enough for most transactions, it still suffers from the inherent weaknesses of the trust based model. Completely non-reversible transactions are not really possible, since financial institutions cannotavoid mediating disputes.",
+#                             style = {"fontSize": "vmin" })
+                            
+                
+#                 ]), className= "text-center", style= {"height": "22rem"}, color= onramp_colors["dark_blue"], inverse= True
+#     )
+
+#     return descript
+
 
 def DisplayPie():
     pie = dbc.Card([

@@ -40,9 +40,9 @@ df_btc = df[['BTC_vol_30', 'BTC_vol_60', 'BTC_vol_7', 'BTC_vol_14']].copy() #Ann
 
 df_btc.columns = ['Ann. 30D Volatility', 'Ann. 60D Volatility', 'Ann. 7D Volatility', 'Avg30DVolatility']
 
-
 for col in df_btc.columns:
-    df_btc.loc[col] = df_btc[col].map(lambda element: element/100)
+    df_btc[col] = df_btc[col].map(lambda element: element/100)
+
 
 avg_7 = df_btc["Ann. 7D Volatility"].mean()
 avg_30 = df_btc["Ann. 30D Volatility"].mean()

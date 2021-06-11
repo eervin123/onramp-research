@@ -3,7 +3,7 @@ import pandas as pd
 import bt
 import plotly.express as px
 import plotly.graph_objects as go
-from formatting import onramp_colors, onramp_template
+from formatting import onramp_colors, onramp_template, onramp_template_dashboard
 
 def get_coin_data(symbol):
     df = pd.read_csv(f"datafiles/{symbol}_data.csv")
@@ -157,9 +157,9 @@ def get_data():
 
 def calculate_controls(data):
     # TODO @cyrus It looks like you were using VWO not AGG for the bond portion I made the change but please confirm you agree.
-  stock_dic_control = {'spy': float(60)/100, 'agg': float(40)/100, 'btc-usd': float(0)/100}
-  stock_dic_spy = {'spy': float(100)/100, 'agg': float(0)/100, 'btc-usd': float(0)/100}
-  stock_dic_agg = {'spy': float(0)/100, 'agg': float(100)/100, 'btc-usd': float(0)/100}
+  stock_dic_control = {'spy': float(60)/100, 'agg': float(40)/100}
+  stock_dic_spy = {'spy': float(100)/100}
+  stock_dic_agg = {'agg': float(100)/100}
                             
   strategy_control = bt.Strategy('60-40 Portfolio', 
                           [bt.algos.RunMonthly(), 
@@ -206,12 +206,12 @@ def line_chart(results_list):
     fig.update_yaxes( # the y-axis is in dollars
         tickprefix="$"
     )
-    fig.update_layout(
-        legend = {
-            "xanchor": "left",
-            "x": .2,
-        }  
-    )
+    # fig.update_layout(
+    #     legend = {
+    #         "xanchor": "left",
+    #         "x": .2,
+    #     }  
+    # )
     return fig
 
 def plotly_pie(stock_list, percent_list):
@@ -220,7 +220,7 @@ def plotly_pie(stock_list, percent_list):
     fig = px.pie( values = percent_list, names = stock_list, color = stock_list, template = onramp_template, hole = .3)
     
     fig.update_traces(textfont_size=17, marker=dict( line=dict(color='white', width=1)))
-    #fig.update_traces(marker=dict(line=dict(color='white', width=1.3)))
+    fig.update_layout(font = dict(color = "white"))
     
 
     return fig
@@ -276,7 +276,7 @@ def scatter_plot(results_list):
                             template= onramp_template,
                             #width = 530, height = 350
                             )
-    fig.update_layout(legend = {"y": -.38})
+    #fig.update_layout(legend = {"y": -.38})
     
     return fig
 
@@ -301,7 +301,7 @@ def balance_table(results, results_con):
                                 cells=dict(values=[['60-40 Portfolio', series_res.columns[0]], ["$100", "$100"], [final_con, final_res]],
                                             line_color = 'rgba(100, 100, 100, 0.36)',
                                             font = dict(color = [text_color*3], size = 12),
-                                            height = 30,
+                                            height = 26,
                                             fill_color = onramp_colors["dark_blue"] )) ])
     fig.update_layout(
             {
@@ -344,7 +344,7 @@ def short_stats_table(results_list):
                                         font=dict(color='black', size=12)),
                             cells=dict(values=[stats_combined.index, stats_combined.Your_Strategy, stats_combined.Portfolio6040, stats_combined.Difference],
                                         line_color = 'rgba(100, 100, 100, 0.36)',
-                                        height = 30,
+                                        height = 26,
                                         font = dict(color = text_color),
                                         fill_color = onramp_colors["dark_blue"] )) ])
     fig.update_layout(
@@ -421,7 +421,7 @@ def monthly_table(results_list):
     con_rows = [] #this creates the list of the "60-40 Portfolio " then all the numbers
     for i in range(len(res_con.index)):
         temp = []
-        temp += ["60-40 Portfolio"]
+        temp += [df_results[1].iloc[0][1]]
         for j in range(len(res_con.columns)):
             temp += [str((round(df_c.iloc[i][j] *100, 2))) + '%'] #this takes the value in, round to 2 decimal places, and adds the percent sign
         con_rows.append(temp)
@@ -548,19 +548,26 @@ def optomize_table(df):
 
     df.columns = ["Allocation"]
     df = df.dropna()
-    
+    df.index = df.index.map(str.upper)
     fig = go.Figure(data=[go.Table(
                             header=dict(values= labels,
-                                        line_color= 'black',
-                                        fill_color= '#131c4f',
+                                        line_color= 'rgba(100, 100, 100, 0.36)',
+                                        fill_color= onramp_colors["cyan"],
                                         align=['center','center'],
-                                        font=dict(color='white', size=10)),
+                                        font=dict(color='black', size=12)),
                             cells=dict(values=[df.index, df.Allocation],
-                                        line_color = 'black',
+                                        line_color = 'rgba(100, 100, 100, 0.36)',
                                         height = 30,
-                                        font = dict(color = 'black'),
-                                        fill_color = '#f7f7f7' )) ])
+                                        font = dict(color = 'white'),
+                                        fill_color = onramp_colors["dark_blue"] )) ])
     fig.update_layout(margin = dict(l=1, r=0, t=0, b=0))
+    
+    fig.update_layout(
+            {
+                "plot_bgcolor": "rgba(0, 0, 0, 0)",  # Transparent
+                "paper_bgcolor": "rgba(0, 0, 0, 0)",
+            }
+        )
     return fig
 
 def optomize_table_combine(df):
@@ -629,7 +636,7 @@ def stats_table(results_list):
     #creates a datframe with exactly what we need
     df = pd.DataFrame(list(zip(stats_col, strat1_col, strat2_col)), 
                columns =['Stats', 'Your_Strategy', 'Portfolio6040'])
-    labels = ['<b>Stats<b>', '<b>' +stats_combined.iloc[0][1] + '<b>', "<b>60-40 Portfolio<b>"]
+    labels = ['<b>Stats<b>', '<b>' +stats_combined.iloc[0][1] + '<b>', '<b>' +stats_combined.iloc[0][2] + '<b>',]
     
     text_color = []
     n = len(df)
@@ -646,7 +653,7 @@ def stats_table(results_list):
                                         font=dict(color='black', size=12)),
                             cells=dict(values=[df.Stats, df.Your_Strategy, df.Portfolio6040],
                                         line_color = 'rgba(100, 100, 100, 0.36)',
-                                        height = 30,
+                                        height = 26,
                                         font = dict(color = text_color, size = 12),
                                         fill_color =  onramp_colors["dark_blue"])) ])
     fig.update_layout(margin = dict(l=2, r=1, t=0, b=10), 

@@ -91,12 +91,12 @@ onramp_margins = {
     "l": 40,
     "r": 20,
     "t": 0,
-    "b": 140,
+    "b": 120,
 }  # Set top margin to in case there is a legend
 
 
 onramp_layout = go.Layout(
-    colorway= [onramp_colors["btc"], onramp_colors["white"], onramp_colors["cyan"], '#1a1a1a'],
+    colorway= [onramp_colors["btc"], onramp_colors["white"], onramp_colors["cyan"], '#B0B6BD', onramp_colors["pink"], onramp_colors["purple"], onramp_colors["light_blue"], onramp_colors["orange"]],
     font = {'family' : onramp_font_family},
     title=onramp_title,
     title_x=0.5, # Align chart title to center
@@ -104,12 +104,40 @@ onramp_layout = go.Layout(
     plot_bgcolor="rgba(0,0,0,0)",
     xaxis=onramp_xaxis,
     yaxis=onramp_yaxis,
-    height=200,
+    #height=200,
     legend=onramp_legend,
     margin=onramp_margins,
 )
 
+
 onramp_template = dict(layout=go.Layout(onramp_layout))
+
+#----------------------------Second Template for graphs which need legends inside them
+
+onramp_legend_dashboard = {
+    "orientation": "v",
+    "yanchor": "top",
+    "y": 1,
+    "xanchor": "left",
+    "x": .04,
+    "font": {"size": 17, "color": onramp_colors["gray"]},
+}  # Legend will be on the bottom middle
+
+onramp_layout_dashboard = go.Layout(
+    colorway= [onramp_colors["btc"], onramp_colors["white"], onramp_colors["cyan"], '#B0B6BD'],
+    font = {'family' : onramp_font_family},
+    title=onramp_title,
+    title_x=0.5, # Align chart title to center
+    paper_bgcolor="rgba(0,0,0,0)",
+    plot_bgcolor="rgba(0,0,0,0)",
+    xaxis=onramp_xaxis,
+    yaxis=onramp_yaxis,
+    #height=200,
+    legend=onramp_legend_dashboard,
+    margin=onramp_margins,
+)
+
+onramp_template_dashboard = dict(layout=go.Layout(onramp_layout_dashboard))
 
 custom_scale = [
     # Let first 10% (0.1) of the values have color rgb(0, 0, 0)

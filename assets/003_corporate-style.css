@@ -28,7 +28,10 @@
   border-color: black;
 }
 
-
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+  color: #fff;
+  background-color: #00eead;
+}
 
 .rc-slider-rail{
   background-color: #00eead;
@@ -69,7 +72,7 @@
 /* Html
 ––––––––––––––––––––––––––––––––––––––––––––––––––*/
 html {
-  font-family: "Roboto" !important;
+  font-family: "Angular Material" !important;
   background: rgb(66, 73, 114);
   background-repeat: no-repeat !important;
   background-size: cover !important;
@@ -82,7 +85,7 @@ html {
 /* Body
 ––––––––––––––––––––––––––––––––––––––––––––––––––*/
 body {
-  font-family: "Roboto" !important;
+  font-family: "Angular Material" !important;
   background-color: transparent; /* By default the body color is white, making any transparent component, actually white!*/
 }
 
@@ -167,7 +170,7 @@ img {
 /* Typography
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Roboto" !important;
+  font-family: "Angular Material" !important;
   margin-top: 0px;
   margin-bottom: 0px;
   padding-top: 3px;

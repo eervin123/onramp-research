@@ -14,7 +14,7 @@ import redis
 from direct_redis import DirectRedis
 import pyarrow as pa
 import urllib.parse as urlparse
-from formatting import onramp_colors, onramp_template, custom_scale
+from formatting import onramp_colors, onramp_template, onramp_template_dashboard, custom_scale
 from helpers import *
 from bt_algos import RebalanceAssetThreshold
 #get_coin_data, get_coin_data_new, volatility, calc_volatility, calc_volatility_new, create_corr, create_corr_new, get_data, calculate_controls, pl
@@ -27,7 +27,7 @@ r = DirectRedis(host=url.hostname, port=url.port, password=url.password)
 #r = redis.Redis(host='localhost', port=6379)
 
 ####################################################################################################
-# 000 - IMPORT DATA DASHBOARD
+# 000 - IMPORT DATA SLIDER DASHBOARD
 ####################################################################################################
 
 df = pd.read_csv(
@@ -85,7 +85,7 @@ df_stats = df_stats.dropna()
 
 colors = [onramp_colors["dark_blue"], "#3fb6dc", "#f2a900"]
 ####################################################################################################
-# 000 - LARGE CHARTS DATA
+# 001 - LARGE CHARTS DATA
 ####################################################################################################
 pairs_crypto = [
     "BTC-USDT",
@@ -193,7 +193,7 @@ def update_graphs(value):
 
     percent_dict = {"Traditional 60/40": 1 - float(value) / 100, "Bitcoin": float(value) / 100}
 
-    # print(value)
+    #print(value)
     def graph_pie(percent_dictionary):
 
         colors_pie = [onramp_colors['dark_blue'], "#f2a900"]  # BTC Orange
@@ -489,6 +489,7 @@ def update_graphs(value):
     [dash.dependencies.Input("dropdown", "value")],
 )
 def update_vol(value):
+    
     def graph_volatility(df, coins, xd):
         source = "Binance"
         yaxis_dict = dict(
@@ -503,7 +504,7 @@ def update_vol(value):
         )
         vols = [14, 30, 90]
         colors = 6 * [
-            "black",
+            "grey",
             "#033F63",
             "#28666E",
             "#7C9885",
@@ -904,7 +905,7 @@ def update_graph(num_click, stock_choice_1, alloc1, stock_choice_2, alloc2, stoc
     stock_choice_2 = stock_choice_2.lower()
     stock_choice_3 = stock_choice_3.lower()
     stock_choice_4 = stock_choice_4.lower()
-
+    stock_list_pie = [stock_choice_1, stock_choice_2, stock_choice_3, stock_choice_4]
     
     #stock_list = stock_choice_1 +',' + stock_choice_2 + ',' + stock_choice_3 + ',' + stock_choice_4
     
@@ -959,8 +960,8 @@ def update_graph(num_click, stock_choice_1, alloc1, stock_choice_2, alloc2, stoc
     stock_dic = {stock_choice_1: float(alloc1)/100, stock_choice_2: float(alloc2)/100, stock_choice_3: float(alloc3)/100, stock_choice_4: float(alloc4)/100} #dictonary for strat
     
     if(rebalance == None or rebalance == ""):
-        rebalance = 1.2
-    rebalance = float(rebalance)
+        rebalance = 120
+    rebalance = float(rebalance)/100
     strategy_ = bt.Strategy("Custom Strategy", 
                               [ 
                               bt.algos.RunDaily(),
@@ -979,8 +980,10 @@ def update_graph(num_click, stock_choice_1, alloc1, stock_choice_2, alloc2, stoc
     print("Finished Strategy", stock_choice_1, ":", data_et - data_st)
     ################################################### LINE CHART ########################################################################################################
     fig_line = line_chart(results_list)
+    fig_line.update_layout(template = onramp_template_dashboard) #legend in top left
 
     fig_scat = scatter_plot(results_list)
+    fig_scat.update_layout(template = onramp_template_dashboard) #legend in top left
 
     fig_stats = stats_table(results_list)
 
@@ -999,4 +1002,206 @@ def update_graph(num_click, stock_choice_1, alloc1, stock_choice_2, alloc2, stoc
     end = time.time()
     print("Finished Everything", stock_choice_1, ":", end - start)
     return fig, fig_line, fig_scat, fig_stats, fig_month_table, fig_balance_table, fig_returns_stats
+
+
+####################################################################################################
+# PORTFOLIO OPTIMIZER PAGE
+####################################################################################################
+@dash_app.callback(
+    [Output('pie_chart_o', 'figure'),
+    Output('line_chart_o', 'figure'),
+    Output('opto_table', 'figure'),
+    Output('scatter_plot_o', 'figure'),
+    Output('stats_table_o', 'figure'),
+    Output('month_table_o', 'figure'),
+    ],
+    
+    Input("submit_button_o", "n_clicks"),
+    State('Ticker_o', 'value'),
+    State('cTicker_o', 'value'),
+    State('opti_sel', 'value'),
+    State('Frequency_sel', 'value'),
+    State('crypto_alloc', 'value'),
+)
+def update_graph(num_click, tickers, crypto_tickers, opti_sel, freq_sel, crypto_max = 1.2):
+    
+    tickers = tickers.replace(" ", '') #remove any extra spaces
+    tickers_list = tickers.split(',')
+
+    c_tickers = crypto_tickers.replace(" ", '') #remove any extra spaces
+    c_tickers_list = c_tickers.split(',')
+
+    full_asset_list = tickers_list + c_tickers_list
+    
+    ####################################################################################################################################################
+    ############### GET DATA
+    ####################################################################################################################################################
+    data = pd.DataFrame()
+    for ticker in full_asset_list:
+        data_x = r.get(ticker)
+        if data_x is None:
+            print("Could not find", ticker, "in the cache.")
+            data_x = bt.get(ticker, start = '2017-01-01')
+            r.set(ticker, data_x)
+            r.expire(ticker, timedelta(seconds = 86400))
+
+        data = data.join(data_x, how = 'outer')
+    
+    data = data.dropna()
+    if(crypto_max == None or crypto_max == ""): #In order to make crypto allocation optional
+        crypto_max = 120
+    crypto_max = float(crypto_max)/100
+
+    
+    ####################################################################################################################################################
+    ############### PREPARE DATA
+    ####################################################################################################################################################
+    
+    #Figure out which Frequency 
+    if (freq_sel == 'Daily'):
+        returns = data.to_log_returns().dropna()
+        name = 'Portfolio Optomized Daily'
+
+    if (freq_sel == 'Month'):
+        returns = data.asfreq("M",method='ffill').to_log_returns().dropna()
+        name = 'Portfolio Optomized Monthly'
+
+    if (freq_sel == 'Quart'):
+        returns = data.asfreq("Q",method='ffill').to_log_returns().dropna()
+        name = 'Portfolio Optomized Quarterly'
+
+    if (freq_sel == 'Year'):
+        returns = data.asfreq("Y",method='ffill').to_log_returns().dropna()
+        name = 'Portfolio Optomized Yearly'
+
+    #Pick the right optimization type
+    if(opti_sel == 'ef'):
+        daily_opt = returns.calc_mean_var_weights().as_format(".2%")
+    if(opti_sel == "er"):
+        daily_opt = returns.calc_erc_weights().as_format(".2%")
+    if(opti_sel == "iv"):
+        daily_opt = returns.calc_inv_vol_weights().as_format(".2%")
+    
+    #preparing data for charts
+    stock_dic = daily_opt.to_dict()
+
+    for key in stock_dic: #makes percents numbers 
+        stock_dic[key] = float(stock_dic[key].replace('%', ''))
+        stock_dic[key] = stock_dic[key]/100
+        
+    stock_list = list(stock_dic.keys()) #convert the dictionary into lists for plotting
+    percent_list = list(stock_dic.values())
+
+    temp = []
+    temp_stock = []
+    for i in range(len(percent_list)): #Takes out values of 0 
+        if (percent_list[i] != 0):
+            temp.append(percent_list[i])
+            temp_stock.append(stock_list[i])
+
+    stock_list = temp_stock
+    percent_list= temp
+
+    
+    ####################################################################################################################################################
+    ############### CALCULATE MAXIMUM CRYPTO ALLOCATION
+    ####################################################################################################################################################
+
+    crypto_tickers = crypto_tickers.replace('-', '')
+    crypto_list = crypto_tickers.split(',')
+    only_stock_list = tickers_list
+    crypto_sum = 0
+    stock_sum = 0
+
+    for i in crypto_list: #checking if we need to adjust because too much crypto
+        crypto_sum += stock_dic[i] * 100
+
+    for i in only_stock_list: #total stock allocation for later
+        stock_sum += stock_dic[i] * 100
+        
+    if(crypto_sum  > crypto_max*100):
+
+        adjusted_dict = {} #this will be the new allocation dictionary 
+
+        crypto_relative_percent = {} #gets the right crypto allocations after the maximum is in place
+        
+        for i in crypto_list: 
+            crypto_relative_percent[i] = ((stock_dic[i] * 100)/ crypto_sum)
+            adjusted_dict[i] = (crypto_relative_percent[i]*(crypto_max*100))/100
+        
+        
+        
+        
+        stock_relative_percent = {} #gets the right stock allocations after maximum
+        for i in only_stock_list: 
+            stock_relative_percent[i] = ((stock_dic[i] * 100)/ stock_sum)
+            adjusted_dict[i] = (stock_relative_percent[i]* (100-(crypto_max*100)))/100
+
+
+        daily_opt = pd.Series(adjusted_dict).as_format(".2%") #make a series like the origonal
+        
+        #preparing the data again but with the new series 
+        stock_dic = daily_opt.to_dict()
+
+        for key in stock_dic: #makes percents numbers 
+            stock_dic[key] = float(stock_dic[key].replace('%', ''))
+            stock_dic[key] = stock_dic[key]/100
+        
+        stock_list = list(stock_dic.keys()) #convert the dictionary into lists for plotting
+        percent_list = list(stock_dic.values())
+
+        temp = []
+        temp_stock = []
+        for i in range(len(percent_list)): #Takes out values of 0 
+            if (percent_list[i] != 0):
+                temp.append(percent_list[i])
+                temp_stock.append(stock_list[i])
+
+        stock_list = temp_stock
+        percent_list= temp
+
+   
+    ####################################################################################################################################################
+    ############### CREATE STRATEGY AND GRAPH
+    ####################################################################################################################################################
+
+    strategy_op = bt.Strategy(name, 
+                                [bt.algos.RunMonthly(), 
+                                bt.algos.SelectAll(), 
+                                bt.algos.WeighSpecified(**stock_dic),
+                                bt.algos.Rebalance()]) #Creating strategy
+
+    strategy_port = bt.Strategy('Equally Weighted Portfolio', 
+                                [bt.algos.RunMonthly(), 
+                                bt.algos.SelectAll(), 
+                                bt.algos.WeighEqually(),
+                                bt.algos.Rebalance()]) #Creating strategy
+
+    test_op = bt.Backtest(strategy_op, data)
+    results_op_d = bt.run(test_op)
+
+    test_port = bt.Backtest(strategy_port, data)
+    results_port = bt.run(test_port)
+
+    #table
+    fig_opt_table = optomize_table(daily_opt)
+    
+    #pie_colors = [strategy_color, P6040_color, spy_color, agg_color, '#7496F3', '#B7FA59', 'brown', '#EE4444', 'gold']
+    fig_pie = plotly_pie(stock_list, percent_list)
+
+    results_list = [results_op_d, results_port, results_spy, results_agg]
+    fig_line = line_chart(results_list)
+    fig_line.update_layout(template = onramp_template_dashboard)
+
+    
+    fig_scat = scatter_plot(results_list) #scatter function in functions
+    fig_scat.update_layout(template = onramp_template_dashboard)
+
+    fig_stats = stats_table(results_list)
+
+    fig_month = monthly_table(results_list)
+    fig_month.update_layout(height = 950)
+
+    return fig_pie, fig_line, fig_opt_table, fig_scat, fig_stats, fig_month
+
 ##############################################################################################################################################################

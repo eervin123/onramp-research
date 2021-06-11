@@ -1,9 +1,17 @@
+from dash_bootstrap_components._components.CardHeader import CardHeader
+from dash_bootstrap_components._components.DropdownMenu import DropdownMenu
+from dash_bootstrap_components._components.DropdownMenuItem import DropdownMenuItem
+from dash_bootstrap_components._components.InputGroup import InputGroup
+from dash_bootstrap_components._components.Label import Label
+from dash_bootstrap_components._components.PopoverHeader import PopoverHeader
 import dash_core_components as dcc
 import dash_html_components as html
 from dash_bootstrap_components._components.CardBody import CardBody
 from dash_bootstrap_components._components.Row import Row
 import dash_bootstrap_components as dbc
 import plotly.graph_objs as go
+import pandas as pd
+import numpy as np
 from dash_app import dash_app
 from formatting import onramp_colors, externalgraph_rowstyling, externalgraph_colstyling, recapdiv
 from helpers import get_coin_data, get_coin_data_new, volatility, calc_volatility, calc_volatility_btc_vol, calc_volatility_new, create_corr, create_corr_new
@@ -27,25 +35,28 @@ pairs = [
 ]
 
 df = calc_volatility_btc_vol(pairs) #Used for Crypto Vol Chart 
+#print(df)
+df_btc = df[['BTC_vol_30', 'BTC_vol_60', 'BTC_vol_7', 'BTC_vol_14']].copy() #Annualized bitcoin vol chart
 
-df_btc = df[['BTC_vol_30', 'BTC_vol_60', 'BTC_vol_7']] #Annualized bitcoin vol chart
+df_btc.columns = ['Ann. 30D Volatility', 'Ann. 60D Volatility', 'Ann. 7D Volatility', 'Avg30DVolatility']
 
-df_btc.columns = ['Ann. 30D Volatility', 'Ann. 60D Volatility', 'Ann. 7D Volatility']
 
 for col in df_btc.columns:
-    df_btc[col] = df_btc[col].map(lambda element: element/100)
+    df_btc.loc[col] = df_btc[col].map(lambda element: element/100)
 
 avg_7 = df_btc["Ann. 7D Volatility"].mean()
 avg_30 = df_btc["Ann. 30D Volatility"].mean()
 avg_60 = df_btc["Ann. 60D Volatility"].mean()
-df_btc["Avg. 30D Volatility"] = avg_30
+
+df_btc = df_btc.assign(Avg30DVolatility = avg_30)
+
 
 def graph_btc_vol(df):
     fig = go.Figure()
     fig.add_trace(go.Scatter( x = df.index, y = df['Ann. 30D Volatility'], name = 'Ann. 30D Volatility', line = dict(color = "#00EEAD", width = 2, dash = 'solid')))
     fig.add_trace(go.Scatter( x = df.index, y = df['Ann. 60D Volatility'], name = 'Ann. 60D Volatility', line = dict(color = "white", width = 2, dash = 'solid')))
     fig.add_trace(go.Scatter( x = df.index, y = df['Ann. 7D Volatility'], name = 'Ann. 7D Volatility', line = dict(color = "#B0B6BD", width = 2, dash = 'dot')))
-    fig.add_trace(go.Scatter( x = df.index, y = df['Avg. 30D Volatility'], name = 'Avg. 30D Volatility', line = dict(color = "white", width = 2, dash = 'dash')))
+    fig.add_trace(go.Scatter( x = df.index, y = df['Avg30DVolatility'], name = 'Avg. 30D Volatility', line = dict(color = "white", width = 2, dash = 'dash')))
     fig.update_xaxes(showgrid = False)
     fig.update_yaxes(showgrid=False) 
     fig.update_layout(yaxis_tickformat="%")
@@ -181,399 +192,227 @@ def get_header():
 # Nav bar
 def get_navbar(p="dashboard"):
 
-    navbar_dashboard = dbc.Row([
-        dbc.Col( width = {"size" : 0}, className = "mr-3" ),
-        dbc.Col([
-        dbc.Nav(
-        [
-        dbc.NavItem(dbc.NavLink("Dashboard", active=True, href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
-        dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
-        ],
-        pills=True, 
-        )
-        ])
-    ], className = "bg-white")
+    navbar_dashboard = dbc.Navbar([
+            dbc.Nav(
+            [
+                dbc.NavItem(dbc.NavLink("Dashboard", active=True, href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
+                dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Portfolio Optimizer", href="/apps/portfolio-optimizer", style = {"color": "black"})),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
+                    ],
+                    label = "Volatility Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                ),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
+                    ],
+                    label = "Correlation Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                ),
+            ],
+            pills=True, 
+            ), 
+        ], color = "rgba(230,230,230,0.92)", sticky = "top")
 
-    navbar_vol = dbc.Row([
-        dbc.Col( width = {"size" : 0}, className = "mr-3" ),
-        dbc.Col([
-        dbc.Nav(
-        [
-        dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Volatility Chart",active=True, href="/apps/volatility-chart", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
-        ],
-        pills=True, 
-        )
-        ])
-    ], className = "bg-white")
+    navbar_custom = dbc.Navbar([
+            dbc.Nav(
+            [
+                dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
+                dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard",active=True, href="/apps/custom-dashboard", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Portfolio Optimizer", href="/apps/portfolio-optimizer", style = {"color": "black"})),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
+                    ],
+                    label = "Volatility Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                ),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
+                    ],
+                    label = "Correlation Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                ),
+            ],
+            pills=True, 
+            ), 
+        ], color = "rgba(230,230,230,0.92)", sticky = "top")
 
-    navbar_heatmap = dbc.Row([
-        dbc.Col( width = {"size" : 0}, className = "mr-3" ),
-        dbc.Col([
-        dbc.Nav(
-        [
-        dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Correlation Matrix",active=True, href="/apps/correlation-matrix", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
-        ],
-        pills=True, 
-        )
-        ])
-    ], className = "bg-white")
+    navbar_optimizer = dbc.Navbar([
+            dbc.Nav(
+            [
+                dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
+                dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Portfolio Optimizer", active=True, href="/apps/portfolio-optimizer", style = {"color": "black"})),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
+                    ],
+                    label = "Volatility Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                ),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
+                    ],
+                    label = "Correlation Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                ),
+            ],
+            pills=True, 
+            ), 
+        ], color = "rgba(230,230,230,0.92)", sticky = "top")
 
-    navbar_timeline = dbc.Row([
-        dbc.Col( width = {"size" : 0}, className = "mr-3" ),
-        dbc.Col([
-        dbc.Nav(
-        [
-        dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Correlation Over Time", active=True, href="/apps/correlation-timeline", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Bitcoin Volatility",  href="/apps/bitcoin-volatility", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
-        ],
-        pills=True, 
-        )
-        ])
-    ], className = "bg-white")
+    navbar_vol = dbc.Navbar([
+            dbc.Nav(
+            [
+                dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
+                dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Portfolio Optimizer", href="/apps/portfolio-optimizer", style = {"color": "black"})),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Volatility Chart", active=True, href="/apps/volatility-chart", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
+                    ],
+                    label = "Volatility Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                    
+                ),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
+                    ],
+                    label = "Correlation Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                ),
+            ],
+            pills=True, 
+            ), 
+        ], color = "rgba(230,230,230,0.92)", sticky = "top")
 
-    btc_vol = dbc.Row([
-        dbc.Col( width = {"size" : 0}, className = "mr-3" ),
-        dbc.Col([
-        dbc.Nav(
-        [
-        dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Bitcoin Volatility", active=True, href="/apps/bitcoin-volatility", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
-        ],
-        pills=True, 
-        )
-        ])
-    ], className = "bg-white")
+    navbar_btc_vol = dbc.Navbar([
+            dbc.Nav(
+            [
+                dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
+                dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Portfolio Optimizer", href="/apps/portfolio-optimizer", style = {"color": "black"})),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Volatility Chart",  href="/apps/volatility-chart", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Bitcoin Volatility", active=True, href="/apps/bitcoin-volatility", style = {"color": "black"})),
+                    ],
+                    label = "Volatility Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                    
+                ),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
+                    ],
+                    label = "Correlation Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                ),
+            ],
+            pills=True, 
+            ), 
+        ], color = "rgba(230,230,230,0.92)", sticky = "top")
 
-    navbar_custom = dbc.Row([
-        dbc.Col( width = {"size" : 0}, className = "mr-3" ),
-        dbc.Col([
-        dbc.Nav(
-        [
-        dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Correlation Matrix", href="/apps/correlation-matrix", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
-        dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", active=True, href="/apps/custom-dashboard", style = {"color": "black"})),
-        ],
-        pills=True, 
-        )
-        ])
-    ], className = "bg-white")
+    navbar_heatmap = dbc.Navbar([
+            dbc.Nav(
+            [
+                dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
+                dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Portfolio Optimizer", href="/apps/portfolio-optimizer", style = {"color": "black"})),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
+                    ],
+                    label = "Volatility Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                ),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Matrix", active=True, href="/apps/correlation-matrix", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Over Time", href="/apps/correlation-timeline", style = {"color": "black"})),
+                    ],
+                    label = "Correlation Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                    
+                ),
+            ],
+            pills=True, 
+            ), 
+        ], color = "rgba(230,230,230,0.92)", sticky = "top")
 
-    # navbar_dashboard = html.Div(
-    #     [
-    #         html.Div([], className="col-1"),
-    #         html.Div(
-    #             [   html.Div(
-    #                      [
-    #                  dbc.Tabs(
-    #                     [
-    #                         dbc.Tab(label="Tab 1", tab_id="tab-1"),
-    #                         dbc.Tab(label="Tab 2", tab_id="tab-2"),
-    #                     ],
-    #                     id="tabs",
-    #                     active_tab="tab-1",
-    #                 ),
-    #                 html.Div(id="content"),
-    #                         ]
-    #                     ),
+    navbar_timeline = dbc.Navbar([
+            dbc.Nav(
+            [
+                dbc.NavItem(dbc.NavLink("Dashboard",  href="/apps/dashboard", style = {"color": "black", "outline-color": 'black'})),
+                dbc.NavItem(dbc.NavLink("Custom Strategy Dashboard", href="/apps/custom-dashboard", style = {"color": "black"})),
+                dbc.NavItem(dbc.NavLink("Portfolio Optimizer", href="/apps/portfolio-optimizer", style = {"color": "black"})),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Volatility Chart", href="/apps/volatility-chart", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Bitcoin Volatility", href="/apps/bitcoin-volatility", style = {"color": "black"})),
+                    ],
+                    label = "Volatility Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                ),
+                dbc.DropdownMenu(
+                    [
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Matrix",  href="/apps/correlation-matrix", style = {"color": "black"})),
+                    dbc.DropdownMenuItem(dbc.NavLink("Correlation Over Time", active=True, href="/apps/correlation-timeline", style = {"color": "black"})),
+                    ],
+                    label = "Correlation Charts",
+                    toggle_style={"color": "black"},
+                    nav = True,
+                    
+                    
+                ),
+            ],
+            pills=True, 
+            ), 
+        ], color = "rgba(230,230,230,0.92)", sticky = "top")
 
-
-    #                 dcc.Link(
-    #                     html.H4(children="Dashboard", style=navbarcurrentpage),
-    #                     href="/apps/dashboard",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Volatility Chart"),
-    #                     href="/apps/volatility-chart",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Correlation Matrix"),
-    #                     href="/apps/correlation-matrix",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Correlation Over Time"),
-    #                     href="/apps/correlation-timeline",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-            
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Bitcoin Rolling Volatility"),
-    #                     href="/apps/bitcoin-volatility",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-    #         html.Div([], className="col-3"),
-    #     ],
-    #     className="row",
-    #     style={
-    #         "background-color": onramp_colors["dark-green"],  # behind nav
-    #         "box-shadow": "2px 5px 5px 1px #00eead",
-    #     },
-    # )
-
-    # navbar_vol = html.Div(
-    #     [
-    #         html.Div([], className="col-1"),
-    #         html.Div(
-    #             [dcc.Link(html.H4(children="Dashboard"), href="/apps/dashboard")],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Volatility Chart", style=navbarcurrentpage),
-    #                     href="/apps/volatility-chart",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Correlation Matrix"),
-    #                     href="/apps/correlation-matrix",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Correlation Over Time"),
-    #                     href="/apps/correlation-timeline",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #         [
-    #             dcc.Link(
-    #                 html.H4(children="Bitcoin Rolling Volatility"),
-    #                 href="/apps/bitcoin-volatility",
-    #             )
-    #         ],
-    #         className="col-2",
-    #         ),
-            
-    #         html.Div([], className="col-3"),
-    #     ],
-    #     className="row",
-    #     style={
-    #         "background-color": onramp_colors["dark-green"],  # behind nav
-    #         "box-shadow": "2px 5px 5px 1px #00eead",
-    #     },
-    # )
-
-    # navbar_heatmap = html.Div(
-    #     [
-    #         html.Div([], className="col-1"), #Empty Col
-            
-            
-    #         html.Div(
-    #             [dcc.Link(html.H4(children="Dashboard"), href="/apps/dashboard")],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Volatility Chart"),
-    #                     href="/apps/volatility-chart",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Correlation Matrix", style=navbarcurrentpage),
-    #                     href="/apps/correlation-matrix",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Correlation Over Time"),
-    #                     href="/apps/correlation-timeline",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-
-    #         html.Div(
-    #         [
-    #             dcc.Link(
-    #                 html.H4(children="Bitcoin Rolling Volatility"),
-    #                 href="/apps/bitcoin-volatility",
-    #             )
-    #         ],
-    #         className="col-2",
-    #         ),
-    #         html.Div([], className="col-3"),
-    #     ],
-    #     className="row",
-    #     style={
-    #         "background-color": onramp_colors["dark-green"],  # behind nav
-    #         "box-shadow": "2px 5px 5px 1px #00eead",
-    #     },
-    # )
-
-    # navbar_timeline = html.Div(
-    #     [
-    #         html.Div([], className="col-1"),
-    #         html.Div(
-    #             [dcc.Link(html.H4(children="Dashboard"), href="/apps/dashboard")],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Volatility Chart"),
-    #                     href="/apps/volatility-chart",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Correlation Matrix"),
-    #                     href="/apps/correlation-matrix",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(
-    #                         children="Correlation Over Time", style=navbarcurrentpage
-    #                     ),
-    #                     href="/apps/correlation-timeline",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-
-    #         html.Div(
-    #         [
-    #             dcc.Link(
-    #                 html.H4(children="Bitcoin Rolling Volatility"),
-    #                 href="/apps/bitcoin-volatility",
-    #             )
-    #         ],
-    #         className="col-2",
-    #         ),
-
-    #         html.Div([], className="col-3"),
-    #     ],
-    #     className="row",
-    #     style={
-    #         "background-color": onramp_colors["dark-green"],  # behind nav
-    #         "box-shadow": "2px 5px 5px 1px #00eead",
-    #     },
-    # )
-
-    # btc_vol = html.Div(
-    #     [
-    #         html.Div([], className="col-1"),
-    #         html.Div(
-    #             [dcc.Link(html.H4(children="Dashboard"), href="/apps/dashboard")],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Volatility Chart"),
-    #                     href="/apps/volatility-chart",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(children="Correlation Matrix"),
-    #                     href="/apps/correlation-matrix",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-    #         html.Div(
-    #             [
-    #                 dcc.Link(
-    #                     html.H4(
-    #                         children="Correlation Over Time"
-    #                     ),
-    #                     href="/apps/correlation-timeline",
-    #                 )
-    #             ],
-    #             className="col-2",
-    #         ),
-
-    #         html.Div(
-    #         [
-    #             dcc.Link(
-    #                 html.H4(children="Bitcoin Rolling Volatility", style = navbarcurrentpage),
-    #                 href="/apps/bitcoin-volatility",
-    #             )
-    #         ],
-    #         className="col-2",
-    #         ),
-
-    #         html.Div([], className="col-3"),
-    #     ],
-    #     className="row",
-    #     style={
-    #         "background-color": onramp_colors["dark-green"],  # behind nav
-    #         "box-shadow": "2px 5px 5px 1px #00eead",
-    #     },
-    # )
 
     if p == "dashboard":
         return navbar_dashboard
@@ -584,12 +423,13 @@ def get_navbar(p="dashboard"):
     elif p == "timeline":
         return navbar_timeline
     elif p == "btc_vol":
-        return btc_vol
+        return navbar_btc_vol
     elif p == "custom":
         return navbar_custom
+    elif p == "optimize":
+        return navbar_optimizer
     else:
         return navbar_dashboard
-
 
 #####################
 # Empty row
@@ -616,6 +456,7 @@ dashboard_page = html.Div(
         #####################
         # Row 2 : Nav bar
         get_navbar("dashboard"),
+        
         
         #####################
         # Row 3 : Filters
@@ -1222,38 +1063,57 @@ heatmap_timeline_page = html.Div(
 ####################################################################################################
 # 005 - Custom Strategy Page
 ####################################################################################################
+stock_df = pd.read_csv('datafiles/tickerlist.csv')
+stock_df = stock_df.dropna(how = "all")
+
+ticker_list = list(stock_df["Ticker"])
+
+
+for crypto in stock_df["Cryptos"]:
+    if crypto is not np.nan:
+        ticker_list.append(crypto)
 
 def Inputs():
 
     inputs_ = dbc.Card([
             dbc.CardHeader(children= html.H3("Inputs"), style = {"font": "Roboto", "color": onramp_colors["gray"]}),
             dbc.CardBody([
-                #Inputs 1 
+                #Inputs 1
+
                 dbc.Row([
                     dbc.Col([
-                        dbc.Label("Tickers"),
+                        html.Datalist(
+                            id='list-suggested-inputs', 
+                            children=[html.Option(value=word) for word in ticker_list]
+                        ),
+                        dbc.FormText("Enter Tickers"),
                         dbc.Input(
                             id = "Ticker1",
                             type= 'text',
                             value = "SPY",
                             placeholder= "Enter Ticker",
+                            list = 'list-suggested-inputs',
                             debounce = True,
-                            style = {"width" : "100%"}
+                            style = {"width" : "100%", "height": "60%"}
 
                         ),
                     ],width={'size':4}, className= " mb-4", 
                     ), 
 
                     dbc.Col([
-                        dbc.Label("Allocation %"),
-                        dbc.Input(
-                            id = "Allocation1",
-                            value = "50",
-                            type= 'numeric',
-                            placeholder= "Enter Allocation %",
-                            style = {"width" : "100%"}
+                        dbc.FormText("Allocation %"),
+                        dbc.InputGroup([
+                            dbc.Input(
+                                id = "Allocation1",
+                                value = "50",
+                                type= 'numeric',
+                                placeholder= "Enter Allocation %",
+                                style = {"width" : "100%"}
 
-                        ), ],width={'size': 6, 'offset':1},
+                            ), 
+                            dbc.InputGroupAddon("%", addon_type = "append"),
+                        ], size = 'sm' )
+                        ],width={'size': 6, 'offset':1},
                     ),
                 ]),
 
@@ -1265,22 +1125,26 @@ def Inputs():
                             type= 'text',
                             value = 'AGG',
                             placeholder= "Enter Ticker",
-                            style = {"width" : "100%"}
+                            list = 'list-suggested-inputs',
+                            style = {"width" : "100%", "height": "100%"}
 
                         ),
                     width={'size':4}, className= "mb-4"
                     ), 
 
-                    dbc.Col(
-                        dbc.Input(
-                            id = "Allocation2",
-                            type= 'text',
-                            value = "40",
-                            placeholder= "Enter Allocation %",
-                            style = {"width" : "100%"}
+                    dbc.Col([
+                        dbc.InputGroup([
+                            dbc.Input(
+                                id = "Allocation2",
+                                type= 'text',
+                                value = "40",
+                                placeholder= "Enter Allocation %",
+                                style = {"width" : "100%"}
 
-                        ), width={'size':6, 'offset':1},
-                    ),
+                            ), 
+                            dbc.InputGroupAddon("%", addon_type = "append"),
+                        ], size = 'sm')
+                    ], width={'size':6, 'offset':1}),
                 ]),
 
                 #Inputs 3 
@@ -1291,21 +1155,26 @@ def Inputs():
                             type= 'text',
                             value = 'BTC-USD',
                             placeholder= "Enter Ticker",
-                            style = {"width" : "100%"}
+                            list = 'list-suggested-inputs',
+                            style = {"width" : "100%", "height": "100%"}
 
                         ),
                     width={'size':4}, className= "mb-4"
                     ), 
 
-                    dbc.Col(
-                        dbc.Input(
-                            id = "Allocation3",
-                            type= 'text',
-                            value = '7',
-                            placeholder= "Enter Allocation %",
-                            style = {"width" : "100%"}
+                    dbc.Col([
+                        dbc.InputGroup([
+                            dbc.Input(
+                                id = "Allocation3",
+                                type= 'text',
+                                value = '7',
+                                placeholder= "Enter Allocation %",
+                                style = {"width" : "100%"}
 
-                        ), width={'size':6, 'offset':1},
+                            ), 
+                            dbc.InputGroupAddon("%", addon_type = "append"),
+                        ], size = 'sm')
+                        ], width={'size':6, 'offset':1},
                     ),
                 ]),
 
@@ -1317,21 +1186,25 @@ def Inputs():
                             type= 'text',
                             value = 'ETH-USD',
                             placeholder= "Enter Ticker",
-                            style = {"width" : "100%"}
+                            list = 'list-suggested-inputs',
+                            style = {"width" : "100%", "height": "100%"}
 
                         ),
-                    width={'size':4}, className= "mb-4"
+                    width={'size':4}, className= "mb-2"
                     ), 
 
-                    dbc.Col(
+                    dbc.Col([
+                        dbc.InputGroup([
                         dbc.Input(
                             id = "Allocation4",
                             type= 'text',
                             value = "3",
                             placeholder= "Enter Allocation %",
                             style = {"width" : "100%"}
-
-                        ), width={'size':6, 'offset':1},
+                        ), 
+                        dbc.InputGroupAddon("%", addon_type = "append"),
+                        ], size = 'sm')
+                        ],width={'size':6, 'offset':1},
                     ),
                 ]),
 
@@ -1341,14 +1214,29 @@ def Inputs():
                     width={'size':4}, className= "mb-4" #Empty Col for Rebalance 
                     ), 
 
-                    dbc.Col(
-                        dbc.Input(
-                            id = "Rebalance",
-                            type= 'text',
-                            placeholder= "Rebalance Threshold %",
-                            style = {"width" : "100%"}
+                    dbc.Col([
+                        dbc.FormText("Rebalance Threshold %"),
+                        dbc.InputGroup([
+                            dbc.Input(
+                                id = "Rebalance",
+                                type= 'text',
+                                placeholder= "Optional",
+                                style = {"width" : "100%", "height": "100%"}
 
-                        ), width={'size':6, 'offset':1}, className= "mb-4"
+                            ), 
+                            dbc.InputGroupAddon("%", addon_type = "append"),
+                        ], size = "sm", style = {"height": "60%"}),
+                        dbc.Popover(
+                            children = [
+                            dbc.PopoverHeader("Rebalance Threshold", style = {"color": "black"}),
+                            dbc.PopoverBody("If given a rebalance threshold, a portfolio rebalance will occur whenever any asset increases by x%."),
+                            dbc.PopoverBody("Ex. Bitcoin has a 5% allocation in your portfolio with a 5% threshold. If bitcoin ever becomes 10% or over of the portfolio, a rebalance will occur."),
+                            ],
+                            id = "pop_rebal",
+                            target = "Rebalance",
+                            trigger = "hover"
+                        )
+                        ],width={'size':6, 'offset':1}, className= "mb-4"
                     ),
                 ]),
 
@@ -1360,16 +1248,18 @@ def Inputs():
                             id = "submit_button",
                             children= "Create Strategy",
                             n_clicks=0,
-                            style= {"width": "100%"}
+                            style= {"width": "100%", "height": "100%"}
 
                         ), width={'size':11, 'offset':0},
                     ),
                 ]),
                 
             ]), 
-    ], className= "text-center mb-2 mr-2", style= {"height": "31rem"}, color= onramp_colors["dark_blue"], inverse= True,)
+    ], className= "text-center mb-2 mr-2", style= {"height": "28rem"}, color= onramp_colors["dark_blue"], inverse= True,)
 
     return inputs_
+
+=======
 # @CYRUS I removed the following because it wasn't being used.  Feel free to delete or modify
 # def Description():
 
@@ -1388,6 +1278,7 @@ def Inputs():
 
 #     return descript
 
+
 def DisplayPie():
     pie = dbc.Card([
         dbc.CardHeader(children= html.H3("Portfolio Allocation"), style = {"font": "Roboto", "color": onramp_colors["gray"]}),
@@ -1395,11 +1286,12 @@ def DisplayPie():
             
             dcc.Loading( id = "loading_pie", children=
             dcc.Graph(
-                id = "pie_chart_c"
+                id = "pie_chart_c",
+                style = {"responsive": True,  "width": "95%", "height": "40vh"}
             )
             )
         ]),
-    ],  className= "text-center mb-2 mr-2", style= {"height": "31rem"}, color= onramp_colors["dark_blue"], inverse = True)
+    ],  className= "text-center mb-2 mr-2", style= {"height": "28rem"}, color= onramp_colors["dark_blue"], inverse = True)
 
     return pie
            
@@ -1410,10 +1302,10 @@ def DisplayLineChart():
             dcc.Loading(id = "loading_line", children=
             dcc.Graph(
                 id = "line_chart_c",
-                style= {"responsive": True}
+                style= {"responsive": True,  "width": "95%", "height": "40vh"}
             ))
         ]), 
-    ], className= "text-center mb-2", style= {"max-width" : "100%", "margin": "auto", "height": "31rem"}, color= onramp_colors["dark_blue"], inverse = True)
+    ], className= "text-center mb-2", style= {"max-width" : "100%", "margin": "auto", "height": "28rem"}, color= onramp_colors["dark_blue"], inverse = True)
 
     return line        
 
@@ -1424,11 +1316,11 @@ def DisplayScatter():
             dcc.Loading(id = "loading-scatter", children=
             dcc.Graph(
                 id = "scatter_plot_c",
-                style= {"responsive": True}
+                style= {"responsive": True, "height": "43vh"}
             )
             )
         ]),  
-    ], className= "text-center mb-2 mr-2", style= {"max-width" : "100%", "margin": "auto", "height": "33rem"}, color= onramp_colors["dark_blue"], inverse = True)
+    ], className= "text-center mb-2 mr-2", style= {"max-width" : "100%", "margin": "auto", "height": "29rem"}, color= onramp_colors["dark_blue"], inverse = True)
 
     return scat        
 
@@ -1443,7 +1335,7 @@ def DisplayStats():
             )
             )
         ]),  
-    ], className= "text-center mb-2", style= {"max-width" : "100%", "margin": "auto", "height": "33rem"}, color= onramp_colors["dark_blue"], inverse = True)
+    ], className= "text-center mb-2", style= {"max-width" : "100%", "margin": "auto", "height": "29rem"}, color= onramp_colors["dark_blue"], inverse = True)
 
     return stats        
 
@@ -1466,7 +1358,7 @@ def DisplayReturnStats():
             
                             
         ])
-    ],  className= "text-center mb-2 mr-2", style= {"max-width" : "100%", "margin": "auto", "height": "33rem"}, color= onramp_colors["dark_blue"], inverse = True)
+    ],  className= "text-center mb-2 mr-2", style= {"max-width" : "100%", "margin": "auto", "height": "29rem"}, color= onramp_colors["dark_blue"], inverse = True)
 
     return stats      
 
@@ -1489,7 +1381,8 @@ custom_page = dbc.Container([
     
     get_navbar('custom'),
 
-    get_emptyrow(),
+    #get_emptyrow(),
+    #get_emptyrow(),
     #Title 
     dbc.Row(
         dbc.Col(
@@ -1514,7 +1407,7 @@ custom_page = dbc.Container([
                     Inputs()
                 ],  ),
             ),
-        ], xs = 12, sm = 12, md = 12, lg = 3, xl = 3),
+        ], xs = 12, sm = 12, md = 12, lg = 6, xl = 3),
 
         dbc.Col([
             
@@ -1523,14 +1416,14 @@ custom_page = dbc.Container([
                     DisplayPie()
                 ],  ),
             ]),
-        ], xs = 12, sm = 12, md = 12, lg = 3, xl = 3),
+        ], xs = 12, sm = 12, md = 12, lg = 6, xl = 3),
         dbc.Col([
             dbc.Row(
                 dbc.Col([
                     DisplayLineChart()
                 ]),
             )
-        ], xs = 12, sm = 12, md = 12, lg = 6, xl = 6 )
+        ], xs = 12, sm = 12, md = 12, lg = 12, xl = 6 )
     ],no_gutters = True),
 
     # Stats | Scatter Plot | Return Recap
@@ -1541,7 +1434,7 @@ custom_page = dbc.Container([
                     DisplayScatter()
                 ],),
             ),
-        ], xs = 12, sm = 12, md = 12, lg = 4, xl = 4),
+        ], xs = 12, sm = 12, md = 12, lg = 12, xl = 4),
 
 
         dbc.Col([
@@ -1551,7 +1444,7 @@ custom_page = dbc.Container([
                     
                 ],),
             ),
-        ], xs = 12, sm = 12, md = 12, lg = 4, xl = 4),
+        ], xs = 12, sm = 12, md = 12, lg = 6, xl = 4),
         
         dbc.Col([
             dbc.Row(
@@ -1559,7 +1452,7 @@ custom_page = dbc.Container([
                     DisplayStats()
                 ]),
             ),
-        ], xs = 12, sm = 12, md = 12, lg = 4, xl = 4)
+        ], xs = 12, sm = 12, md = 12, lg = 6, xl = 4)
     ], no_gutters = True),
 
     
@@ -1574,3 +1467,342 @@ custom_page = dbc.Container([
     ]),
 ], fluid=True)
 
+####################################################################################################
+# 005 - Portfolio Optimizer Page
+####################################################################################################
+
+def Inputs():
+
+    inputs_ = dbc.Card([
+            dbc.CardHeader(children= html.H3("Inputs"), style = {"font": "Roboto", "color": onramp_colors["gray"]}),
+            dbc.CardBody([
+                #Stock Ticker 
+                dbc.Row([
+                    dbc.Col([
+                        dbc.FormText("Stock Tickers"),
+                        dbc.Input(
+                            id = "Ticker_o",
+                            type= 'text',
+                            value = "spy,agg,tsla,msft",
+                            placeholder= "Enter Tickers",
+                            debounce = True,
+                            style = {"width" : "100%", "height": "62%"}
+
+                        ),
+                    ],width={'size':6}, className= "text-left mb-3", 
+                    ),
+                    dbc.Col([
+                        dbc.FormText("Crypto Tickers"),
+                        dbc.Input(
+                            id = "cTicker_o",
+                            type= 'text',
+                            value = "btc-usd,eth-usd,bnb-usd",
+                            placeholder= "Enter Cryptos",
+                            debounce = True,
+                            style = {"width" : "100%", "height": "62%"}
+
+                        ),
+                    ],width={'size':6}, className= "text-left mb-3", 
+                    ), 
+
+                ]),
+
+                #Inputs 1 
+                # dbc.Row([
+                #     dbc.Col([
+                #         dbc.FormText("Enter Crypto Tickers Comma Seperated"),
+                #         dbc.Input(
+                #             id = "cTicker_o",
+                #             type= 'text',
+                #             value = "btc-usd,eth-usd,bnb-usd",
+                #             placeholder= "Enter Cryptos",
+                #             debounce = True,
+                #             style = {"width" : "100%", "height": "50%"}
+
+                #         ),
+                #     ],width={'size':12}, className= "text-left mb-3", 
+                #     ), 
+                # ]),
+                
+                #Inputs 2
+                dbc.Row([
+                    dbc.Col([
+                        dbc.FormText("Select Optimization Type"),
+                        dbc.Select(
+                            id = "opti_sel",
+                            options=[
+                                {"label": "Mean Variance Optimization", "value": "ef"},
+                                {"label": "Equal Risk Contribution", "value": "er"},
+                                {"label": "Inverse Volitility", "value": "iv"},
+                            ],
+                            value = "ef",
+                            style = {"width" : "100%", "height": "62%"}
+
+                        ),
+                        dbc.Popover(
+                            children = [
+                            dbc.PopoverHeader("Optimization Types", style = {"color": "black"}),
+                            dbc.PopoverBody("Mean Variance: This type utilizes the Efficient Frontier approach of maximizing returns for each unit of risk"),
+                            dbc.PopoverBody("Equal Risk Contribution: This gives equal risk of each asset"),
+                            dbc.PopoverBody("Inverse Volatility: Gives the inverse of the volatility for each asset"),
+                            ],
+                            id = "pop_opti",
+                            target = "opti_sel",
+                            trigger = "hover"
+                        )
+                    ],width={'size':12}, className= "text-left mb-3"), 
+                ]),
+
+                #Inputs 3
+                dbc.Row([
+                    dbc.Col([
+                        dbc.FormText("Rebalance Freq"),
+                        dbc.Select(
+                            id = "Frequency_sel",
+                            options=[
+                                {"label": "Daily Rebalance", "value": "Daily"},
+                                {"label": "Monthly Rebalance", "value": "Month"},
+                                {"label": "Quarterly Rebalance", "value": "Quart"},
+                                {"label": "Yearly Rebalance", "value": "Year"},
+                                {"label": "Compare All", "value": "Compare"},
+                            ],
+                            value = "Quart",
+                            style = {"width" : "100%", "height": "62%"}
+                        ),
+                        dbc.Popover(
+                            children = [
+                            dbc.PopoverHeader("Rebalance Frequency", style = {"color": "black"}),
+                            dbc.PopoverBody("Use this to select the frequency that the data is rebalanced for during optimization"),
+                            ],
+                            id = "pop_freq",
+                            target = "Frequency_sel",
+                            trigger = "hover"
+                        )
+                        
+                    ], width={'size':6}, className= "mb-5 text-left"
+                    ), 
+
+                    dbc.Col([
+                        dbc.FormText("Max Crypto Alloc"),
+                        dbc.InputGroup([
+                        dbc.Input(
+                            id = "crypto_alloc",
+                            type= 'text',
+                            placeholder= "Optional",
+                            style = {"width" : "100%"}
+                        ),
+                        dbc.Popover(
+                            children = [
+                            dbc.PopoverHeader("Maximum Crypto Allocation", style = {"color": "black"}),
+                            dbc.PopoverBody("Although the optimizer may reccomend a high crypto allocation, we understand that is not viable for most people. Use this box to limit the amount of crypto in the final optimization"),
+                            ],
+                            id = "pop_max",
+                            target = "crypto_alloc",
+                            trigger = "hover"
+                        ),
+                        dbc.InputGroupAddon("%", addon_type = "append")
+                        ], )
+                    ], width={'size':6, 'offset':0}, className = "text-left"),
+                ]),
+
+                
+
+                #Submit Button
+                dbc.Row([
+                    
+                    dbc.Col(
+                        dbc.Button(
+                            id = "submit_button_o",
+                            children= "Create Strategy",
+                            n_clicks=0,
+                            style= {"width": "100%"}
+
+                        ), width={'size':12, 'offset':0},
+                    ),
+                ]),
+                
+            ]), 
+    ], className= "text-center mb-2 mr-2", style= {"height": "25rem"}, color= onramp_colors["dark_blue"], inverse= True,)
+
+    return inputs_
+
+def DisplayPie():
+    pie = dbc.Card([
+        dbc.CardHeader(children= html.H3("Portfolio Allocation"), style = {"font": "Roboto", "color": onramp_colors["gray"]}),
+        dbc.CardBody([
+            
+            dcc.Loading( id = "loading_pie_o", children=
+            dcc.Graph(
+                id = "pie_chart_o",
+                style = {"responsive": True, "height": "37vh"}
+            )
+            )
+        ]),
+    ],  className= "text-center mb-2 mr-2", style= {"height": "25rem"}, color= onramp_colors["dark_blue"], inverse = True)
+
+    return pie
+           
+def DisplayLineChart():
+    line = dbc.Card([
+        dbc.CardHeader(children= html.H3("Portfolio Performance"), style = {"font": "Roboto", "color": onramp_colors["gray"]}),
+        dbc.CardBody([
+            dcc.Loading(id = "loading_line", children=
+            dcc.Graph(
+                id = "line_chart_o",
+                style= {"height": "36vh"}
+            ))
+        ]), 
+    ], className= "text-center mb-2", style= {"max-width" : "100%", "margin": "auto", "height": "25rem"}, color= onramp_colors["dark_blue"], inverse = True)
+    
+    return line            
+
+def DisplayScatter():
+    scat = dbc.Card([
+        dbc.CardHeader(children= html.H3("Risk vs. Return"), style = {"font": "Roboto", "color": onramp_colors["gray"]}),
+        dbc.CardBody([
+            dcc.Loading(id = "loading-scatter", children=
+            dcc.Graph(
+                id = "scatter_plot_o",
+                style= {"responsive": True, "height": "36vh"}
+            )
+            )
+        ]),  
+    ], className= "text-center mb-2 mr-2", style= {"max-width" : "100%", "margin": "auto", "height": "25rem"}, color= onramp_colors["dark_blue"], inverse = True)
+
+    return scat        
+
+def DisplayStats():
+    stats = dbc.Card([
+        dbc.CardHeader(children= html.H3("Performance Statistics"), style = {"font": "Roboto", "color": onramp_colors["gray"]}),
+        dbc.CardBody([
+            dcc.Loading(id = "loading_stats", children=
+            dcc.Graph(
+                id = "stats_table_o",
+                style= {"responsive": True}
+            )
+            )
+        ]),  
+    ], className= "text-center mb-2", style= {"max-width" : "100%", "margin": "auto", "height": "25rem"}, color= onramp_colors["dark_blue"], inverse = True)
+
+    return stats        
+
+def DisplayOptomizeTable():
+    stats = dbc.Card([
+        dbc.CardHeader(children= html.H3("Portfolio Allocation"), style = {"font": "Roboto", "color": onramp_colors["gray"]}),
+        dbc.CardBody([
+            dcc.Loading(id = "loading_return1", children= 
+                dcc.Graph(
+                id = "opto_table",
+                style= {"responsive": True}
+                )
+            ),                
+        ])
+    ],  className= "text-center mb-2 mr-2", style= {"max-width" : "100%", "margin": "auto", "height": "25rem"}, color= onramp_colors["dark_blue"], inverse = True)
+
+    return stats      
+
+def DisplayMonthTable():
+    stats = dbc.Card([
+        dbc.CardHeader(children= html.H3("Returns Breakdown"), style = {"font": "Roboto", "color": onramp_colors["gray"]}),
+        dbc.CardBody([
+            dcc.Loading( id = "loading_month", children=
+            dcc.Graph(
+                id = "month_table_o",
+                style= {"responsive": True}
+            )
+            )
+        ])
+    ],  className= "text-center", style= {"max-width" : "100%", "margin": "auto", "height": "63rem"}, color= onramp_colors["dark_blue"], inverse = True)
+
+    return stats        
+
+optimizer_page = dbc.Container([
+    
+    get_navbar('optimize'),
+
+    #get_emptyrow(),
+    #get_emptyrow(),
+    #Title 
+    dbc.Row(
+        dbc.Col(
+            dbc.Card([
+                #dbc.CardHeader(children = html.H1("Portfolio Optimizer Dashboard")),
+                dbc.CardBody([
+                    html.H1(children="Portfolio Optimizer Dashboard", style = {"color": onramp_colors["white"]}), 
+                    
+                    html.P(children= "Use the following tool to build hypothetical portfolios of equities, ETFs, and various Cryptoassets.  Analyze the impact of cryptoassets modeled in a traditional portfolio allocation. Over time we will enable advisors to create custom reports for clients based on the output.", 
+                            style = {"fontSize": "vmin", "color": onramp_colors["white"]}),
+                ]),
+            ],className="text-center mb-2", color= onramp_colors["dark_blue"], inverse= True,), 
+        width = 12)
+    ),
+
+    
+    # Inputs | Pie Chart | Line Chart
+    dbc.Row([
+        
+        dbc.Col([
+            dbc.Row(
+                dbc.Col([
+                    Inputs()
+                ],  ),
+            ),
+        ], xs = 12, sm = 12, md = 12, lg = 6, xl = 3),
+
+        dbc.Col([
+            
+            dbc.Row([
+                dbc.Col([
+                    DisplayPie()
+                ],  ),
+            ]),
+        ], xs = 12, sm = 12, md = 12, lg = 6, xl = 4),
+        dbc.Col([
+            dbc.Row(
+                dbc.Col([
+                    DisplayLineChart()
+                ]),
+            )
+        ], xs = 12, sm = 12, md = 12, lg = 12, xl = 5 )
+    ],no_gutters = True),
+
+    # Stats | Scatter Plot | Return Recap
+    dbc.Row([
+        dbc.Col([
+            dbc.Row(
+                dbc.Col([
+                    DisplayOptomizeTable()
+                ],),
+            ),
+        ], xs = 12, sm = 12, md = 12, lg = 2, xl = 2),
+
+
+        dbc.Col([
+            dbc.Row(
+                dbc.Col([
+                    DisplayScatter()
+                    
+                ],),
+            ),
+        ], xs = 12, sm = 12, md = 12, lg = 5, xl = 5),
+        
+        dbc.Col([
+            dbc.Row(
+                dbc.Col([
+                    DisplayStats()
+                ]),
+            ),
+        ], xs = 12, sm = 12, md = 12, lg = 5, xl = 5)
+    ], no_gutters = True),
+
+    
+    dbc.Row([
+        dbc.Col([
+            dbc.Row(
+                dbc.Col([
+                    DisplayMonthTable(),
+                ]),
+            ),
+        ], xs = 12, sm = 12, md = 12, lg = 12, xl = 12),
+    ]),
+], fluid=True)

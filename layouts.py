@@ -221,7 +221,7 @@ def get_navbar(p="dashboard"):
             ],
             pills=True, 
             ), 
-        ], color = "rgba(230,230,230,0.92)", sticky = "top")
+        ], color = "#f5f5f5", sticky = "top")
 
     navbar_custom = dbc.Navbar([
             dbc.Nav(

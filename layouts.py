@@ -252,7 +252,7 @@ def get_navbar(p="dashboard"):
             ],
             pills=True, 
             ), 
-        ], color = "rgba(230,230,230,0.92)", sticky = "top")
+        ], color = "#f5f5f5", sticky = "top", className = "m-n4", style = {"width": "10000px"})
 
     navbar_optimizer = dbc.Navbar([
             dbc.Nav(
@@ -283,7 +283,7 @@ def get_navbar(p="dashboard"):
             ],
             pills=True, 
             ), 
-        ], color = "rgba(230,230,230,0.92)", sticky = "top")
+        ], color = "#f5f5f5", sticky = "top", className = "m-n4", style = {"width": "10000px"})
 
     navbar_vol = dbc.Navbar([
             dbc.Nav(
@@ -315,7 +315,7 @@ def get_navbar(p="dashboard"):
             ],
             pills=True, 
             ), 
-        ], color = "rgba(230,230,230,0.92)", sticky = "top")
+        ], color = "#f5f5f5", sticky = "top")
 
     navbar_btc_vol = dbc.Navbar([
             dbc.Nav(
@@ -347,7 +347,7 @@ def get_navbar(p="dashboard"):
             ],
             pills=True, 
             ), 
-        ], color = "rgba(230,230,230,0.92)", sticky = "top")
+        ], color = "#f5f5f5", sticky = "top")
 
     navbar_heatmap = dbc.Navbar([
             dbc.Nav(
@@ -379,7 +379,7 @@ def get_navbar(p="dashboard"):
             ],
             pills=True, 
             ), 
-        ], color = "rgba(230,230,230,0.92)", sticky = "top")
+        ], color = "#f5f5f5", sticky = "top")
 
     navbar_timeline = dbc.Navbar([
             dbc.Nav(
@@ -411,7 +411,7 @@ def get_navbar(p="dashboard"):
             ],
             pills=True, 
             ), 
-        ], color = "rgba(230,230,230,0.92)", sticky = "top")
+        ], color = "#f5f5f5", sticky = "top")
 
 
     if p == "dashboard":

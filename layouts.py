@@ -1380,7 +1380,7 @@ custom_page = dbc.Container([
     
     get_navbar('custom'),
 
-    #get_emptyrow(),
+    get_emptyrow(),
     #get_emptyrow(),
     #Title 
     dbc.Row(
@@ -1719,7 +1719,7 @@ optimizer_page = dbc.Container([
     
     get_navbar('optimize'),
 
-    #get_emptyrow(),
+    get_emptyrow(),
     #get_emptyrow(),
     #Title 
     dbc.Row(

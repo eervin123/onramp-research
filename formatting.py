@@ -90,7 +90,7 @@ onramp_legend = {
 onramp_margins = {
     "l": 40,
     "r": 20,
-    "t": 0,
+    "t": 10,
     "b": 120,
 }  # Set top margin to in case there is a legend
 

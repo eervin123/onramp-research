@@ -204,7 +204,11 @@ def line_chart(results_list):
                     )
     
     fig.update_yaxes( # the y-axis is in dollars
-        tickprefix="$"
+        tickprefix="$",
+        type = 'log',
+        dtick = 1,
+        nticks = 20
+
     )
     # fig.update_layout(
     #     legend = {

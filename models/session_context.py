@@ -5,7 +5,7 @@ from contextlib import contextmanager
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-postgres_uri = os.getenv("postgres.url")
+postgres_uri = os.getenv("POSTGRES_URL")
 
 
 @contextmanager

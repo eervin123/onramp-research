@@ -1,6 +1,7 @@
+from typing import List
+
 from sqlalchemy import Column, String, Float, DateTime, text
 from sqlalchemy.orm import declarative_base, Session
-from sqlalchemy.orm import Session
 
 Base = declarative_base()
 
@@ -18,7 +19,7 @@ class CryptocurrencyPairOHLCV(Base):
     datetime = Column(DateTime, primary_key=True)
 
     @staticmethod
-    def get_all_history_for_pair(asset_1: String, asset_2: String, session: Session):
-        stmt = text("SELECT * FROM cryptocurrency pairs where asset_1=:asset_1 and asset_2=:asset_2")
+    def get_all_history_for_pair(asset_1: String, asset_2: String, session: Session) -> List["CryptocurrencyPairOHLCV"]:
+        stmt = text("SELECT * FROM cryptocurrency_pairs where asset_1=:asset_1 and asset_2=:asset_2")
         return session.query(CryptocurrencyPairOHLCV).from_statement(stmt) \
             .params(asset_1=asset_1, asset_2=asset_2).all()

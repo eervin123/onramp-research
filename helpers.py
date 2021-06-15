@@ -4,6 +4,9 @@ import bt
 import plotly.express as px
 import plotly.graph_objects as go
 from formatting import onramp_colors, onramp_template, onramp_template_dashboard
+from db_to_csv_transformer import eager_fetch_all_crypto_data
+
+get_coin_data_from_db = eager_fetch_all_crypto_data()
 
 def get_coin_data(symbol):
     df = pd.read_csv(f"datafiles/{symbol}_data.csv")

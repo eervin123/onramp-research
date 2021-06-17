@@ -1039,7 +1039,7 @@ def update_graph(num_click, tickers, crypto_tickers, opti_sel, freq_sel, crypto_
     data = pd.DataFrame()
     for ticker in full_asset_list:
         data_x = r.get(ticker)
-        if data_x is None:
+        if not data_x:
             print("Could not find", ticker, "in the cache.")
             data_x = bt.get(ticker, start = '2017-01-01')
             r.set(ticker, data_x)
@@ -1060,15 +1060,15 @@ def update_graph(num_click, tickers, crypto_tickers, opti_sel, freq_sel, crypto_
     #Figure out which Frequency 
     if (freq_sel == 'Daily'):
         returns = data.to_log_returns().dropna()
-        name = 'Portfolio Optomized Daily'
+        name = 'Portfolio Optimized Daily'
 
     if (freq_sel == 'Month'):
         returns = data.asfreq("M",method='ffill').to_log_returns().dropna()
-        name = 'Portfolio Optomized Monthly'
+        name = 'Portfolio Optimized Monthly'
 
     if (freq_sel == 'Quart'):
         returns = data.asfreq("Q",method='ffill').to_log_returns().dropna()
-        name = 'Portfolio Optomized Quarterly'
+        name = 'Portfolio Optimized Quarterly'
 
     if (freq_sel == 'Year'):
         returns = data.asfreq("Y",method='ffill').to_log_returns().dropna()

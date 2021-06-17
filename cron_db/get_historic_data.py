@@ -2,32 +2,51 @@
 
 import requests
 import pandas as pd
-from dateutil.parser import parse
 from sqlalchemy.orm import Session
-import datetime
-from cryptocurrency_pair_ohlcv import CryptocurrencyPairOHLCV
-from session_context import db_session
 from datetime import datetime, timedelta
+import os
+import sys
+from tqdm import tqdm
+
+currentdir = os.path.dirname(os.path.realpath(__file__))
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
+
+from models.cryptocurrency_pair_ohlcv import CryptocurrencyPairOHLCV
+from models.session_context import db_session
 
 TICKER_MAPPING = {
-    'ETH': 'ethereum',
-    'EOS': 'eos',
-    'USDT': 'tether',
-    'TRX': 'tron',
-    'IOTA': 'iota',
-    'XLM': 'stellar',
-    'XRP': 'ripple',
-    'ADA': 'cardano',
-    'NEO': 'neo',
-    'BCHABC': 'bitcoin-cash',
-    'BNB': 'binance-coin',
-    'BTC': 'bitcoin'
+    'eth': 'ethereum',
+    'eos': 'eos',
+    # USD here maps to tether for coincap
+    'usd': 'tether',
+    'doge': 'dogecoin',
+    'sol1': 'solana',
+    'ada': 'cardano',
+    'xrp': 'ripple',
+    'dot1': 'polkadot',
+    'uni3': 'uniswap',
+    'bch': 'bitcoin-cash',
+    'ltc': 'litecoin',
+    'neo': 'neo',
+    'link': 'chainlink',
+    'matic': 'matic-network',
+    'theta': 'theta',
+    'xlm': 'stellar',
+    'vet': 'vechain',
+    'aave': 'aave',
+    'etc': 'ethereum-classic',
+    'fil': 'filecoin',
+    'xmr': 'monero',
+    'trx': 'tron',
+    'bnb': 'binance-coin',
+    'btc': 'bitcoin'
 }
 
 
 def get_and_insert_historical_data(symbol: str, ts_start: float, session: Session):
     base, quote = symbol.split('-')
-
+    now = datetime.now().replace(hour=0, minute=0)
     baseId = TICKER_MAPPING[base]
     quoteId = TICKER_MAPPING[quote]
 
@@ -39,13 +58,13 @@ def get_and_insert_historical_data(symbol: str, ts_start: float, session: Sessio
         # Add another day to our last datetime found
         start_time = datetime.timestamp(start_time + timedelta(days=1))
 
-    if datetime.fromtimestamp(start_time) > datetime.now():
+    if datetime.fromtimestamp(start_time) > now:
         return historical_data
 
     url = "https://api.coincap.io/v2/candles?exchange=binance&interval=d1" \
           f"&baseId={baseId}&quoteId={quoteId}" \
           f"&start={int(start_time) * 1000}" \
-          f"&end={datetime.timestamp(datetime.now()) * 1000}"
+          f"&end={datetime.timestamp(now) * 1000}"
 
     response = requests.get(url)
     if response.status_code > 300:
@@ -69,13 +88,14 @@ def get_and_insert_historical_data(symbol: str, ts_start: float, session: Sessio
           'period': item.datetime
           } for item in total_data]
     )
-    df.to_csv(f'{symbol}_data.csv', index=False, header=True)
+    pairs_name = symbol.upper() + 'T'
+    df.to_csv(f'../datafiles/{pairs_name}_data.csv', index=False, header=True)
 
 API_LIMIT = 700
-ts_start = datetime.timestamp(datetime.now() - timedelta(days=API_LIMIT))
-pairs = ['BTC-USDT', 'BCHABC-USDT', 'TRX-USDT', 'IOTA-USDT', 'XLM-USDT', 'EOS-USDT', 'XRP-USDT', 'ADA-USDT', 'LTC-USDT',
-         'NEO-USDT', 'BNB-USDT', 'ETH-USDT']
-for pair in pairs:
+ts_start = datetime.timestamp(datetime.now().replace(hour=0, minute=0) - timedelta(days=API_LIMIT))
+pairs = pd.read_csv('../datafiles/tickerlist.csv')['Cryptos']
+pairs.dropna(inplace=True)
+for pair in tqdm(pairs.tolist()):
     with db_session() as db:
         try:
             get_and_insert_historical_data(pair, ts_start, db)

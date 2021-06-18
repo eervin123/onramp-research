@@ -11,8 +11,7 @@ from dash_bootstrap_components._components.Row import Row
 import dash_bootstrap_components as dbc
 import plotly.graph_objs as go
 import pandas as pd
-import numpy as np
-from dash_app import dash_app
+import numpy as np 
 from formatting import onramp_colors, externalgraph_rowstyling, externalgraph_colstyling, recapdiv
 from helpers import get_coin_data, get_coin_data_new, volatility, calc_volatility, calc_volatility_btc_vol, calc_volatility_new, create_corr, create_corr_new
 
@@ -141,52 +140,6 @@ btc_vol_fig = graph_btc_vol(df_btc)
 ####################################################################################################
 # 000 - LAYOUTS
 ####################################################################################################
-
-
-#####################
-# Header with logo
-def get_header():
-
-    header = html.Div(
-        [
-            html.Div(
-                [], className="col-2"
-            ),  # Same as img width, allowing to have the title centrally aligned
-            html.Div(
-                [
-                    html.H1(
-                        children="Onramp Academy Tools",
-                        style={"textAlign": "center", "font": "Roboto"},
-                    ),
-                    html.H4(
-                        children="Interactive Market Data and Tools to Explore the Cryptoasset Economy",
-                        style={
-                            "textAlign": "center",
-                            "font": "Roboto",
-                            "color": "#b0b6bd",
-                        },
-                    ),
-                ],
-                className="col-8",
-                style={"padding-top": "1%"},
-            ),
-            html.Div(
-                [
-                    html.Img(
-                        src=dash_app.get_asset_url("onramp-logo-small.png"),
-                        height="43 px",
-                        width="auto",
-                    )
-                ],
-                className="col-2",
-                style={"align-items": "center", "padding-top": "1%", "height": "auto"},
-            ),
-        ],
-        className="row",
-        style={"height": "4%", "background-color": onramp_colors["dark_blue"]},
-    )
-
-    return header
 
 #####################
 # Nav bar
@@ -1259,23 +1212,6 @@ def Inputs():
 
     return inputs_
 
-# @CYRUS I removed the following because it wasn't being used.  Feel free to delete or modify
-# def Description():
-
-#     descript = dbc.Card(
-#                 dbc.CardBody([
-                   
-#                             html.P(children= "Commerce on the Internet has come to rely almost exclusively on financial institutions serving as trusted third parties to process electronic payments. While the system works well enough for most transactions, it still suffers from the inherent weaknesses of the trust based model. Completely non-reversible transactions are not really possible, since financial institutions cannotavoid mediating disputes.", 
-#                             style = {"fontSize": "vmin" }),
-                            
-#                             html.P(children= "Commerce on the Internet has come to rely almost exclusively on financial institutions serving as trusted third parties to process electronic payments. While the system works well enough for most transactions, it still suffers from the inherent weaknesses of the trust based model. Completely non-reversible transactions are not really possible, since financial institutions cannotavoid mediating disputes.",
-#                             style = {"fontSize": "vmin" })
-                            
-                
-#                 ]), className= "text-center", style= {"height": "22rem"}, color= onramp_colors["dark_blue"], inverse= True
-#     )
-
-#     return descript
 
 
 def DisplayPie():
